@@ -1,7 +1,6 @@
 package com.company;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 public class DMethod {
  
@@ -9,42 +8,65 @@ public class DMethod {
    private String name;
    private String returnType;
    
-   private LinkedHashMap<String, String> parameters;
+   private ArrayList<DProperty> parameters;
    
    //constructor
    
    public DMethod() {
-      parameters = new LinkedHashMap<String, String>();
+      parameters = new ArrayList<DProperty>();
+   }
+   
+   public DMethod(String name, String returnType) {
+      parameters = new ArrayList<DProperty>();
+      this.returnType = returnType;
+      this.name = name;
    }
    
    //methods
+   
+   public String getName() {
+      return name;
+   }
    
    public String getReturnType() {
       return returnType;
    }
    
-   public String getParameter( int order) {
-      Iterator<String> itr = parameters.keySet().iterator();
-      for (int i = 0; i < order; i++) {
-         itr.next();
-      }
-      return itr.next();
+   public void setName( String name) {
+      this.name = name;
+   }
+   
+   public void setReturnType( String returnType) {
+      this.returnType = returnType;
+   }
+   
+   public DProperty getParameter( int order) {
+      return parameters.get( order);
    }
    
    public void addParameter( String name, String type) {
-      parameters.put( name, type);
+      DProperty dp = new DProperty( name, type);
+      parameters.add( dp);
+   }
+   
+   public void addParameter( DProperty parameter) {
+      parameters.add( parameter);
    } 
    
+   public void removeParameter( DProperty dp) {
+      parameters.remove( dp);
+   }
+   
    public void removeParameter( String name) {
-      parameters.remove( name);
+      for( int i = 0; i < parameters.size(); i++) {
+         if (parameters.get(i).getName().equals(name)) {
+            parameters.remove( name);
+         }
+      }
    }
    
    public void removeParameter( int order) {
-      Iterator<String> itr = parameters.keySet().iterator();
-      for (int i = 0; i < order; i++) {
-         itr.next();
-      }
-      parameters.remove(itr.next());
+      parameters.remove( parameters.get(order));
    }
    
 }
