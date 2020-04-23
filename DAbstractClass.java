@@ -1,14 +1,17 @@
-public class DAbstractClass extends DGeneralClass 
+package com.company;
+
+public class DAbstractClass extends DGeneralClass
 {
    // properties
    
    // constructors
-   public DAbstractClass()
+   public DAbstractClass( String name)
    {
-      super();
+      super( name);
    } 
    
    // methods
+   @Override
    public void extract()
    {
       

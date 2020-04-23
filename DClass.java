@@ -1,18 +1,25 @@
-public class DClass extends DGeneralClass 
+package com.company;
+
+import java.util.ArrayList;
+
+public class DClass extends DGeneralClass
 {
    // properties
    
    // constructors
-   public DClass()
+   public DClass( String name)
    {
-      super();
+      super( name);
    } 
    
    // methods
+   @Override
    public void extract()
    {
       
    }
-   
-   
+
+
+
+
 }

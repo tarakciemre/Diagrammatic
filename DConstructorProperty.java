@@ -1,3 +1,5 @@
+package com.company;
+
 public class DConstructorProperty
 {
    private DProperty property;
@@ -16,7 +18,7 @@ public class DConstructorProperty
       return property;  
    }
    
-   public String isIncluded() 
+   public boolean isIncluded()
    {
       return included;
    }

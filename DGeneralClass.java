@@ -1,22 +1,31 @@
+package com.company;
 import java.util.ArrayList;
    
-public abstract class DGeneralClass extends DObject
+public class DGeneralClass extends DObject
 {
    // properties
-   DConstructor cons;
-   ArrayList<DMethod> meths;
-   ArrayList<DProperty> props;
+   private String name;
+   private DConstructor cons;
+   private ArrayList<DMethod> meths;
+   private ArrayList<DProperty> props;
    
    // constructors
-   public DGeneralClass()
+   public DGeneralClass( String name)
    {
-      cons = new DConstructor( this);
+      this.name = name;
+      cons = new DConstructor((DClass) this);
       meths = new ArrayList<DMethod>();
       props = new ArrayList<DProperty>();
-      
    } 
    
    // methods
    
-   
+   @Override
+   public void extract() {
+
+   }
+
+   public ArrayList<DProperty> getProperties() {
+      return props;
+   }
 }

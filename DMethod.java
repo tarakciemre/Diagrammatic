@@ -1,15 +1,15 @@
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
+package com.company;
+
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 public class DMethod {
  
    //properties
+   private String name;
+   private String returnType;
    
-   String name;
-   String returnType;
-   
-   LinkedHashMap<String, String> parameters;
+   private LinkedHashMap<String, String> parameters;
    
    //constructor
    

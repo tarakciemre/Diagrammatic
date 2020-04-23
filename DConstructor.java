@@ -1,14 +1,20 @@
+package com.company;
+
+import java.util.ArrayList;
+
 public class DConstructor
 {
-   DConstructorProperty[] properties;
+   private ArrayList<DConstructorProperty> properties;
    
    public DConstructor(DClass c)
    {
-      properties = new DConstructorProperty[20];
-      for(int i = 0; i < getProperties().length; i++)
+      properties = new ArrayList<DConstructorProperty>();
+      for(int i = 0; i < c.getProperties().size(); i++)
       {
-         properties[i] = new DConstructorProperty( getProperties()[i], false);
+         properties.set(i, new DConstructorProperty( c.getProperties().get(i), false) );
       }
    }
+
+
 }
 
