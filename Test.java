@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Test {
    
    public static void main( String[] args) {
-      // PROPERTIES
+      // VARIABLES
        // for stage 1
       DGeneralClass cg;
       DInterface i;
