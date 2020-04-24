@@ -14,6 +14,8 @@ public class DMethod {
    
    public DMethod() {
       parameters = new ArrayList<DProperty>();
+	  name = "";
+	  returnType = "void";
    }
    
    public DMethod(String name, String returnType) {
