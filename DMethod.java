@@ -1,30 +1,47 @@
-package com.company;
+package dpackage;
 
 import java.util.ArrayList;
 
 public class DMethod {
  
-   //properties
+   // Properties
    private String name;
    private String returnType;
-   
    private ArrayList<DProperty> parameters;
    
-   //constructor
+   // Constructors
    
    public DMethod() {
+      name = "";
+      returnType = "void";
       parameters = new ArrayList<DProperty>();
-	  name = "";
-	  returnType = "void";
    }
    
    public DMethod(String name, String returnType) {
       parameters = new ArrayList<DProperty>();
-      this.returnType = returnType;
-      this.name = name;
+      this.returnType = returnType.trim();
+      this.name = name.trim();
    }
    
-   //methods
+   // Methods
+   public String toString() {
+      String str;
+      String rtn;
+      
+      if ( returnType.equals("void"))
+         rtn = "no return function";
+      else
+         rtn = "returns type " + returnType;
+      
+      str = name + " " + rtn + " " + " taking parameters : ";
+      
+      for ( int i = 0; i < parameters.size() - 1; i++)
+         str += parameters.get(i) + ", ";
+      if ( parameters.size() > 0)
+         str += parameters.get(parameters.size() - 1);
+      
+      return str;
+   }
    
    public String getName() {
       return name;
@@ -44,6 +61,10 @@ public class DMethod {
    
    public DProperty getParameter( int order) {
       return parameters.get( order);
+   }
+   
+   public ArrayList<DProperty> getParameters() {
+      return parameters;
    }
    
    public void addParameter( String name, String type) {

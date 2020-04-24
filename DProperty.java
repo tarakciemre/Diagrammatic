@@ -1,35 +1,37 @@
-package com.company;
+package dpackage;
 
-public class DProperty
-{
+public class DProperty {
+   
+   // Properties
    private String name;
    private String type;
    
-   public DProperty(String name, String type)
-   {
+   // Constructors
+   public DProperty(String name, String type) {
       this.type = type;
-      this.name = name;
+      this.name = name.trim();
    }
    
-   //Getters and setters
-   public String getName()
-   {
+   // Methods
+   public String toString() {
+      
+      return "<type:" + getType() + " name:" + getName() + ">";
+   }
+   //Getters and Setters
+   public String getName() {
       return name;  
    }
    
-   public String getType() 
-   {
+   public String getType()  {
       return type;
    }
    
-   public int setName(String name)
-   {
+   public int setName(String name) {
       this.name = name;
       return 1; //should return something else if empty
    }
    
-   public int setType(String type)
-   {
+   public int setType(String type) {
       this.type = type;
       return 1; //should return something else if empty
    }

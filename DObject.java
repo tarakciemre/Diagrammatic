@@ -1,9 +1,11 @@
-package com.company;
+package dpackage;
 
 public abstract class DObject {
-   //fields
+   
+   // Properties
    protected String name;
 
-   //methods 
+   // Methods
+   
    public abstract void extract();
 }

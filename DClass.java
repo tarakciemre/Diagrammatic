@@ -1,25 +1,22 @@
-package com.company;
+package dpackage;
 
 import java.util.ArrayList;
 
-public class DClass extends DGeneralClass
-{
-   // properties
+public class DClass extends DGeneralClass {
    
-   // constructors
-   public DClass( String name)
-   {
+   // Properties
+   private DConstructor cons;
+   
+   // Constructors
+   public DClass( String name) {
       super( name);
+      cons = new DConstructor((DClass) this);
    } 
    
-   // methods
+   // Methods
    @Override
-   public void extract()
-   {
+   public void extract() {
       
    }
-
-
-
 
 }
