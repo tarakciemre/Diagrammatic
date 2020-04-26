@@ -2,6 +2,7 @@
 package logic.tools;
 
 import java.util.ArrayList;
+import logic.interfaces.*;
 import logic.object_source.*;
 
 public class DMethod {
@@ -94,4 +95,7 @@ public class DMethod {
       parameters.remove( parameters.get(order));
    }
    
+   public ArrayList<String> extract() {
+      return null;
+   }
 }

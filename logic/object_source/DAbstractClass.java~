@@ -10,6 +10,8 @@ public class DAbstractClass extends DGeneralClass {
       super( name);
    } 
    
+   //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
+   
    // Methods
    
    @Override
@@ -17,5 +19,4 @@ public class DAbstractClass extends DGeneralClass {
       //for console demos
       System.out.println(this);
    }
-   
 }

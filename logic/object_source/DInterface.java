@@ -9,7 +9,6 @@ public class DInterface extends DObject {
    // Properties
    private ArrayList<DMethod> methodCollector;
    private String name;
-   protected ArrayList<DInterface> superInterfaces;
    
    // Constructors
    public DInterface( String name) {
@@ -17,12 +16,8 @@ public class DInterface extends DObject {
       methodCollector = new ArrayList<DMethod>();
    }
    
-   public DInterface( String name, DInterface superInterface) {
-      this.name = name;
-      methodCollector = new ArrayList<DMethod>();
-      superInterfaces = new ArrayList<DInterface>();
-      superInterfaces.add( superInterface);
-   }
+   //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
+
    // Methods
    @Override
    public String toString() {
@@ -48,20 +43,10 @@ public class DInterface extends DObject {
    public void removeMethod( DMethod m) {
       methodCollector.remove(m);
    }
-      
-   public ArrayList<DMethod> getMethods()
-   {
-      return methodCollector;
-   }
-    
-   public void addSuperInterface( DInterface superInterface)
-   {
-      superInterfaces.add(superInterface);
-   }
    
    @Override
-   public void extract() {
+   public ArrayList<String> extract() {
       //for console demos
-      System.out.println( this);
+      return null;
    }
 }

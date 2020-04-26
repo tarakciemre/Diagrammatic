@@ -1,13 +1,16 @@
 //package com.company;
 package logic.tools;
 
+import java.util.ArrayList;
 import logic.object_source.*;
+import logic.interfaces.*;
+
 /**
  * An object for the properties of classes
  * to extract each item
  * @version 26.04.2020
  */
-public class DProperty implements Extractable {
+public class DProperty {
    
    // Properties
    private String name;
@@ -43,8 +46,10 @@ public class DProperty implements Extractable {
       return 1; //should return something else if empty
    }
    
+      
    public String extract()
    {
       return type + " " + name + ";";
    }
+   
 }

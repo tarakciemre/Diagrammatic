@@ -2,8 +2,9 @@
 package logic.object_source;
 
 import logic.tools.*;
+import logic.interfaces.*;
 
-public abstract class DObject {
+public abstract class DObject implements Extractable{
    
    // Properties
    protected String name;
