@@ -2,8 +2,12 @@
 package logic.tools;
 
 import logic.object_source.*;
-
-public class DProperty {
+/**
+ * An object for the properties of classes
+ * to extract each item
+ * @version 26.04.2020
+ */
+public class DProperty implements Extractable {
    
    // Properties
    private String name;
@@ -37,5 +41,10 @@ public class DProperty {
    public int setType(String type) {
       this.type = type;
       return 1; //should return something else if empty
+   }
+   
+   public String extract()
+   {
+      return type + " " + name + ";";
    }
 }
