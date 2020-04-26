@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import logic.object_source.*;
 import logic.interfaces.*;
 
+/**
+ * An object for the properties of classes
+ * to extract each item
+ * @version 26.04.2020
+ */
 public class DProperty {
    
    // Properties
@@ -41,8 +46,10 @@ public class DProperty {
       return 1; //should return something else if empty
    }
    
-   public ArrayList<String> extract() {
-      return null;
+      
+   public String extract()
+   {
+      return type + " " + name + ";";
    }
    
 }

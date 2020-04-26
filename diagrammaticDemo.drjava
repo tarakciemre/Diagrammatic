@@ -3,49 +3,53 @@
   <project autorefresh="false" build="classes/" main="Test" root="" work="">
     <createjar file=""/>
     <source>
-      <file active="true" name="logic/tools/DProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:26:54">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+      <file active="true" name="logic/tools/DProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:37:17">
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/tools/DConstructorProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/tools/DConstructor.java" package="logic.tools" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/object_source/DClass.java" package="logic.object_source" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="Main.java" package="" timestamp="26-Apr-2020 15:18:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/tools/DMethod.java" package="logic.tools" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="Test.java" package="" timestamp="26-Apr-2020 15:38:38">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/object_source/DAbstractClass.java" package="logic.object_source" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/object_source/DObject.java" package="logic.object_source" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/object_source/DInterface.java" package="logic.object_source" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
       <file name="logic/object_source/DGeneralClass.java" package="logic.object_source" timestamp="26-Apr-2020 17:24:07">
-        <select from="943" to="943"/>
-        <scroll column="53" row="0"/>
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
+      </file>
+      <file name="logic/interfaces/Extractable.java" package="logic.interfaces" timestamp="26-Apr-2020 17:37:17">
+        <select from="995" to="995"/>
+        <scroll column="176" row="0"/>
       </file>
     </source>
     <included/>
