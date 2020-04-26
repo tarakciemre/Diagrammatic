@@ -3,7 +3,10 @@ package logic.tools;
 
 import java.util.ArrayList;
 import logic.object_source.*;
+<<<<<<< HEAD
 import logic.interfaces.*;
+=======
+>>>>>>> parent of d49f1a2... extract method
 
 public class DProperty {
    
@@ -40,8 +43,11 @@ public class DProperty {
       this.type = type;
       return 1; //should return something else if empty
    }
+<<<<<<< HEAD
    
    public ArrayList<String> extract() {
       return null;
    }
+=======
+>>>>>>> parent of d49f1a2... extract method
 }
