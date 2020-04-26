@@ -7,7 +7,6 @@ public abstract class DObject {
    
    // Properties
    protected String name;
-   protected DObject superClass;
 
    // Methods
    public abstract void extract();

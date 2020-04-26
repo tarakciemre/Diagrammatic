@@ -9,15 +9,29 @@ public class DGeneralClass extends DObject {
    private String name;
    private ArrayList<DMethod> meths;
    private ArrayList<DProperty> props;
+   protected DGeneralClass superClass;
+   protected ArrayList<DInterface> interfaces;
    
    // Constructors 
    public DGeneralClass( String name) {
       this.name = name.trim();
       meths = new ArrayList<DMethod>();
       props = new ArrayList<DProperty>();
+      superClass = null;
+      interfaces = new ArrayList<DInterface>();
    } 
    
-   //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
+   public DGeneralClass( String name, DGeneralClass superClass) {
+      this.name = name.trim();
+      meths = new ArrayList<DMethod>();
+      props = new ArrayList<DProperty>();
+      this.superClass = superClass;
+      interfaces = new ArrayList<DInterface>();
+      if ( superClass instanceof DAbstractClass)
+      {
+         addMethods( superClass.getMethods() );
+      }
+   } 
    
    // Methods 
    public String toString() {
@@ -117,4 +131,14 @@ public class DGeneralClass extends DObject {
       meths.remove(m);
    }
    
+   public void addInterface( DInterface newInterface)
+   {
+      interfaces.add( newInterface);
+      addMethods( newInterface.getMethods() );
+   }
+   
+   public ArrayList<DMethod> getMethods()
+   {
+      return meths;
+   }
 }

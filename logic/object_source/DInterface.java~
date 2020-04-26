@@ -15,6 +15,8 @@ public class DInterface extends DObject {
       this.name = name;
       methodCollector = new ArrayList<DMethod>();
    }
+   
+   //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
 
    // Methods
    @Override
