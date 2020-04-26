@@ -1,4 +1,7 @@
 //package com.company;
+package logic.tools;
+
+import logic.object_source.*;
 
 public class DConstructorProperty
 {

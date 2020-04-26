@@ -2,6 +2,7 @@
 package logic.object_source;
 
 import logic.tools.*;
+import java.util.ArrayList;
 
 public class DAbstractClass extends DGeneralClass {
    
@@ -13,10 +14,9 @@ public class DAbstractClass extends DGeneralClass {
    //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
    
    // Methods
-   
    @Override
-   public void extract() {
+   public ArrayList<String> extract() {
       //for console demos
-      System.out.println(this);
+      return null;
    }
 }

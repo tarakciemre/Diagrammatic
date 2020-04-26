@@ -1,7 +1,9 @@
 //package com.company;
 package logic.tools;
 
+import java.util.ArrayList;
 import logic.object_source.*;
+import logic.interfaces.*;
 
 public class DProperty {
    
@@ -37,5 +39,9 @@ public class DProperty {
    public int setType(String type) {
       this.type = type;
       return 1; //should return something else if empty
+   }
+   
+   public ArrayList<String> extract() {
+      return null;
    }
 }

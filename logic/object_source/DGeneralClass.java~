@@ -17,6 +17,8 @@ public class DGeneralClass extends DObject {
       props = new ArrayList<DProperty>();
    } 
    
+   //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
+   
    // Methods 
    public String toString() {
       String str = "public class " + name ;
