@@ -1,6 +1,8 @@
-package com.company;
+//package com.company;
+package logic.tools;
 
 import java.util.ArrayList;
+import logic.object_source.*;
 
 public class DMethod {
  

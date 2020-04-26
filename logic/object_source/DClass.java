@@ -1,6 +1,8 @@
-package com.company;
+//package com.company;
+package logic.object_source;
 
 import java.util.ArrayList;
+import logic.tools.*;
 
 public class DClass extends DGeneralClass {
    

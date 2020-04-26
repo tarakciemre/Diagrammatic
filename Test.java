@@ -1,6 +1,9 @@
 //import dpackage.*;
 import java.util.ArrayList;
 
+import logic.object_source.*;
+import logic.tools.*;
+
 public class Test {
    
    public static void main( String[] args) {
