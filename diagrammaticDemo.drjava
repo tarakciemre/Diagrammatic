@@ -3,7 +3,7 @@
   <project autorefresh="false" build="classes/" main="Test" root="" work="">
     <createjar file=""/>
     <source>
-      <file active="true" name="logic/tools/DProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:37:17">
+      <file active="true" name="logic/tools/DProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:37:27">
         <select from="995" to="995"/>
         <scroll column="176" row="0"/>
       </file>
