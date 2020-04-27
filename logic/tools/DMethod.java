@@ -2,7 +2,6 @@
 package logic.tools;
 
 import java.util.ArrayList;
-import logic.interfaces.*;
 import logic.object_source.*;
 
 public class DMethod {
@@ -11,9 +10,9 @@ public class DMethod {
    private String name;
    private String returnType;
    private ArrayList<DProperty> parameters;
+   private boolean isStatic;
    
-   // Constructors
-   
+   // Constructors  
    public DMethod() {
       name = "";
       returnType = "void";
@@ -97,5 +96,9 @@ public class DMethod {
    
    public ArrayList<String> extract() {
       return null;
+   }
+   
+   public void setStatic( boolean st) {
+      isStatic = st;
    }
 }
