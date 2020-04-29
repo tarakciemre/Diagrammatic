@@ -38,10 +38,9 @@ public class DGeneralClass extends DObject {
       return str;
    }
    
-   @Override
-   public void extract() {
-      //for console demos
-      System.out.println( this);
+   public ArrayList<String> extract()
+   {
+      return null;
    }
 
    public ArrayList<DProperty> getProperties() {
@@ -116,5 +115,4 @@ public class DGeneralClass extends DObject {
    public void removeMethod( DMethod m) {
       meths.remove(m);
    }
-   
 }

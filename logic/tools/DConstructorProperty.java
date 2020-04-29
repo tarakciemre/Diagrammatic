@@ -38,7 +38,7 @@ public class DConstructorProperty
       this.included = included;
    }
    
-   public ArrayList<String> extract() {
-      return null;
+   public String extract() {
+      return getProperty().extract();
    }
 }

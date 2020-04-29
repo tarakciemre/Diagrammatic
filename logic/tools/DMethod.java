@@ -94,8 +94,29 @@ public class DMethod {
       parameters.remove( parameters.get(order));
    }
    
-   public ArrayList<String> extract() {
-      return null;
+   public ArrayList<String> extract()
+   {
+      ArrayList<String> lines = new ArrayList<String>();
+      String firstLine = "";
+      firstLine = "public " + returnType + " " + name + "( ";
+      for( int i = 0; i < parameters.size(); i++)  
+      {
+         DProperty p = parameters.get(i);
+         firstLine += p.getType() + " " + p.getName() + ", ";
+      }
+      firstLine.substring(0, firstLine.length() - 2);
+      firstLine += ")";
+      
+      lines.add( firstLine);
+      lines.add( "{");
+      if( returnType.equals( "void"))
+         lines.add( "\treturn;");
+      else
+         lines.add( "\treturn null;");
+      
+      lines.add( "}");
+      
+      return lines;
    }
    
    public void setStatic( boolean st) {

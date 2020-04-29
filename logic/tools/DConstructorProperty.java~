@@ -28,16 +28,14 @@ public class DConstructorProperty
       return included;
    }
    
-   public int setProperty(DProperty property)
+   public void setProperty(DProperty property)
    {
       this.property = property;
-      return 1; //should return something else if empty
    }
    
-   public int setIncluded(boolean included)
+   public void setIncluded(boolean included)
    {
       this.included = included;
-      return 1; //should return something else if empty
    }
    
    public ArrayList<String> extract() {

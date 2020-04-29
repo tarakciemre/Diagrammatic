@@ -17,8 +17,8 @@ public class DClass extends DGeneralClass {
    
    // Methods
    @Override
-   public void extract() {
-      
+   public ArrayList<String> extract() {
+      return null;
    }
 
 }
