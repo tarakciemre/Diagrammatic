@@ -7,7 +7,7 @@ import logic.tools.*;
 public class DClass extends DGeneralClass {
    
    // Properties
-   private DConstructor cons;
+   private DConstructor cons; // Will be made into an ArrayList
    
    // Constructors
    public DClass( String name) {
@@ -39,6 +39,8 @@ public class DClass extends DGeneralClass {
       
       lines.add( "\t//Constructors");
       lines.add( "");
+      
+      // !EDIT! multiple constructors will be possible
       for( int i = 0; i < cons.extract().size(); i++)
       {
          lines.add( "\t" + cons.extract().get(i));

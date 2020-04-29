@@ -3,6 +3,7 @@ package logic.object_source;
 
 import logic.tools.*;
 import logic.interfaces.*;
+import java.util.ArrayList;
 
 public abstract class DObject implements Extractable{
    
@@ -11,5 +12,5 @@ public abstract class DObject implements Extractable{
    protected DObject superClass;
 
    // Methods
-   public abstract void extract();
+   public abstract ArrayList<String> extract();
 }

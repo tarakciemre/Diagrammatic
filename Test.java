@@ -6,54 +6,62 @@ import logic.tools.*;
 
 public class Test {
    
+   // for stage 1
+   static DGeneralClass cg;
+   static DInterface i;
+   static DClass c;
+   static DAbstractClass ac;
+   static DMethod m;
+   static DProperty p;
+   static DConstructor con;
+   
+   // for stage 2
+   static DProperty num; 
+   static DProperty taste;
+   static DProperty withPancake;
+   static DProperty jakeMadeIt;
+   static DMethod getEaten;
+   static DMethod setEaten;
+   static int cardinality;
+   
    public static void main( String[] args) {
-      // VARIABLES
-       // for stage 1
-      DGeneralClass cg;
-      DInterface i;
-      DClass c;
-      DAbstractClass ac;
-      DMethod m;
-      DProperty p;
-      DConstructor con;
-       // for stage 2
-      DProperty num; 
-      DProperty taste;
-      DProperty withPancake;
-      DProperty jakeMadeIt;
-      DMethod getEaten;
-      DMethod setEaten;
-      int cardinality;
+      classesWorking();
       
-      // PROGRAM CODE
+      // TO TEST SOMETHÝNG, UNCOMMENT THE NECESSARY LINE BELOW:
+      //dMethodTest();
+      //dClassTest();
+      //dAbstractTest();
+      //dExtractTest();
+   }
+   
+   // Test Constructor
+   public static void testConstructor()
+   {
       
-       // stage 1
+   }
+   
+   public static void classesWorking()
+   {
       cg = new DGeneralClass("GeneralClass");
       i = new DInterface("Interactable");
       c = new DClass("Bacon");
       ac = new DAbstractClass("E");
       m = new DMethod("isEven", "int");
       p = new DProperty("dassein", "Dassein");
-      con = new DConstructor( c);
-      
-      System.out.println("{DGeneralClass} "   + cg);
-      System.out.println("{DInterface} "      +  i);
-      System.out.println("{DClass} "          +  c);
-      System.out.println("{DAbstractClass} "  + ac);
-      System.out.println("{DMethod} "         +  m);
-      System.out.println("{DProperty} "       +  p);
-      System.out.println();
-      
-       // stage 2
-      
-        // stage 2.1: DMethod
+      con = new DConstructor( c);  
+   } 
+   
+   public static void dMethodTest()
+   {
       num = new DProperty( "number", "int");
       m.addParameter(num);
       
       System.out.println("{DMethod} "         +  m);
-      System.out.println();
-      
-        // stage 2.2: DClass
+      System.out.println(); 
+   }
+   
+   public static void dClassTest()
+   {
       taste = new DProperty( "taste", "Taste");
       withPancake = new DProperty( "withPancake", "boolean");
       jakeMadeIt = new DProperty( "jakeMadeIt", "boolean");
@@ -76,8 +84,10 @@ public class Test {
       
       System.out.println("{DClass} "          +  c);
       System.out.println();
-      
-        // stage 2.3: DAbstractClass
+   }
+   
+   public static void dAbstractTest()
+   {
       cardinality = 5;
       for ( int k = 0; k < cardinality; k++) {
          ac.addProperty( new DProperty( "element"+k, "Number"));
@@ -85,16 +95,14 @@ public class Test {
       
       System.out.println("{DAbstractClass} "  + ac);
       System.out.println();
-      
+   }
+   
+   public static void dExtractTest()
+   {
       for( int k = 0; k < c.extract().size(); k++)
          System.out.println( c.extract().get(k));
       
       for( int k = 0; k < ac.extract().size(); k++)
          System.out.println( ac.extract().get(k));
-      
-        // stage 2.4: DConstructor
-      
-       // stage 3: Extracting
    }
-   
 }
