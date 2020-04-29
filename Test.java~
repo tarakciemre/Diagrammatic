@@ -22,6 +22,7 @@ public class Test {
       DProperty withPancake;
       DProperty jakeMadeIt;
       DMethod getEaten;
+      DMethod setEaten;
       int cardinality;
       
       // PROGRAM CODE
@@ -56,7 +57,8 @@ public class Test {
       taste = new DProperty( "taste", "Taste");
       withPancake = new DProperty( "withPancake", "boolean");
       jakeMadeIt = new DProperty( "jakeMadeIt", "boolean");
-      getEaten = new DMethod( "getEaten", "void");
+      getEaten = new DMethod( "getEaten", "boolean");
+      setEaten = new DMethod( "setEaten", "void");
       
       ArrayList<DProperty> forBacon = new ArrayList<DProperty>();
       forBacon.add(taste);
@@ -66,6 +68,9 @@ public class Test {
       
       c.addProperty(jakeMadeIt);
       c.addMethod(getEaten);
+      c.addMethod(setEaten);
+      
+      c.updateConstructor();
       
       System.out.println("{DClass} "          +  c);
       System.out.println();
@@ -78,6 +83,10 @@ public class Test {
       
       System.out.println("{DAbstractClass} "  + ac);
       System.out.println();
+      
+      for( int k = 0; k < c.extract().size(); k++)
+         System.out.println( c.extract().get(k));
+      
       
         // stage 2.4: DConstructor
       

@@ -66,6 +66,8 @@ public class Test {
       
       c.addProperties( forBacon);
       
+      ac.addProperty(jakeMadeIt);
+      ac.addMethod(getEaten);
       c.addProperty(jakeMadeIt);
       c.addMethod(getEaten);
       c.addMethod(setEaten);
@@ -87,6 +89,8 @@ public class Test {
       for( int k = 0; k < c.extract().size(); k++)
          System.out.println( c.extract().get(k));
       
+      for( int k = 0; k < ac.extract().size(); k++)
+         System.out.println( ac.extract().get(k));
       
         // stage 2.4: DConstructor
       

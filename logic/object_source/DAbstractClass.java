@@ -2,6 +2,7 @@ package logic.object_source;
 
 
 import logic.tools.*;
+import java.util.ArrayList;
    
 public class DAbstractClass extends DGeneralClass {
    
@@ -16,24 +17,24 @@ public class DAbstractClass extends DGeneralClass {
    
    @Override
    public ArrayList<String> extract() {
-      lines = new ArrayList<String>();
+      ArrayList<String> lines = new ArrayList<String>();
       
       lines.add("public abstract class " + this.getName());
       lines.add("{");
       lines.add("");
       lines.add( "\t// Properties");
-      for ( int i = 0; i < this.getProperties(); i++)
-         lines.add( "\tprivate " + this.getProperties().get(i).extract();
+      lines.add("");
+      for ( int i = 0; i < this.getProperties().size(); i++)
+         lines.add( "\tprivate " + this.getProperties().get(i).extract());
       lines.add("");
       lines.add( "\t// Methods");
       lines.add( "");
       for( int i = 0; i < getMethods().size(); i++)
       {
-         for( int a = 0; a < getMethods().get(i).extract().size(); a++)
-         {
-            lines.add( "\t" + " public abstract" + getMethods().get(i).extract().get(a).substring( 6));
-         }
-         lines.add( "");
+         String line = "";
+         line += "\tpublic abstract" + getMethods().get(i).extract().get(0).substring( 6) + "{};";
+
+         lines.add( line);
       }
       lines.add( "");
       lines.add( "}");
