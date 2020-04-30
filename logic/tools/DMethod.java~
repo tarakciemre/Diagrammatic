@@ -9,8 +9,9 @@ public class DMethod {
    // Properties
    private String name;
    private String returnType;
-   private ArrayList<DProperty> parameters;
    private boolean isStatic;
+   private ArrayList<DProperty> parameters;
+
    
    // Constructors  
    public DMethod() {
@@ -27,7 +28,18 @@ public class DMethod {
    
    // Methods
    public String toString() {
-      String str;
+      
+      String output;
+      output = name + " " + returnType + " " + isStatic + " ";
+      for( DProperty param: parameters)
+      {
+         output = output + param + "!";
+      }
+      output = output.substring(0, output.length() - 2);
+      return output;
+      
+      //IDK WHat this is
+      /*String str;
       String rtn;
       
       if ( returnType.equals("void"))
@@ -43,6 +55,7 @@ public class DMethod {
          str += parameters.get(parameters.size() - 1);
       
       return str;
+      */
    }
    
    public String getName() {

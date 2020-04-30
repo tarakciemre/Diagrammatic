@@ -1,0 +1,21 @@
+package tools;
+
+import java.util.ArrayList;
+import logic.object_source.DClass;
+import logic.object_source.DInterface;
+import logic.object_source.DClass;
+import logic.object_source.DClass;
+
+/*
+ * DFileManager class for methods related to project/file translations.
+ * @version 30.04.2020
+ */
+
+public class ProjectManager
+{
+   
+   public static DClass textToClass( ArrayList<String> lines)
+   {
+      
+   }
+}

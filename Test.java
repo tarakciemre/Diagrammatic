@@ -31,7 +31,8 @@ public class Test {
       //dMethodTest();
       dClassTest();
       //dAbstractTest();
-      dExtractTest();
+      //dExtractTest();
+      translateTest();
    }
    
    // Test Constructor
@@ -46,7 +47,7 @@ public class Test {
       i = new DInterface("Interactable");
       c = new DClass("Bacon");
       ac = new DAbstractClass("E");
-      m = new DMethod("isEven", "int");
+      m = new DMethod("isEven", "int", false);
       p = new DProperty("dassein", "Dassein");
       con = new DConstructor( c);  
    } 
@@ -65,8 +66,10 @@ public class Test {
       taste = new DProperty( "taste", "Taste");
       withPancake = new DProperty( "withPancake", "boolean");
       jakeMadeIt = new DProperty( "jakeMadeIt", "boolean");
-      getEaten = new DMethod( "getEaten", "boolean");
-      setEaten = new DMethod( "setEaten", "void");
+      getEaten = new DMethod( "getEaten", "boolean", false);
+      setEaten = new DMethod( "setEaten", "void", false);
+      setEaten.addParameter(taste);
+      setEaten.addParameter(withPancake);
       
       ArrayList<DProperty> forBacon = new ArrayList<DProperty>();
       forBacon.add(taste);
@@ -80,10 +83,11 @@ public class Test {
       c.addMethod(getEaten);
       c.addMethod(setEaten);
       
-      c.addConstructor();
+      c.addConstructor( new DConstructor(c));
       
       System.out.println("{DClass} "          +  c);
       System.out.println();
+      
       
       for(String param: c.classToString())
       {
@@ -113,6 +117,9 @@ public class Test {
    
    public static void translateTest()
    {
+      DClass copydc = ProjectManager.textToClass( c.classToString());
       
+      for( int k = 0; k < copydc.extract().size(); k++)
+         System.out.println( copydc.extract().get(k));
    }
 }

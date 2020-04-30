@@ -20,10 +20,11 @@ public class DMethod {
       parameters = new ArrayList<DProperty>();
    }
    
-   public DMethod(String name, String returnType) {
+   public DMethod(String name, String returnType, boolean isStatic) {
       parameters = new ArrayList<DProperty>();
       this.returnType = returnType.trim();
       this.name = name.trim();
+      this.isStatic = isStatic;
    }
    
    // Methods
@@ -35,7 +36,7 @@ public class DMethod {
       {
          output = output + param + "!";
       }
-      output = output.substring(0, output.length() - 2);
+      output = output.substring(0, output.length() - 1);
       return output;
       
       //IDK WHat this is
@@ -64,6 +65,16 @@ public class DMethod {
    
    public String getReturnType() {
       return returnType;
+   }
+   
+   public boolean getStatic()
+   {
+      return isStatic;
+   }
+   
+   public void setStatic( boolean isStatic)
+   {
+      this.isStatic = isStatic;
    }
    
    public void setName( String name) {
@@ -111,13 +122,19 @@ public class DMethod {
    {
       ArrayList<String> lines = new ArrayList<String>();
       String firstLine = "";
-      firstLine = "public " + returnType + " " + name + "( ";
+      firstLine = "public ";
+      if( isStatic)
+         firstLine += "static ";
+      firstLine += returnType + " " + name + "( ";
       for( int i = 0; i < parameters.size(); i++)  
       {
          DProperty p = parameters.get(i);
          firstLine += p.getType() + " " + p.getName() + ", ";
       }
-      firstLine.substring(0, firstLine.length() - 2);
+      if( firstLine.contains(","))     
+         firstLine = firstLine.substring(0, firstLine.length() - 2);
+      else
+         firstLine = firstLine.substring(0, firstLine.length() - 1);
       firstLine += ")";
       
       lines.add( firstLine);
@@ -132,7 +149,4 @@ public class DMethod {
       return lines;
    }
    
-   public void setStatic( boolean st) {
-      isStatic = st;
-   }
 }

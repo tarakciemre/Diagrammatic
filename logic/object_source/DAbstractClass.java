@@ -47,16 +47,16 @@ public class DAbstractClass extends DGeneralClass {
       ArrayList<String> output;
       
       output = new ArrayList<String>();
-      output.add("ABSTRACTCLASS: " + getName());
+      output.add("ABS: " + getName());
       output.add("");
       for( DProperty prop: getProperties())
       {
-         output.add("PROP " + prop);
+         output.add("PRO " + prop);
       }
       output.add("");
       for( DMethod meth: getMethods())
       {
-         output.add("METH " + meth);
+         output.add("MET " + meth);
       }
       output.add("");
       output.add("END");
