@@ -6,38 +6,17 @@ import logic.tools.*;
    
 public class DGeneralClass extends DObject {
    // Properties
-   private String name;
-   private ArrayList<DMethod> meths;
-   private ArrayList<DProperty> props;
-   
+
    // Constructors 
    public DGeneralClass( String name) {
       this.name = name.trim();
-      meths = new ArrayList<DMethod>();
-      props = new ArrayList<DProperty>();
+      setMethods(new ArrayList<DMethod>());
+      setProperties(new ArrayList<DProperty>());
    } 
    
    //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
    
-   // Methods 
-   public String toString() {
-      String str = "public class " + name ;
-      
-      str += " \n Fields: " ;
-      for ( int i = 0; i < props.size() - 1; i++)
-         str += props.get(i) + " | ";
-      if ( props.size() > 0)
-         str += props.get( props.size() - 1) + " ";
-      
-      str += "\n Methods: ";
-      for ( int i = 0; i < meths.size() - 1; i++)
-         str += meths.get(i) + " | ";
-      if ( meths.size() > 0)
-         str += meths.get( meths.size() - 1) + " ";
-      
-      return str;
-   }
-   
+   // Methods  
    public String getName()
    {
       return name;
@@ -47,83 +26,78 @@ public class DGeneralClass extends DObject {
    {
       return null;
    }
-
-   public ArrayList<DProperty> getProperties() {
-      return props;
-   }
-   
-   public ArrayList<DMethod> getMethods()
-   {
-      return meths;
-   }
    
    public void addProperty( String name, String type) {
       DProperty n = new DProperty( name, type);
-      props.add(n);
+      getProperties().add(n);
    }
    
    public void addProperty( DProperty p) {
-      props.add(p);
+      getProperties().add(p);
    }
    
    public void addProperties( ArrayList<DProperty> ps) {
       for ( DProperty p : ps)
-        props.add(p); 
+        getProperties().add(p); 
    }
    
    public void removeProperty( String name) {
-      for ( DProperty p : props) {
+      for ( DProperty p : getProperties()) {
          if ( p.getName().equals(name))
-            props.remove(p);
+            getProperties().remove(p);
       }
    }
    
    public void removeProperty( DProperty p) {
-      props.remove(p);
+      getProperties().remove(p);
       
    }
    
    public void removeProperties( ArrayList<DProperty> ps) {
       for ( DProperty p : ps) {
-         for ( int i = 0; i < props.size(); i++) {
-            if ( props.get(i).getName().equals(p.getName()) && props.get(i).getType().equals(p.getType()))
-               props.remove( props.get(i));
+         for ( int i = 0; i < getProperties().size(); i++) {
+            if ( getProperties().get(i).getName().equals(p.getName()) && getProperties().get(i).getType().equals(p.getType()))
+               getProperties().remove( getProperties().get(i));
          }
       }
    }
    
    public void removeAllFieldsType( String type) {
-      for ( DProperty p : props) {
+      for ( DProperty p : getProperties()) {
          if ( p.getType().equals(type))
-            props.remove(p);
+            getProperties().remove(p);
       }
    }
    
    public void addMethod( DMethod m) {
-      meths.add(m);
+      getMethods().add(m);
    }
    
    public void addMethods( ArrayList<DMethod> ms) {
       for ( DMethod m : ms)
-         meths.add(m);
+         getMethods().add(m);
    }
    
    public void removeAllMethodsNamed( String name) {
-      for (DMethod m : meths) {
+      for (DMethod m : getMethods()) {
          if ( m.getName().equals(name))
-            meths.remove(m);
+            getMethods().remove(m);
       }
    }
    
    public void removeMethod( String name, String returnType, ArrayList<DProperty> parameters) {
-      for ( DMethod m : meths) {
+      for ( DMethod m : getMethods()) {
          if ( m.getName().equals(name) && m.getReturnType().equals(returnType) && m.getParameters().equals(parameters))
-            meths.remove(m);
+            getMethods().remove(m);
       }
    }
    
    public void removeMethod( DMethod m) {
-      meths.remove(m);
+      getMethods().remove(m);
    }
    
+   public String toString()
+   {
+      return "You shouldn't have created such an object";
+   }
 }

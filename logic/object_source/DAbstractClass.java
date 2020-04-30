@@ -40,6 +40,27 @@ public class DAbstractClass extends DGeneralClass {
       lines.add( "}");
       
       return lines;
-
+   }
+   
+   public ArrayList<String> classToString()
+   {
+      ArrayList<String> output;
+      
+      output = new ArrayList<String>();
+      output.add("ABSTRACTCLASS: " + getName());
+      output.add("");
+      for( DProperty prop: getProperties())
+      {
+         output.add("PROP " + prop);
+      }
+      output.add("");
+      for( DMethod meth: getMethods())
+      {
+         output.add("METH " + meth);
+      }
+      output.add("");
+      output.add("END");
+      
+      return output;
    }
 }

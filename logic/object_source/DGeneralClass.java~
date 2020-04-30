@@ -38,6 +38,11 @@ public class DGeneralClass extends DObject {
       return str;
    }
    
+   public String getName()
+   {
+      return name;
+   }
+   
    public ArrayList<String> extract()
    {
       return null;
@@ -45,6 +50,11 @@ public class DGeneralClass extends DObject {
 
    public ArrayList<DProperty> getProperties() {
       return props;
+   }
+   
+   public ArrayList<DMethod> getMethods()
+   {
+      return meths;
    }
    
    public void addProperty( String name, String type) {
@@ -115,4 +125,5 @@ public class DGeneralClass extends DObject {
    public void removeMethod( DMethod m) {
       meths.remove(m);
    }
+   
 }

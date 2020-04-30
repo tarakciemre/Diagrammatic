@@ -7,13 +7,13 @@ import logic.tools.*;
 public class DInterface extends DObject {
    
    // Properties
-   private ArrayList<DMethod> methodCollector;
+   
    private String name;
    
    // Constructors
    public DInterface( String name) {
       this.name = name;
-      methodCollector = new ArrayList<DMethod>();
+      setMethods(new ArrayList<DMethod>());
    }
    
    //A CONSTRUCTOR IS NEEDED HERE WITH "SUPER" PARAMETER
@@ -21,12 +21,13 @@ public class DInterface extends DObject {
    // Methods
    @Override
    public String toString() {
+      // !EDIT THIS!
       String str = "Interface " + name + " with methods:\n";
       
-      for ( int i = 0; i < methodCollector.size() - 1; i++)
-         str += methodCollector.get(i) + ", ";
-      if ( methodCollector.size() > 0)
-         str += methodCollector.get(methodCollector.size() - 1);
+      for ( int i = 0; i < getMethods().size() - 1; i++)
+         str += getMethods().get(i) + ", ";
+      if ( getMethods().size() > 0)
+         str += getMethods().get(getMethods().size() - 1);
       
       return str;
    }
@@ -36,17 +37,44 @@ public class DInterface extends DObject {
          addMethod( methods[i]);
    }
    
+   public String getName()
+   {
+      return name;
+   }
+   
    public void addMethod( DMethod m) {
-      methodCollector.add(m);
+      getMethods().add(m);
    }
    
    public void removeMethod( DMethod m) {
-      methodCollector.remove(m);
+      getMethods().remove(m);
    }
    
    @Override
    public ArrayList<String> extract() {
       //for console demos
       return null;
+   }
+   
+   public ArrayList<String> classToString()
+   {
+      ArrayList<String> output;
+      
+      output = new ArrayList<String>();
+      output.add("INTERFACE: " + getName());
+      output.add("");
+      for( DProperty prop: getProperties())
+      {
+         output.add("PROP " + prop);
+      }
+      output.add("");
+      for( DMethod meth: getMethods())
+      {
+         output.add("METH " + meth);
+      }
+      output.add("");
+      output.add("END");
+      
+      return output;
    }
 }

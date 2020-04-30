@@ -5,21 +5,19 @@ import java.util.ArrayList;
 import logic.tools.*;
 
 public class DClass extends DGeneralClass {
-   
    // Properties
-   private DConstructor cons; // Will be made into an ArrayList
+   private ArrayList<DConstructor> constructors;
    
    // Constructors
    public DClass( String name) {
       super( name);
-      cons = new DConstructor((DClass) this);
+      constructors = new ArrayList<DConstructor>();
    } 
    
-   // Methods
-   
-   public void updateConstructor()
+   // Methods   
+   public void addConstructor()
    {
-      cons = new DConstructor( (DClass) this);
+      constructors.add(new DConstructor((DClass) this));
    }
    
    @Override
@@ -41,9 +39,10 @@ public class DClass extends DGeneralClass {
       lines.add( "");
       
       // !EDIT! multiple constructors will be possible
-      for( int i = 0; i < cons.extract().size(); i++)
+      // !EDIT! MUST BE EDITED TO MAKE COMPATIBLE WITH ARRAYLISTS
+      for( int i = 0; i < constructors.get(0).extract().size(); i++)
       {
-         lines.add( "\t" + cons.extract().get(i));
+         lines.add( "\t" + constructors.get(0).extract().get(i));
       }
       lines.add( "");
       
@@ -64,6 +63,30 @@ public class DClass extends DGeneralClass {
       return lines;
    }
    
-
-
+   public ArrayList<String> classToString()
+   {
+      ArrayList<String> output;
+      
+      output = new ArrayList<String>();
+      output.add("CLASS: " + getName());
+      output.add("");
+      for( DProperty prop: getProperties())
+      {
+         output.add("PROP " + prop);
+      }
+      output.add("");
+      for( DMethod meth: getMethods())
+      {
+         output.add("METH " + meth);
+      }
+      output.add("");
+      for( DConstructor cons: constructors)
+      {
+         output.add("CONS " + cons);
+      }
+      output.add("");
+      output.add("END");
+      
+      return output;
+   }
 }

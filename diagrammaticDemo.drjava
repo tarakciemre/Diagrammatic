@@ -3,53 +3,57 @@
   <project autorefresh="false" build="classes/" main="Test" root="" work="">
     <createjar file=""/>
     <source>
-      <file active="true" name="Test.java" package="" timestamp="30-Apr-2020 00:45:43">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
-      </file>
-      <file name="logic/object_source/DAbstractClass.java" package="logic.object_source" timestamp="30-Apr-2020 00:18:30">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
-      </file>
-      <file name="logic/tools/DProperty.java" package="logic.tools" timestamp="26-Apr-2020 17:41:32">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
-      </file>
-      <file name="logic/object_source/DInterface.java" package="logic.object_source" timestamp="26-Apr-2020 17:41:32">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
-      </file>
-      <file name="logic/interfaces/Extractable.java" package="logic.interfaces" timestamp="26-Apr-2020 17:41:32">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file active="true" name="logic/object_source/DGeneralClass.java" package="logic.object_source" timestamp="30-Apr-2020 02:40:02">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
       <file name="logic/tools/DConstructorProperty.java" package="logic.tools" timestamp="30-Apr-2020 00:18:30">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
       <file name="Main.java" package="" timestamp="26-Apr-2020 15:25:01">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
-      <file name="logic/tools/DMethod.java" package="logic.tools" timestamp="30-Apr-2020 00:18:30">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file name="logic/interfaces/Translatable.java" package="" timestamp="30-Apr-2020 01:06:57">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
-      <file name="logic/object_source/DGeneralClass.java" package="logic.object_source" timestamp="30-Apr-2020 00:18:30">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file name="logic/interfaces/Extractable.java" package="logic.interfaces" timestamp="30-Apr-2020 01:12:52">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
-      <file name="logic/tools/DConstructor.java" package="logic.tools" timestamp="30-Apr-2020 00:18:30">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file name="logic/tools/DProperty.java" package="logic.tools" timestamp="30-Apr-2020 01:54:54">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
-      <file name="logic/object_source/DObject.java" package="logic.object_source" timestamp="30-Apr-2020 00:21:31">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file name="logic/tools/DMethod.java" package="logic.tools" timestamp="30-Apr-2020 01:57:54">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
-      <file name="logic/object_source/DClass.java" package="logic.object_source" timestamp="30-Apr-2020 00:34:38">
-        <select from="690" to="690"/>
-        <scroll column="210" row="0"/>
+      <file name="Test.java" package="" timestamp="30-Apr-2020 02:16:01">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
+      </file>
+      <file name="logic/object_source/DAbstractClass.java" package="logic.object_source" timestamp="30-Apr-2020 02:17:15">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
+      </file>
+      <file name="logic/tools/DConstructor.java" package="logic.tools" timestamp="30-Apr-2020 02:17:31">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
+      </file>
+      <file name="logic/object_source/DInterface.java" package="logic.object_source" timestamp="30-Apr-2020 02:35:23">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
+      </file>
+      <file name="logic/object_source/DObject.java" package="logic.object_source" timestamp="30-Apr-2020 02:37:13">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
+      </file>
+      <file name="logic/object_source/DClass.java" package="logic.object_source" timestamp="30-Apr-2020 02:39:40">
+        <select from="2636" to="2636"/>
+        <scroll column="1759" row="0"/>
       </file>
     </source>
     <included/>

@@ -71,6 +71,16 @@ public class DConstructor implements Extractable
       }
    }
 
+   public String toString()
+   {
+      String output;
+      output = "";
+      for( DConstructorProperty prop: properties)
+      {
+         output = output + prop.isIncluded() + " ";
+      }
+      return output;
+   }
 }
 
 

@@ -25,13 +25,13 @@ public class Test {
    static int cardinality;
    
    public static void main( String[] args) {
-      classesWorking();
+      init();
       
       // TO TEST SOMETHÝNG, UNCOMMENT THE NECESSARY LINE BELOW:
       //dMethodTest();
-      //dClassTest();
+      dClassTest();
       //dAbstractTest();
-      //dExtractTest();
+      dExtractTest();
    }
    
    // Test Constructor
@@ -40,7 +40,7 @@ public class Test {
       
    }
    
-   public static void classesWorking()
+   public static void init()
    {
       cg = new DGeneralClass("GeneralClass");
       i = new DInterface("Interactable");
@@ -80,10 +80,15 @@ public class Test {
       c.addMethod(getEaten);
       c.addMethod(setEaten);
       
-      c.updateConstructor();
+      c.addConstructor();
       
       System.out.println("{DClass} "          +  c);
       System.out.println();
+      
+      for(String param: c.classToString())
+      {
+         System.out.println(param);
+      }
    }
    
    public static void dAbstractTest()
@@ -104,5 +109,10 @@ public class Test {
       
       for( int k = 0; k < ac.extract().size(); k++)
          System.out.println( ac.extract().get(k));
+   }
+   
+   public static void translateTest()
+   {
+      
    }
 }

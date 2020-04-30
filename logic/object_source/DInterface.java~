@@ -45,8 +45,8 @@ public class DInterface extends DObject {
    }
    
    @Override
-   public void extract() {
+   public ArrayList<String> extract() {
       //for console demos
-      System.out.println( this);
+      return null;
    }
 }

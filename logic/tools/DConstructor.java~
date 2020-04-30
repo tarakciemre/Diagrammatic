@@ -8,6 +8,7 @@ package logic.tools;
 
 import java.util.ArrayList;
 import logic.object_source.*;
+import logic.interfaces.Extractable;
 
 public class DConstructor implements Extractable
 {
@@ -19,7 +20,7 @@ public class DConstructor implements Extractable
       properties = new ArrayList<DConstructorProperty>();
       for(int i = 0; i < c.getProperties().size(); i++)
       {
-         properties.set(i, new DConstructorProperty( c.getProperties().get(i), false) );
+         properties.add(new DConstructorProperty( c.getProperties().get(i), true) );
       }
       className = c.getName();
    }
@@ -38,8 +39,10 @@ public class DConstructor implements Extractable
             firstLine += p.getType() + " " + p.getName() + ", ";
          }
       }
-      firstLine.substring(0, firstLine.size() - 2);
+      firstLine = firstLine.substring(0, firstLine.length() - 2);
       firstLine += ")";
+      
+      lines.add( firstLine);
       
       lines.add( "{");
       
@@ -49,11 +52,13 @@ public class DConstructor implements Extractable
          if( cp.isIncluded())
          {
             DProperty p = cp.getProperty();
-            lines.add( "   this." + p.getName() + " = " + p.getName());
+            lines.add( "\tthis." + p.getName() + " = " + p.getName() + ";");
          }
       }
       
       lines.add( "}");
+      
+      return lines;
    }
 
    //String pName yerine DConstructorProperty gelebilir mi?

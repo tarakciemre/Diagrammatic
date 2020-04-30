@@ -24,9 +24,9 @@ public class DProperty {
    
    // Methods
    public String toString() {
-      
-      return "<type:" + getType() + " name:" + getName() + ">";
+      return name + "," + type;
    }
+   
    //Getters and Setters
    public String getName() {
       return name;  
@@ -46,10 +46,8 @@ public class DProperty {
       return 1; //should return something else if empty
    }
    
-      
    public String extract()
    {
       return type + " " + name + ";";
-   }
-   
+   } 
 }
