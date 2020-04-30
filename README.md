@@ -21,10 +21,10 @@ Not having a strong visual grasp for the concepts of Object-Oriented Programming
 #### Group Members
 - [Sefer Giray Şenel](group/giray_log.md)    
 - [Murat Kaan Özbaş](group/kaan_log.md)
-- [Özgür Abi] (group/özgür_log.md)
-- [Osman Serhat Yılmaz] (group/osman_log.md)
-- [Elif Zeynep Soytorun] (group/elif_log.md)
-- [Emre Tarakçı] (group/emre_log.md)
+- [Özgür Abi](group/özgür_log.md)
+- [Osman Serhat Yılmaz](group/osman_log.md)
+- [Elif Zeynep Soytorun](group/elif_log.md)
+- [Emre Tarakçı](group/emre_log.md)
 
 ****
 **Instructor:** _David Davenport_   **TA:**  _Irmak Türköz_
