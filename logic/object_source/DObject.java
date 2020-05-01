@@ -44,4 +44,9 @@ public class DObject implements Extractable{
    {
       this.propertyCollector = propertyCollector;
    }
+   
+   public String getName()
+   {
+      return name;
+   }
 }
