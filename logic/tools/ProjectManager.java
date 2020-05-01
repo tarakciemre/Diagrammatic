@@ -32,8 +32,15 @@ public class ProjectManager
             if( line.length() > 3)
             {
                String lineInfo = line.substring( 4, line.length());
-               System.out.println(lineInfo);
-               if (line.startsWith( "PRO"))
+               if(line.startsWith( "EXT"))
+               {
+                  
+               }
+               else if(line.startsWith( "IMP"))
+               {
+                  
+               }
+               else if (line.startsWith( "PRO"))
                {
                   String[] propInfo = lineInfo.split(",");
                   DProperty dp = new DProperty( propInfo[0], propInfo[1]);

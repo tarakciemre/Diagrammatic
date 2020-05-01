@@ -68,8 +68,12 @@ public class DClass extends DGeneralClass {
       ArrayList<String> output;
       
       output = new ArrayList<String>();
-      output.add("CLA: " + getName());
-      output.add("");
+      output.add( "CLA: " + getName());
+      output.add( "");
+      output.add( "EXT");
+      output.add( "");
+      output.add( "IMP");
+      output.add( "");
       for( DProperty prop: getProperties())
       {
          output.add("PRO " + prop);

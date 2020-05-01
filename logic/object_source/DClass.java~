@@ -15,9 +15,9 @@ public class DClass extends DGeneralClass {
    } 
    
    // Methods   
-   public void addConstructor()
+   public void addConstructor( DConstructor dcon)
    {
-      constructors.add(new DConstructor((DClass) this));
+      constructors.add( dcon);
    }
    
    @Override
@@ -68,21 +68,21 @@ public class DClass extends DGeneralClass {
       ArrayList<String> output;
       
       output = new ArrayList<String>();
-      output.add("CLASS: " + getName());
+      output.add("CLA: " + getName());
       output.add("");
       for( DProperty prop: getProperties())
       {
-         output.add("PROP " + prop);
+         output.add("PRO " + prop);
       }
       output.add("");
       for( DMethod meth: getMethods())
       {
-         output.add("METH " + meth);
+         output.add("MET " + meth);
       }
       output.add("");
       for( DConstructor cons: constructors)
       {
-         output.add("CONS " + cons);
+         output.add("CON " + cons);
       }
       output.add("");
       output.add("END");

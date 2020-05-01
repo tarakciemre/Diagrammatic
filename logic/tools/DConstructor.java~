@@ -39,7 +39,7 @@ public class DConstructor implements Extractable
             firstLine += p.getType() + " " + p.getName() + ", ";
          }
       }
-      firstLine = firstLine.substring(0, firstLine.length() - 2);
+      firstLine = firstLine.substring(0, firstLine.length() - 1);
       firstLine += ")";
       
       lines.add( firstLine);
@@ -79,7 +79,13 @@ public class DConstructor implements Extractable
       {
          output = output + prop.isIncluded() + " ";
       }
+      output = output.substring(0, output.length() - 1);
       return output;
+   }
+   
+   public ArrayList<DConstructorProperty> getProperties()
+   {
+      return properties;
    }
 }
 

@@ -39,7 +39,7 @@ public class DConstructor implements Extractable
             firstLine += p.getType() + " " + p.getName() + ", ";
          }
       }
-      firstLine = firstLine.substring(0, firstLine.length() - 1);
+      firstLine = firstLine.substring(0, firstLine.length() - 2);
       firstLine += ")";
       
       lines.add( firstLine);
