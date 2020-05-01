@@ -61,16 +61,16 @@ public class DInterface extends DObject {
       ArrayList<String> output;
       
       output = new ArrayList<String>();
-      output.add("INTERFACE: " + getName());
+      output.add("INT: " + getName());
       output.add("");
       for( DProperty prop: getProperties())
       {
-         output.add("PROP " + prop);
+         output.add("PRO " + prop);
       }
       output.add("");
       for( DMethod meth: getMethods())
       {
-         output.add("METH " + meth);
+         output.add("MET " + meth);
       }
       output.add("");
       output.add("END");

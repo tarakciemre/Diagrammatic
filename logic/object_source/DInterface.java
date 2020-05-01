@@ -37,11 +37,6 @@ public class DInterface extends DObject {
          addMethod( methods[i]);
    }
    
-   public String getName()
-   {
-      return name;
-   }
-   
    public void addMethod( DMethod m) {
       getMethods().add(m);
    }

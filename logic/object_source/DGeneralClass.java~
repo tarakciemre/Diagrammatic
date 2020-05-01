@@ -22,6 +22,11 @@ public class DGeneralClass extends DObject {
       return name;
    }
    
+   public void setName( String name)
+   {
+      this.name = name;
+   }
+   
    public ArrayList<String> extract()
    {
       return null;
