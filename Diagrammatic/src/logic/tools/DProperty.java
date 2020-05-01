@@ -1,10 +1,6 @@
 //package com.company;
 package logic.tools;
 
-import java.util.ArrayList;
-import logic.object_source.*;
-import logic.interfaces.*;
-
 /**
  * An object for the properties of classes
  * to extract each item
@@ -24,9 +20,9 @@ public class DProperty {
    
    // Methods
    public String toString() {
-      
-      return "<type:" + getType() + " name:" + getName() + ">";
+      return name + "," + type;
    }
+   
    //Getters and Setters
    public String getName() {
       return name;  
@@ -46,10 +42,8 @@ public class DProperty {
       return 1; //should return something else if empty
    }
    
-      
    public String extract()
    {
       return type + " " + name + ";";
-   }
-   
+   } 
 }

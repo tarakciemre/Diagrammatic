@@ -54,4 +54,12 @@ public class DObject implements Extractable{
    {
       this.name = name;
    }
+
+	public ArrayList<DConstructor> getConstructorCollector() {
+		return constructorCollector;
+	}
+	
+	public void setConstructorCollector(ArrayList<DConstructor> constructorCollector) {
+		this.constructorCollector = constructorCollector;
+	}
 }

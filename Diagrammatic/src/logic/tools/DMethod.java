@@ -2,7 +2,6 @@
 package logic.tools;
 
 import java.util.ArrayList;
-import logic.object_source.*;
 
 public class DMethod {
  
@@ -109,7 +108,7 @@ public class DMethod {
    public void removeParameter( String name) {
       for( int i = 0; i < parameters.size(); i++) {
          if (parameters.get(i).getName().equals(name)) {
-            parameters.remove( name);
+            parameters.remove( parameters.get(i));
          }
       }
    }

@@ -1,10 +1,6 @@
 //package com.company;
 package logic.tools;
 
-import java.util.ArrayList;
-import logic.object_source.*;
-import logic.interfaces.*;
-
 public class DConstructorProperty
 {
    private DProperty property;
@@ -38,7 +34,7 @@ public class DConstructorProperty
       this.included = included;
    }
    
-   public ArrayList<String> extract() {
-      return null;
+   public String extract() {
+      return getProperty().extract();
    }
 }
