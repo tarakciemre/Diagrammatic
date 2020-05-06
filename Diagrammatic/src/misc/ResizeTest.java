@@ -7,13 +7,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.canvas.*;
 import javafx.scene.transform.*;
 import javafx.scene.image.*;
 import javafx.beans.property.*;
 import javafx.geometry.*;
 
-public class Resize extends Application {
+public class ResizeTest extends Application {
 
     double a = 6, a2 = a / 2;
     double gridSize = -1;
@@ -22,7 +24,8 @@ public class Resize extends Application {
     Slider slider1, slider2;
     CheckBox checkBox;
     ScrollPane scrollPane;
-    Group group, overlay = null;
+    Group overlay = null;
+    Element group = null;
     Pane zoomPane;
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
     Element selectedElement;
@@ -31,18 +34,46 @@ public class Resize extends Application {
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     Canvas canvas = new Canvas();
     SnapshotParameters sp = new SnapshotParameters();
+    Node[] nodes;
 
     public static void main( String[] args)
     {
         launch(args);
     }
+    void select(Element element) {
+        if (overlay == null && element != null) iniOverlay();
+        if (element != selectedElement) {
+            overlay.setVisible(element != null);
+            if (element != null) element.toFront();
+            selectedElement = element;
+            updateOverlay();
+        }
+    }
 
     @Override
     public void start(final Stage stage) {
+    	nodes = new Node[4];
+    	nodes[0] = createElement(150, 30, 105, 105, Color.AQUA);
+    	nodes[1] = createElement(45, 30, 45, 105, Color.VIOLET);
+    	nodes[2] = createElement(45, 180, 45, 45, Color.TAN);
+    	nodes[3] = createElement(150, 180, 105, 45, Color.LIME);
         BorderPane layout = new BorderPane();
+        handleMouse2(nodes);
         stage.setScene(new Scene(layout, 500, 300));
-        group = new Group(createElement(150, 30, 105, 105, Color.AQUA), createElement(45, 30, 45, 105, Color.VIOLET),
-                          createElement(45, 180, 45, 45, Color.TAN), createElement(150, 180, 105, 45, Color.LIME));
+        group = new Element(nodes[0], nodes[1], nodes[2], nodes[3]);
+        for(Node node : nodes)
+        {
+        	node.setOnMousePressed(me -> {
+                select((Element)node);
+                srBnd.fireEvent(me);
+                me.consume();
+            });
+        }
+
+
+        group.setOnMouseDragged(me -> srBnd.fireEvent(me));
+        group.setOnMouseReleased(me -> srBnd.fireEvent(me));
+        group.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
         zoomPane = new Pane(group);
         zoomPane.setOnMousePressed(me -> select(null));
         Scale scale = new Scale();
@@ -136,10 +167,12 @@ public class Resize extends Application {
 
     class Element extends Group {
 
+
+
         Rectangle rectangle = new Rectangle();
         DoubleProperty widthProperty = new SimpleDoubleProperty();
         DoubleProperty heightProperty = new SimpleDoubleProperty();
-
+        Text text = new Text ("ALBANIA \nSTRONK");
         Element(double x, double y, double width, double height, Paint fill) {
             widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
             heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -148,23 +181,28 @@ public class Resize extends Application {
             widthProperty.set(width);
             heightProperty.set(height);
             rectangle.setFill(fill);
-            getChildren().add(rectangle);
+            getChildren().addAll(rectangle, text);
+            text.setX(2);
+            text.setY(13);
+            text.setFont(new Font("Comic Sans MS", 15));
             //setPickOnBounds(true);
         }
+
+        Element(Node... children) {
+            getChildren().addAll(children);
+            widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
+            heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
+            text.setX(2);
+            text.setY(13);
+            text.setFont(new Font("Comic Sans MS", 15));
+        }
+
         DoubleProperty widthProperty() { return widthProperty; }
         DoubleProperty heightProperty() { return heightProperty; }
         @Override public String toString() { return "[" + getLayoutX() + ", " + getLayoutY() + ", " + widthProperty.get() + ", " + heightProperty.get() + "]"; }
     }
 
-    void select(Element element) {
-        if (overlay == null && element != null) iniOverlay();
-        if (element != selectedElement) {
-            overlay.setVisible(element != null);
-            if (element != null) element.toFront();
-            selectedElement = element;
-            updateOverlay();
-        }
-    }
+
 
     void iniOverlay() {
         overlay = new Group();
@@ -221,6 +259,52 @@ public class Resize extends Application {
         return rectangle;
     }
 
+    void handleMouse2(Node[] nodes) {
+    	for(Node node : nodes)
+    	{
+        node.setOnMousePressed(me -> {
+            lX = me.getX();
+            lY = me.getY();
+            sX = selectedElement.getLayoutX();
+            sY = selectedElement.getLayoutY();
+            sWidth = selectedElement.widthProperty().get();
+            sHeight = selectedElement.heightProperty().get();
+            me.consume();
+        });
+        node.setOnMouseDragged(me -> {
+            double zoom = slider1.getValue();
+            double dx = -(me.getX() - lX) / zoom;
+            double dy = -(me.getY() - lY) / zoom;
+            Object source = me.getSource();
+            if (source == srBnd) relocate(sX + dx, sY + dy);
+            else if (source == srNW) { setHSize(sX + dx, true); setVSize(sY + dy, true); }
+            else if (source == srN) setVSize(sY + dy, true);
+            else if (source == srNE) { setHSize(sX + sWidth + dx, false); setVSize(sY + dy, true); }
+            else if (source == srE) setHSize(sX + sWidth + dx, false);
+            else if (source == srSE) { setHSize(sX + sWidth + dx, false); setVSize(sY + sHeight + dy, false); }
+            else if (source == srS) setVSize(sY + sHeight + dy, false);
+            else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
+            else if (source == srW) setHSize(sX + dx, true);
+            updateZoomPane();
+            me.consume();
+        });
+        node.setOnMouseReleased(me -> { //snap to grid
+            if (checkBox.isSelected() && slider2.getValue() > 0) {
+                Object source = me.getSource();
+                if (source == srBnd) relocate(snap(selectedElement.getLayoutX()), snap(selectedElement.getLayoutY()));
+                else {
+                    if (source == srNW || source == srN || source == srNE) setVSize(snap(selectedElement.getLayoutY()), true);
+                    else if (source == srSW || source == srS || source == srSE) setVSize(snap(selectedElement.getLayoutY() + selectedElement.heightProperty().get()), false);
+                    if (source == srNW || source == srW || source == srSW) setHSize(snap(selectedElement.getLayoutX()), true);
+                    else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
+                }
+                updateZoomPane();
+            }
+            me.consume();
+        });
+    	}
+    }
+
     void handleMouse(Node node) {
         node.setOnMousePressed(me -> {
             lX = me.getX();
@@ -233,8 +317,8 @@ public class Resize extends Application {
         });
         node.setOnMouseDragged(me -> {
             double zoom = slider1.getValue();
-            double dx = (me.getX() - lX) / zoom;
-            double dy = (me.getY() - lY) / zoom;
+            double dx = -(me.getX() - lX) / zoom;
+            double dy = -(me.getY() - lY) / zoom;
             Object source = me.getSource();
             if (source == srBnd) relocate(sX + dx, sY + dy);
             else if (source == srNW) { setHSize(sX + dx, true); setVSize(sY + dy, true); }
