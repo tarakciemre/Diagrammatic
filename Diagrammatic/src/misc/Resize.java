@@ -26,7 +26,7 @@ public class Resize extends Application {
     Pane zoomPane;
     Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
     Element selectedElement;
-    Rectangle2D area = new Rectangle2D(0, 0, 1000, 1000);
+    Rectangle2D area; // sets the borders for moving objects
     Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     Canvas canvas = new Canvas();
@@ -39,11 +39,13 @@ public class Resize extends Application {
 
     @Override
     public void start(final Stage stage) {
+    	area = new Rectangle2D(0, 0, 500, 500); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-        group = new Group(createElement(150, 30, 105, 105, Color.AQUA), createElement(45, 30, 45, 105, Color.VIOLET),
-                          createElement(45, 180, 45, 45, Color.TAN), createElement(150, 180, 105, 45, Color.LIME));
+        group = new Group(createElement(150, 30, 105, 105, Color.AQUA, true), createElement(45, 30, 45, 105, Color.VIOLET, true),
+                          createElement(45, 180, 45, 45, Color.TAN, true), createElement(150, 180, 105, 45, Color.LIME, true));
         zoomPane = new Pane(group);
+
         zoomPane.setOnMousePressed(me -> select(null));
         Scale scale = new Scale();
         group.getTransforms().add(scale);
@@ -121,17 +123,8 @@ public class Resize extends Application {
         return new ImagePattern(image, 0, 0, size, size, false);
     }
 
-    Element createElement(double x, double y, double width, double height, Paint fill) {
-        Element element = new Element(x, y, width, height, fill);
-        element.setOnMousePressed(me -> {
-            select(element);
-            srBnd.fireEvent(me);
-            me.consume();
-        });
-        element.setOnMouseDragged(me -> srBnd.fireEvent(me));
-        element.setOnMouseReleased(me -> srBnd.fireEvent(me));
-        element.boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
-        return element;
+    Element createElement(double x, double y, double width, double height, Paint fill, boolean listener) {
+        return new Element(x, y, width, height, fill, listener);
     }
 
     class Element extends Group {
@@ -140,7 +133,19 @@ public class Resize extends Application {
         DoubleProperty widthProperty = new SimpleDoubleProperty();
         DoubleProperty heightProperty = new SimpleDoubleProperty();
 
-        Element(double x, double y, double width, double height, Paint fill) {
+        Element( boolean listener) {
+        	if (listener) {
+                setOnMousePressed(me -> {
+                    select(this);
+                    srBnd.fireEvent(me);
+                    me.consume();
+                });
+                setOnMouseDragged(me -> srBnd.fireEvent(me));
+                setOnMouseReleased(me -> srBnd.fireEvent(me));
+                boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+        	}
+        }
+        Element(double x, double y, double width, double height, Paint fill, boolean listener) {
             widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
             heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
             setLayoutX(x);
@@ -150,6 +155,16 @@ public class Resize extends Application {
             rectangle.setFill(fill);
             getChildren().add(rectangle);
             //setPickOnBounds(true);
+            if(listener) {
+            	setOnMousePressed(me -> {
+                    select(this);
+                    srBnd.fireEvent(me);
+                    me.consume();
+                });
+                setOnMouseDragged(me -> srBnd.fireEvent(me));
+                setOnMouseReleased(me -> srBnd.fireEvent(me));
+                boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
+            }
         }
         DoubleProperty widthProperty() { return widthProperty; }
         DoubleProperty heightProperty() { return heightProperty; }
@@ -215,6 +230,7 @@ public class Resize extends Application {
     }
 
     Rectangle srCreate(Cursor cursor) {
+    	//Resize rectangle
         Rectangle rectangle = new Rectangle(a, a, Color.BLACK);
         rectangle.setCursor(cursor);
         handleMouse(rectangle);
