@@ -1,7 +1,5 @@
 package misc;
 
-import java.util.ArrayList;
-
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -41,10 +39,11 @@ public class Resize extends Application {
 
     @Override
     public void start(final Stage stage) {
-    	area = new Rectangle2D(0, 0, 1000, 1000); // sets the borders for moving objects
+    	area = new Rectangle2D(0, 0, 500, 500); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-        group = new Group();
+        group = new Group(createElement(150, 30, 105, 105, Color.AQUA, true), createElement(45, 30, 45, 105, Color.VIOLET, true),
+                          createElement(45, 180, 45, 45, Color.TAN, true), createElement(150, 180, 105, 45, Color.LIME, true));
         zoomPane = new Pane(group);
 
         zoomPane.setOnMousePressed(me -> select(null));
@@ -88,14 +87,6 @@ public class Resize extends Application {
         //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
         stage.show();
         scrollPane.setPannable(true);
-
-        Element r1 = new Element( 0, 0, 300, 300, Color.GOLD, true);
-        Element r2 = new Element( 500, 500, 200, 200, Color.SEASHELL, true);
-
-        drawCenteredLine ( r1, r2);
-        group.getChildren().addAll(r1, r2);
-
-
     }
 
     void updateGrid() {
@@ -137,9 +128,6 @@ public class Resize extends Application {
     }
 
     class Element extends Group {
-
-    	ArrayList<Line> startLines = new ArrayList<Line>();
-    	ArrayList<Line> endLines = new ArrayList<Line>();
 
         Rectangle rectangle = new Rectangle();
         DoubleProperty widthProperty = new SimpleDoubleProperty();
@@ -213,7 +201,6 @@ public class Resize extends Application {
         srSW = srCreate(Cursor.SW_RESIZE);
         srW = srCreate(Cursor.W_RESIZE);
         overlay.getChildren().addAll(srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW);
-        updateLines();
         zoomPane.getChildren().add(overlay);
     }
 
@@ -240,7 +227,6 @@ public class Resize extends Application {
             srSW.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get()) * zoom - a);
             srW.setX(selectedElement.getLayoutX() * zoom);
             srW.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get() / 2) * zoom - a2);
-            updateLines();
         }
     }
 
@@ -276,7 +262,6 @@ public class Resize extends Application {
             else if (source == srS) setVSize(sY + sHeight + dy, false);
             else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
             else if (source == srW) setHSize(sX + dx, true);
-            updateLines();
             updateZoomPane();
             me.consume();
         });
@@ -290,7 +275,6 @@ public class Resize extends Application {
                     if (source == srNW || source == srW || source == srSW) setHSize(snap(selectedElement.getLayoutX()), true);
                     else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
                 }
-                updateLines();
                 updateZoomPane();
             }
             me.consume();
@@ -344,42 +328,4 @@ public class Resize extends Application {
         selectedElement.setLayoutX(x);
         selectedElement.setLayoutY(y);
     }
-
-    void drawCenteredLine( Element first, Element second)
-    {
-    	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
-    	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
-    	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
-    	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
-        Line line = new Line(fcX, fcY, scX, scY);
-        group.getChildren().add(line);
-        first.startLines.add(line);
-        second.endLines.add(line);
-    }
-
-    void updateLines()
-    {
-    	for (Node n : group.getChildren())
-    	{
-    		if ( n instanceof Element)
-    		{
-    			Element e = (Element) n;
-    	    	double cX = e.getLayoutX() + e.widthProperty().get() / 2;
-    	    	double cY = e.getLayoutY() + e.heightProperty().get() / 2;
-    			for (Line sl : e.startLines)
-    			{
-    				sl.setStartX(cX);
-    				sl.setStartY(cY);
-    			}
-
-    			for (Line el : e.endLines)
-    			{
-    				el.setEndX(cX);
-    				el.setEndY(cY);
-    			}
-
-    		}
-    	}
-    }
-
 }
