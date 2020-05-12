@@ -172,6 +172,7 @@ public class Resize extends Application {
                     select(this);
                     srBnd.fireEvent(me);
                     me.consume();
+                    System.out.println("S: " + toString());
                 });
                 setOnMouseDragged(me -> srBnd.fireEvent(me));
                 setOnMouseReleased(me -> srBnd.fireEvent(me));
