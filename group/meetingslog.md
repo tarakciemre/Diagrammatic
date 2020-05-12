@@ -30,3 +30,38 @@ Extractable interface done, GitHub branches caused a major problem for us, we sp
 Logs created and filled for every user. 
 Begun work on detailed design report.
 ****
+
+### Meeting ~ (29/04/2020, 3 hours)
+****
+**Present:** Osman, Giray, Özgür, Elif, Kaan, Emre..   _**Absent:** -
+
+classToString methods completed
+extract method edited
+text/object translation process completed which enables to save project as a text file 
+****
+
+### Meeting ~ (1/05/2020, 5 hours)
+****
+**Present:** Osman, Giray, Özgür, Elif, Kaan, Emre..   _**Absent:** -
+
+Transferred the project from DrJava to Eclipse and installed the JavaFX library into our project
+DClass translate methods updated
+FileManager class planned
+GUI classes and interfaces planned and started to work on GUI.
+Implemented a JavaFX graphical user interface class into project (Resize class) 
+****
+
+### Meeting ~ (8/05/2020, 3 hours)
+****
+**Present:** Osman, Giray, Özgür, Elif, Kaan, Emre..   _**Absent:** -
+
+Worked on how to draw arrows between elements. 
+Designed upcoming stages of drawing arrows and shared by group members.
+Updated element subclass.
+
+ToDo: drawCenteredLine(Element first, Element second) => method (for test purposes)
+	  intLine( Element first, Element second) method
+	  drawLine(Element first, intCoordinates() ) method => returns 0 - up, 1 - left, 2 - down, 3 - right  
+	  drawTriangle(double[] dot, Line line) method
+	  intCoordinates(Element item, Line line) method => returns interception x and y 
+****
