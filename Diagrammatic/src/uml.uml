@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement />
+  <nodes>
+    <node x="704.3778032491653" y="1261.2232589826801">logic.object_source.DClass</node>
+    <node x="1173.0975447252274" y="647.3957162578495">logic.object_source.DInterface</node>
+    <node x="0.0" y="935.0589571523751">logic.object_source.DAbstractClass</node>
+    <node x="855.7859388023729" y="344.49658683349685">logic.interfaces.Extractable</node>
+    <node x="844.0804120237303" y="0.0">logic.tools.DConstructor</node>
+    <node x="426.0" y="1401.2232589826801">logic.tools.ProjectManager</node>
+    <node x="803.0" y="1401.2232589826801">logic.tools.FileManager</node>
+    <node x="0.0" y="1401.2232589826801">logic.tools.DProperty</node>
+    <node x="781.7062255003527" y="614.3739203415">logic.object_source.DObject</node>
+    <node x="363.07708323193987" y="804.8213919113803">logic.object_source.DGeneralClass</node>
+    <node x="217.0" y="1401.2232589826801">logic.tools.DConstructorProperty</node>
+    <node x="1461.0975447252274" y="0.0">logic.tools.DMethod</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="logic.object_source.DAbstractClass" target="logic.object_source.DGeneralClass">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="logic.object_source.DGeneralClass" target="logic.object_source.DObject">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="logic.object_source.DClass" target="logic.object_source.DGeneralClass">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="logic.tools.DConstructor" target="logic.interfaces.Extractable">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="logic.object_source.DInterface" target="logic.object_source.DObject">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="logic.object_source.DObject" target="logic.interfaces.Extractable">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.7148936170212766" x="609.5" y="550.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+
