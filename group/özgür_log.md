@@ -15,4 +15,28 @@ I altered DMethod class with creation of a new class (DProperty)
 I helped design of helper classes.
 I wrote DConstructor class.
 
-**
+### ~ 29/04/2020 ~
+****
+
+I completed classToString method
+I wrote extract method for classes
+I wrote the code for translating texts to classes.
+
+****
+
+###  ~ 1/05/2020 ~
+****
+
+I transferred the project from DrJava to Eclipse and installed the JavaFX library into our project
+I updated DClass translate methods.
+I helped planning of the FileManager class.
+I helped planning of the GUI classes and interfaces.
+
+****
+
+### ~ 8/05/2020 ~
+****
+
+I re-designed Resize class (changed Element inner-class constructor/properties and changed createElement method.)
+I changed Resize class listeners. (Designed them to fit our purpose of UML structure.)
+I helped design of upcoming stages of drawing arrows.

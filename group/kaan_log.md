@@ -13,4 +13,25 @@ This week I helped with the detailed design for the logic part of our project wi
 
 I wrote the DObject class. And then edited some of the other classes by adding many missing methods such as DGeneralClass methods for DProperty and DMethod fields and added toString()s to all classes. More is on the commit itself.
 
-**
+### ~ 29/04/2020 ~
+****
+
+I updated DAbstractClass.
+I updated DConstructor class.
+
+****
+
+###  ~ 1/05/2020 ~
+****
+
+I helped planning of the FileManager class.
+I helped planning of the GUI classes and interfaces.
+
+****
+
+### ~ 8/05/2020 ~
+****
+
+I helped design of Resize class.
+I helped design of Resize class listeners.
+I helped design of upcoming stages of drawing arrows.

@@ -16,4 +16,25 @@ and also extended classes with some methods.
 ### ~ 27.04.2020 ~
 
 
-**
+### ~ 29/04/2020 ~
+****
+
+I completed abstractClassToString method
+I wrote the code for translating texts to abstract classes.
+
+****
+
+###  ~ 1/05/2020 ~
+****
+
+I helped planning of the FileManager class.
+I helped planning of the GUI classes and interfaces.
+
+****
+
+### ~ 8/05/2020 ~
+****
+
+I helped design of Resize class.
+I helped design of Resize class listeners.
+I helped design of upcoming stages of drawing arrows.

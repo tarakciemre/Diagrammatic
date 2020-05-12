@@ -13,4 +13,26 @@ I wrote DConstructorProperty and DProperty classes and edited the rest of the cl
 We had major problems about the merging process in github and it caused our project to corrupt, so I worked on fixing it by reverting the project to an earlier version. We divided the work among ourselves this week
 and put reasonable deadlines for everyone to complete their part of the code. After that, I altered some of my teammates' codes to make sure they were compatible with my code.
 
-**
+### ~ 29/04/2020 ~
+****
+
+I wrote the code for translating texts to interfaces.
+I wrote extract method for abstract classes.
+
+****
+
+###  ~ 1/05/2020 ~
+****
+
+I helped planning of the FileManager class.
+I helped planning of the GUI classes and interfaces. 
+I implemented a JavaFX graphical user interface class into project (Resize class) 
+
+****
+
+### ~ 8/05/2020 ~
+****
+
+I helped design of Resize class.
+I helped design of Resize class listeners.
+I helped design of upcoming stages of drawing arrows.
