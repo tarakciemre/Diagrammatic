@@ -11,9 +11,9 @@ Not having a strong visual grasp for the concepts of Object-Oriented Programming
    
 ## Project Status
 + **Group/project Selection:** completed (13th February 2020)
-+ **Requirements:** completed (9th March 2020)
-+ **UI Design:** completed (30th March 2020)
-+ **Detailed Design:** in progress
++ **Requirements Report:** completed (9th March 2020)
++ **UI Design Report:** completed (30th March 2020)
++ **Detailed Design Report:** in progress
 + **Implementation:** not started!
 + **Reflections:** not yet!
 
