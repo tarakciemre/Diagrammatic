@@ -35,3 +35,9 @@ We understand the Resize class we found online.
 I helped design of Resize class.
 I helped design of Resize class listeners.
 I helped design of upcoming stages of drawing arrows.
+
+****
+
+### ~ 15/05/2020 ~
+****
+I updated element and 2 other methods in Resize so that element boxes cannot be resized smaller than the Strings inside.
