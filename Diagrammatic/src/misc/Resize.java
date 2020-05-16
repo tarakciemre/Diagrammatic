@@ -1,11 +1,8 @@
 package misc;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 
 import gui.tools.ComplexLine;
-=======
->>>>>>> 6548655b2b27abc81bd3352155a71486e1ffcd98
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -49,7 +46,7 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 500, 500); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-<<<<<<< HEAD
+
         Element r1 = new Element( 0, 0, 300, 300, Color.GOLD, true);
         Element r2 = new Element( 500, 500, 200, 200, Color.SEASHELL, true);
         Element r3 = new Element( 700, 700, 200, 200, Color.LIME, true);
@@ -67,10 +64,8 @@ public class Resize extends Application {
         group.getChildren().addAll(r1, r2, r3, r4, r5, closest);
 
 
-=======
         group = new Group(createElement(150, 30, 105, 105, Color.AQUA, true), createElement(45, 30, 45, 105, Color.VIOLET, true),
                           createElement(45, 180, 45, 45, Color.TAN, true), createElement(150, 180, 105, 45, Color.LIME, true));
->>>>>>> 6548655b2b27abc81bd3352155a71486e1ffcd98
         zoomPane = new Pane(group);
 
         zoomPane.setOnMousePressed(me -> {
@@ -173,7 +168,8 @@ public class Resize extends Application {
         Rectangle rectangle = new Rectangle();
         DoubleProperty widthProperty = new SimpleDoubleProperty();
         DoubleProperty heightProperty = new SimpleDoubleProperty();
-<<<<<<< HEAD
+
+        ComplexLine cqwe = new ComplexLine();
         ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
     	ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
 
@@ -183,8 +179,6 @@ public class Resize extends Application {
     	Label l;
     	Label l2;
     	Label l3;
-=======
->>>>>>> 6548655b2b27abc81bd3352155a71486e1ffcd98
 
         Element( boolean listener) {
         	if (listener) {
@@ -411,7 +405,7 @@ public class Resize extends Application {
         selectedElement.setLayoutX(x);
         selectedElement.setLayoutY(y);
     }
-<<<<<<< HEAD
+
 
     void drawCenteredLine( Element first, Element second)
     {
@@ -551,7 +545,4 @@ public class Resize extends Application {
     	return closestLine;
     }
 
-
-=======
->>>>>>> 6548655b2b27abc81bd3352155a71486e1ffcd98
 }
