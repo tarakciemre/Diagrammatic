@@ -1,5 +1,7 @@
 package misc;
 
+import java.util.ArrayList;
+
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -39,11 +41,22 @@ public class Resize extends Application {
 
     @Override
     public void start(final Stage stage) {
-    	area = new Rectangle2D(0, 0, 500, 500); // sets the borders for moving objects
+    	area = new Rectangle2D(0, 0, 2000, 2000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-        group = new Group(createElement(150, 30, 105, 105, Color.AQUA, true), createElement(45, 30, 45, 105, Color.VIOLET, true),
-                          createElement(45, 180, 45, 45, Color.TAN, true), createElement(150, 180, 105, 45, Color.LIME, true));
+        Element r1 = new Element( 0, 0, 300, 300, Color.GOLD, true);
+        Element r2 = new Element( 500, 500, 200, 200, Color.SEASHELL, true);
+        Element r3 = new Element( 500, 500, 200, 200, Color.LIME, true);
+        Element r4 = new Element( 500, 500, 200, 200, Color.GREEN, true);
+        Element r5 = new Element( 500, 500, 200, 200, Color.RED, true);
+
+        group = new Group();
+
+        drawCenteredLine ( r1, r2);
+        drawCenteredLine ( r1, r3);
+        drawCenteredLine ( r1, r4);
+        drawCenteredLine ( r2, r5);
+        group.getChildren().addAll(r1, r2, r3, r4, r5);
         zoomPane = new Pane(group);
 
         zoomPane.setOnMousePressed(me -> select(null));
@@ -132,6 +145,8 @@ public class Resize extends Application {
         Rectangle rectangle = new Rectangle();
         DoubleProperty widthProperty = new SimpleDoubleProperty();
         DoubleProperty heightProperty = new SimpleDoubleProperty();
+        ArrayList<Line> startLines = new ArrayList<Line>();
+    	ArrayList<Line> endLines = new ArrayList<Line>();
 
         Element( boolean listener) {
         	if (listener) {
@@ -263,6 +278,7 @@ public class Resize extends Application {
             else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
             else if (source == srW) setHSize(sX + dx, true);
             updateZoomPane();
+            updateLines();
             me.consume();
         });
         node.setOnMouseReleased(me -> { //snap to grid
@@ -276,6 +292,7 @@ public class Resize extends Application {
                     else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
                 }
                 updateZoomPane();
+                updateLines();
             }
             me.consume();
         });
@@ -328,4 +345,42 @@ public class Resize extends Application {
         selectedElement.setLayoutX(x);
         selectedElement.setLayoutY(y);
     }
+
+    void drawCenteredLine( Element first, Element second)
+    {
+    	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
+    	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
+    	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
+    	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
+        Line line = new Line(fcX, fcY, scX, scY);
+        group.getChildren().add(line);
+        first.startLines.add(line);
+        second.endLines.add(line);
+    }
+
+    void updateLines()
+    {
+    	for (Node n : group.getChildren())
+    	{
+    		if ( n instanceof Element)
+    		{
+    			Element e = (Element) n;
+    	    	double cX = e.getLayoutX() + e.widthProperty().get() / 2;
+    	    	double cY = e.getLayoutY() + e.heightProperty().get() / 2;
+    			for (Line sl : e.startLines)
+    			{
+    				sl.setStartX(cX);
+    				sl.setStartY(cY);
+    			}
+
+    			for (Line el : e.endLines)
+    			{
+    				el.setEndX(cX);
+    				el.setEndY(cY);
+    			}
+
+    		}
+    	}
+    }
+
 }
