@@ -10,6 +10,7 @@ This week I learned to use Github with my project group and joined the group rep
 
 ### ~ 21/04/2020 ~
 This week I learned some more JavaFX, I helped design the base parts of the project and wrote the DConstructor class.
+I wrote DProperty class. 
 
 ### ~ 29/04/2020 ~
 ****

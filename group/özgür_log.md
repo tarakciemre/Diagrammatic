@@ -14,6 +14,7 @@ I learned how HashMaps and LinkedHashMaps work. (for DMethod class)
 I altered DMethod class with creation of a new class (DProperty)
 I helped design of helper classes.
 I wrote DConstructor class.
+I wrote DProperty class. 
 
 ### ~ 29/04/2020 ~
 ****
