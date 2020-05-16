@@ -43,10 +43,9 @@ public class Resize extends Application {
 
     @Override
     public void start(final Stage stage) {
-    	area = new Rectangle2D(0, 0, 500, 500); // sets the borders for moving objects
+    	area = new Rectangle2D(0, 0, 2000, 2000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-
         Element r1 = new Element( 0, 0, 300, 300, Color.GOLD, true);
         Element r2 = new Element( 500, 500, 200, 200, Color.SEASHELL, true);
         Element r3 = new Element( 700, 700, 200, 200, Color.LIME, true);
@@ -64,16 +63,21 @@ public class Resize extends Application {
         group.getChildren().addAll(r1, r2, r3, r4, r5, closest);
 
 
-        group = new Group(createElement(150, 30, 105, 105, Color.AQUA, true), createElement(45, 30, 45, 105, Color.VIOLET, true),
-                          createElement(45, 180, 45, 45, Color.TAN, true), createElement(150, 180, 105, 45, Color.LIME, true));
         zoomPane = new Pane(group);
 
         zoomPane.setOnMousePressed(me -> {
-        	showClosest( new Point2D( me.getX(), me.getY()));
-        	if (getComplexClosest( getClosest( new Point2D( me.getX(), me.getY()))) != null)
+        	Point2D mouseP = new Point2D( me.getX(), me.getY());
+        	showClosest( mouseP);
+
+        	Point2D cP = new Point2D( closest.getCenterX(), closest.getCenterY());
+
+        	Line l = getClosest(mouseP);
+        	ComplexLine cl = getComplex(l);
+
+        	if (l != null)
         	{
-        		ComplexLine cl = getComplexClosest( getClosest( new Point2D( me.getX(), me.getY())));
-        		cl.addPoint(new Point2D( closest.getCenterX(), closest.getCenterY()), cl.getLineIndex(getClosest( new Point2D( me.getX(), me.getY()))) + 1);
+        		cl.addPoint(cP, cl.getLineIndex(l) + 1);
+
         	}
         	select(null);
         });
@@ -83,6 +87,7 @@ public class Resize extends Application {
             showClosest(new Point2D(me.getX(), me.getY()));
             me.consume();
         });
+
         Scale scale = new Scale();
         group.getTransforms().add(scale);
         slider1 = new Slider(.1, 5, 1);
@@ -168,8 +173,6 @@ public class Resize extends Application {
         Rectangle rectangle = new Rectangle();
         DoubleProperty widthProperty = new SimpleDoubleProperty();
         DoubleProperty heightProperty = new SimpleDoubleProperty();
-
-        ComplexLine cqwe = new ComplexLine();
         ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
     	ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
 
@@ -246,7 +249,6 @@ public class Resize extends Application {
         	return contentsV.prefHeight(widthProperty.getValue());
         }
     }
-
 
     void select(Element element) {
         if (overlay == null && element != null) iniOverlay();
@@ -339,6 +341,7 @@ public class Resize extends Application {
             else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
             else if (source == srW) setHSize(sX + dx, true);
             updateZoomPane();
+            updateLines();
             me.consume();
         });
         node.setOnMouseReleased(me -> { //snap to grid
@@ -352,6 +355,7 @@ public class Resize extends Application {
                     else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
                 }
                 updateZoomPane();
+                updateLines();
             }
             me.consume();
         });
@@ -405,7 +409,6 @@ public class Resize extends Application {
         selectedElement.setLayoutX(x);
         selectedElement.setLayoutY(y);
     }
-
 
     void drawCenteredLine( Element first, Element second)
     {
@@ -506,14 +509,14 @@ public class Resize extends Application {
     	return closest2;
     }
 
-    ComplexLine getComplexClosest( Line line)
+    ComplexLine getComplex( Line l)
     {
     	for (Node n : group.getChildren())
     	{
     		if (n instanceof ComplexLine)
     		{
     			ComplexLine cl = (ComplexLine) n;
-    			if (cl.getLineIndex(line) != -1)
+    			if (cl.getLineIndex(l) != -1)
     				return cl;
     		}
     	}
@@ -544,5 +547,6 @@ public class Resize extends Application {
     	}
     	return closestLine;
     }
+
 
 }
