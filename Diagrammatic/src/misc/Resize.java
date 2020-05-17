@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
@@ -14,8 +15,6 @@ import javafx.scene.canvas.*;
 import javafx.scene.transform.*;
 import javafx.scene.image.*;
 import javafx.geometry.*;
-import logic.*;
-import logic.tools.*;
 import logic.object_source.*;
 
 public class Resize extends Application {
@@ -30,10 +29,10 @@ public class Resize extends Application {
 	static double sY;
 	static double sWidth;
 	static double sHeight;
-    static Slider slider1;
+    public static Slider slider1;
 	static Slider slider2;
     static CheckBox checkBox;
-    static ScrollPane scrollPane;
+    public static ScrollPane scrollPane;
     static Group group;
 	static Group overlay = null;
     static Pane zoomPane;
@@ -47,12 +46,14 @@ public class Resize extends Application {
 	static Rectangle srSW;
 	static Rectangle srW;
     static Element selectedElement;
-    static Rectangle2D area; // sets the borders for moving objects
+    public static Rectangle2D area; // sets the borders for moving objects
     Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     Canvas canvas = new Canvas();
     SnapshotParameters sp = new SnapshotParameters();
     static Circle closest;
+
+    static int offset = 5000;
 
     public static void main( String[] args)
     {
@@ -61,41 +62,48 @@ public class Resize extends Application {
 
     @Override
     public void start( Stage stage) {
-    	area = new Rectangle2D(0, 0, 2000, 2000); // sets the borders for moving objects
+    	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-        Element r1 = new Element( 0, 0, 300, 300, Color.GOLD, true);
-        Element r2 = new Element( 500, 500, 200, 200, Color.SEASHELL, true);
-        Element r3 = new Element( 700, 700, 200, 200, Color.LIME, true);
-        Element r4 = new Element( 900, 900, 200, 200, Color.GREEN, true);
-        Element r5 = new Element( 1100, 1100, 200, 200, Color.RED, true);
+        Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GOLD, true);
+        Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.SEASHELL, true);
+        Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.LIME, true);
 
         group = new Group();
 
         closest = new Circle(10);
-
-        drawCenteredLine ( r1, r2);
-        drawCenteredLine ( r1, r3);
-        drawCenteredLine ( r1, r4);
-        drawCenteredLine ( r2, r5);
-        group.getChildren().addAll(r1, r2, r3, r4, r5, closest);
-
+        closest.setFill(Color.RED);
 
         zoomPane = new Pane(group);
 
         zoomPane.setOnMousePressed(me -> {
+        	boolean onCircle = false;
+        	Point2D mouseLoc = new Point2D(me.getX(), me.getY());
+        	for (Node n : group.getChildren())
+        	{
+        		if (n instanceof ComplexLine)
+        		{
+        			ComplexLine cl = (ComplexLine) n;
+        			for (Point2D clp : cl.getPoints())
+        			{
+        				if (mouseLoc.distance(clp) <= 5 )
+        				{
+        					onCircle = true;
+        				}
+        			}
+        		}
+        	}
         	Point2D mouseP = new Point2D( me.getX(), me.getY());
-        	showClosest( mouseP);
 
         	Point2D cP = new Point2D( closest.getCenterX(), closest.getCenterY());
 
         	Line l = getClosest(mouseP);
         	ComplexLine cl = getComplex(l);
 
-        	if (l != null)
+        	if (l != null && !onCircle)
         	{
         		cl.addPoint(cP, cl.getLineIndex(l) + 1);
-
+                scrollPane.setPannable(false);
         	}
         	select(null);
         });
@@ -198,10 +206,15 @@ public class Resize extends Application {
 
         stage.setScene( scene);
 
-
-
         stage.show();
-        scrollPane.setPannable(true);
+
+        drawCenteredLine ( r1, r2);
+        drawCenteredLine ( r1, r3);
+        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setHvalue(offset);
+        scrollPane.setVvalue(offset);
+        group.getChildren().addAll(r1, r2, r3, closest);
     }
 
     void updateGrid() {
@@ -219,7 +232,7 @@ public class Resize extends Application {
         }
     }
 
-    static void updateZoomPane() {
+    public static void updateZoomPane() {
         zoomPane.setPrefWidth(Math.max(scrollPane.getViewportBounds().getWidth(), group.getBoundsInParent().getMaxX()));
         zoomPane.setPrefHeight(Math.max(scrollPane.getViewportBounds().getHeight(), group.getBoundsInParent().getMaxY()));
     }
@@ -335,6 +348,7 @@ public class Resize extends Application {
             else if (source == srW) setHSize(sX + dx, true);
             updateZoomPane();
             updateLines();
+            scrollPane.setPannable(false);
             me.consume();
         });
         node.setOnMouseReleased(me -> { //snap to grid
@@ -349,6 +363,7 @@ public class Resize extends Application {
                 }
                 updateZoomPane();
                 updateLines();
+                scrollPane.setPannable(true);
             }
             me.consume();
         });
@@ -473,7 +488,19 @@ public class Resize extends Application {
         				System.out.println(closest2);
         			}
         		}
+        		if (n instanceof ComplexLine)
+        		{
+        			ComplexLine cl = (ComplexLine) n;
+        			for (Point2D clp : cl.getPoints())
+        			{
+        				if (mouseLoc.distance(clp) <= 5 )
+        				{
+        					inShape = true;
+        				}
+        			}
+        		}
         	}
+
 
         	if (inShape)
         	{
@@ -481,8 +508,8 @@ public class Resize extends Application {
         	}
         	else
         	{
-        		closest.setCenterX(closest2.getX());
-            	closest.setCenterY(closest2.getY());
+        		closest.setCenterX(closest2.getX() / slider1.getValue());
+            	closest.setCenterY(closest2.getY() / slider1.getValue());
             	closest.setRadius(10);
         	}
 
@@ -530,7 +557,7 @@ public class Resize extends Application {
     			{
     				Point2D closest2 = getClosestPoint(l, mouseLoc);
 
-    				if( closest2.distance(mouseLoc) < range && closest2.distance(mouseLoc) < 50 && l.contains(closest2))
+    				if( closest2.distance(mouseLoc) < range && closest2.distance(mouseLoc) < 50 * slider1.getValue() && l.contains(closest2))
     				{
     					range = closest2.distance(mouseLoc);
     					closestLine = l;

@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-
+import misc.Resize;
 
 public class ComplexLine extends Group
 {
@@ -37,6 +37,26 @@ public class ComplexLine extends Group
 		updateLP();
 	}
 
+	public void updateL()
+	{
+		for (int i = 0; i < getChildren().size(); i++)
+		{
+			if (getChildren().get(i) instanceof Line)
+			{
+				getChildren().remove(i);
+			}
+		}
+
+		lines.removeAll(lines);
+		for(int i = 0; i < points.size() - 1; i++)
+		{
+			Line l = new Line( points.get(i).getX(), points.get(i).getY(), points.get(i + 1).getX(), points.get(i + 1).getY());
+			l.setStrokeWidth(3);
+			lines.add(l);
+		}
+		getChildren().addAll(lines);
+	}
+
 	public void updateLP()
 	{
 		getChildren().removeAll(getChildren());
@@ -45,14 +65,46 @@ public class ComplexLine extends Group
 		for(int i = 0; i < points.size() - 1; i++)
 		{
 			Line l = new Line( points.get(i).getX(), points.get(i).getY(), points.get(i + 1).getX(), points.get(i + 1).getY());
+			l.setStrokeWidth(3);
 			lines.add(l);
 		}
 
 		circles.removeAll(circles);
-		for (Point2D p : points)
+		for (int i = 0; i < points.size(); i++)
 		{
+			Point2D p = points.get(i);
 			Circle c = new Circle( p.getX(), p.getY(), 10);
 			circles.add(c);
+			final int FINALINDEX = i;
+			c.setOnMouseDragged(me -> {
+				double x = me.getX();
+				double y = me.getY();
+				if (x < 5)
+					me.consume();
+				if (y < 5)
+					me.consume();
+
+				if (x > Resize.area.getMaxX())
+					me.consume();
+				if (y > Resize.area.getMaxY())
+					me.consume();
+
+				if( !me.isConsumed())
+				{
+					c.setCenterX(x);
+					c.setCenterY(y);
+					points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
+					updateL();
+					Resize.updateOverlay();
+					Resize.updateZoomPane();
+				}
+
+
+			});
+
+			c.setOnMouseReleased(me -> {
+				updateLP();
+			});
 		}
 
 		getChildren().addAll(lines);
@@ -104,6 +156,11 @@ public class ComplexLine extends Group
 				return i;
 		}
 		return -1;
+	}
+
+	public LinkedList<Point2D> getPoints()
+	{
+		return points;
 	}
 
 
