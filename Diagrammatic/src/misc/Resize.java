@@ -3,6 +3,7 @@ package misc;
 import gui.tools.ComplexLine;
 import gui.tools.Element;
 import javafx.application.*;
+import javafx.event.ActionEvent;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -13,6 +14,9 @@ import javafx.scene.canvas.*;
 import javafx.scene.transform.*;
 import javafx.scene.image.*;
 import javafx.geometry.*;
+import logic.*;
+import logic.tools.*;
+import logic.object_source.*;
 
 public class Resize extends Application {
 
@@ -56,7 +60,7 @@ public class Resize extends Application {
     }
 
     @Override
-    public void start(final Stage stage) {
+    public void start( Stage stage) {
     	area = new Rectangle2D(0, 0, 2000, 2000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
@@ -140,6 +144,62 @@ public class Resize extends Application {
         layout.setCenter(scrollPane);
         layout.setBottom(new FlowPane(slider1, checkBox, slider2));
         //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
+
+        // Layout
+        VBox leftLayout = new VBox(10);
+        VBox rightLayout = new VBox(10);
+        BorderPane parentLayout = new BorderPane();
+
+        // Project Scene
+        Canvas canvas = new Canvas( 300, 300);
+        Group root = new Group();
+
+        root.getChildren().add(canvas);
+
+        //ProjectScene p = new ProjectScene( root, canvas);
+
+        // Menu
+        Menu addMenu = new Menu("Add");
+        MenuItem newObject = new MenuItem("New Object");
+        newObject.setOnAction(e -> {
+            displayObjectOptions( canvas.getGraphicsContext2D());
+        });
+        addMenu.getItems().add(newObject);
+
+        //Help menu
+        Menu helpMenu = new Menu("Help");
+
+        CheckMenuItem autoSave = new CheckMenuItem("Enable Autosave");
+        autoSave.setSelected(true);
+        helpMenu.getItems().add(autoSave);
+
+        //Difficulty RadioMenuItems
+        Menu extractMenu = new Menu("Extract...");
+        MenuItem extractAll = new MenuItem( "extract all");
+        MenuItem extractMethods = new MenuItem( "extract methods");
+        MenuItem extractFields = new MenuItem( "extract fields");
+
+        extractAll.setOnAction(e -> extractAll(e) );
+        extractMethods.setOnAction(e -> extractMethods(e));
+        extractFields.setOnAction(e -> extractFields(e));
+
+        extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
+
+        //Main menu bar
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu);
+
+        parentLayout.setCenter( layout);
+        parentLayout.setLeft( leftLayout );
+        parentLayout.setRight( rightLayout );
+        parentLayout.setTop(menuBar);
+
+        Scene scene = new Scene( parentLayout, 300, 250);
+
+        stage.setScene( scene);
+
+
+
         stage.show();
         scrollPane.setPannable(true);
     }
@@ -481,5 +541,67 @@ public class Resize extends Application {
     	return closestLine;
     }
 
+    public static void extractAll( ActionEvent e) {
+        System.out.println("extracting all...");
+    }
 
+    public static void extractMethods( ActionEvent e) {
+        System.out.println("extracting methods...");
+    }
+
+    public static void extractFields( ActionEvent e) {
+        System.out.println("extracting fields...");
+    }
+
+    public void openProject( DObject d) {
+
+        Group g = new Group();
+        Pane p = new Pane();
+
+        p.getChildren().add(g);
+        //projectScene = new ProjectScene( p, d);
+
+    }
+
+    public static void displayObjectOptions( GraphicsContext g) {
+        Button create;
+        TextField name;
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Object");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label message = new Label( "Name of the class:");
+        name = new TextField();
+        create = new Button("create object");
+
+        create.setOnAction( e -> {
+            createObject( name, g);
+            window.close();
+        });
+
+
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll(  message, name, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+
+    public static DObject createObject( TextField name, GraphicsContext gc) {
+        DClass object = new DClass( name.getText());
+        System.out.println( object);
+
+        gc.setStroke(Color.BLUE);
+
+        gc.strokeRoundRect( 160, 60, 20, 20, 100, 100);
+
+        return object;
+    }
 }
