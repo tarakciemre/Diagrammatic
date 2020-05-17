@@ -97,13 +97,14 @@ public class ComplexLine extends Group
 					updateL();
 					Resize.updateOverlay();
 					Resize.updateZoomPane();
+			        Resize.scrollPane.setPannable(false);
 				}
-
 
 			});
 
 			c.setOnMouseReleased(me -> {
 				updateLP();
+		        Resize.scrollPane.setPannable(true);
 			});
 		}
 

@@ -103,7 +103,6 @@ public class Resize extends Application {
         	if (l != null && !onCircle)
         	{
         		cl.addPoint(cP, cl.getLineIndex(l) + 1);
-                scrollPane.setPannable(false);
         	}
         	select(null);
         });
@@ -212,9 +211,10 @@ public class Resize extends Application {
         drawCenteredLine ( r1, r3);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
-        scrollPane.setHvalue(offset);
-        scrollPane.setVvalue(offset);
+        scrollPane.setHvalue(offset + 300);
+        scrollPane.setVvalue(offset + 300);
         group.getChildren().addAll(r1, r2, r3, closest);
+        scrollPane.setPannable(true);
     }
 
     void updateGrid() {
