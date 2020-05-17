@@ -1,8 +1,7 @@
 package misc;
 
-import java.util.ArrayList;
-
 import gui.tools.ComplexLine;
+import gui.tools.Element;
 import javafx.application.*;
 import javafx.stage.*;
 import javafx.scene.*;
@@ -13,28 +12,43 @@ import javafx.scene.shape.*;
 import javafx.scene.canvas.*;
 import javafx.scene.transform.*;
 import javafx.scene.image.*;
-import javafx.beans.property.*;
 import javafx.geometry.*;
 
 public class Resize extends Application {
 
-    double a = 6, a2 = a / 2;
+    static double a = 6;
+	static double a2 = a / 2;
     double gridSize = -1;
     double lastX, lastY;
-    double lX, lY, sX, sY, sWidth, sHeight;
-    Slider slider1, slider2;
-    CheckBox checkBox;
-    ScrollPane scrollPane;
-    Group group, overlay = null;
-    Pane zoomPane;
-    Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
-    Element selectedElement;
-    Rectangle2D area; // sets the borders for moving objects
+    static double lX;
+	static double lY;
+	static double sX;
+	static double sY;
+	static double sWidth;
+	static double sHeight;
+    static Slider slider1;
+	static Slider slider2;
+    static CheckBox checkBox;
+    static ScrollPane scrollPane;
+    static Group group;
+	static Group overlay = null;
+    static Pane zoomPane;
+    public static Rectangle srBnd;
+    static Rectangle srNW;
+	static Rectangle srN;
+	static Rectangle srNE;
+	static Rectangle srE;
+	static Rectangle srSE;
+	static Rectangle srS;
+	static Rectangle srSW;
+	static Rectangle srW;
+    static Element selectedElement;
+    static Rectangle2D area; // sets the borders for moving objects
     Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     Canvas canvas = new Canvas();
     SnapshotParameters sp = new SnapshotParameters();
-    Circle closest;
+    static Circle closest;
 
     public static void main( String[] args)
     {
@@ -145,7 +159,7 @@ public class Resize extends Application {
         }
     }
 
-    void updateZoomPane() {
+    static void updateZoomPane() {
         zoomPane.setPrefWidth(Math.max(scrollPane.getViewportBounds().getWidth(), group.getBoundsInParent().getMaxX()));
         zoomPane.setPrefHeight(Math.max(scrollPane.getViewportBounds().getHeight(), group.getBoundsInParent().getMaxY()));
     }
@@ -168,89 +182,8 @@ public class Resize extends Application {
         return new Element(x, y, width, height, fill, listener);
     }
 
-    class Element extends Group {
 
-        Rectangle rectangle = new Rectangle();
-        DoubleProperty widthProperty = new SimpleDoubleProperty();
-        DoubleProperty heightProperty = new SimpleDoubleProperty();
-        ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
-    	ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
-
-    	HBox contentsH;
-    	HBox contentsH2;
-    	VBox contentsV;
-    	Label l;
-    	Label l2;
-    	Label l3;
-
-        Element( boolean listener) {
-        	if (listener) {
-                setOnMousePressed(me -> {
-                    select(this);
-                    srBnd.fireEvent(me);
-                    me.consume();
-                });
-                setOnMouseDragged(me -> srBnd.fireEvent(me));
-                setOnMouseReleased(me -> srBnd.fireEvent(me));
-                boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
-        	}
-        }
-        Element(double x, double y, double width, double height, Paint fill, boolean listener) {
-            widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
-            heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
-            setLayoutX(x);
-            setLayoutY(y);
-            widthProperty.set(width);
-            heightProperty.set(height);
-            rectangle.setFill(fill);
-            l = new Label("This is a test.");
-            l2 = new Label("This is another test.");
-            l3 = new Label("Just a test.");
-            contentsH = new HBox();
-            contentsH2 = new HBox();
-            contentsV = new VBox();
-            contentsH.getChildren().addAll(l,l2);
-            contentsH2.getChildren().addAll(l3);
-            contentsV.getChildren().addAll( contentsH, contentsH2);
-            getChildren().addAll(rectangle,contentsV);
-            //setPickOnBounds(true);
-            if(listener) {
-            	setOnMousePressed(me -> {
-                    select(this);
-                    srBnd.fireEvent(me);
-                    me.consume();
-                    System.out.println("S: " + toString());
-                });
-                setOnMouseDragged(me -> srBnd.fireEvent(me));
-                setOnMouseReleased(me -> srBnd.fireEvent(me));
-                boundsInParentProperty().addListener((v, o, n) -> updateOverlay());
-            }
-        }
-        DoubleProperty widthProperty() { return widthProperty; }
-        DoubleProperty heightProperty() { return heightProperty; }
-        @Override public String toString() { return "[" + getLayoutX() + ", " + getLayoutY() + ", " + widthProperty.get() + ", " + heightProperty.get() + "]"; }
-
-        public void updateSize() {
-        	for( Node n : contentsH.getChildren())
-        		((Label) n).setPrefWidth(((Label) n).getText().length() * 7);
-        	for( Node n : contentsV.getChildren()) {
-        		for(Node m : ((HBox)n).getChildren())
-        			((Label) m).setPrefHeight( 15);
-        	}
-        }
-
-        public double limitWidth() {
-        	updateSize();
-        	return contentsH.prefWidth(heightProperty.getValue());
-        }
-
-        public double limitHeight() {
-        	updateSize();
-        	return contentsV.prefHeight(widthProperty.getValue());
-        }
-    }
-
-    void select(Element element) {
+    public static void select(Element element) {
         if (overlay == null && element != null) iniOverlay();
         if (element != selectedElement) {
             overlay.setVisible(element != null);
@@ -260,7 +193,7 @@ public class Resize extends Application {
         }
     }
 
-    void iniOverlay() {
+    public static void iniOverlay() {
         overlay = new Group();
         //overlay.setVisible(false);
         srBnd = new Rectangle();
@@ -282,7 +215,7 @@ public class Resize extends Application {
         zoomPane.getChildren().add(overlay);
     }
 
-    void updateOverlay() {
+    public static void updateOverlay() {
         if (selectedElement != null) {
             double zoom = slider1.getValue();
             srBnd.setX(selectedElement.getLayoutX() * zoom);
@@ -308,7 +241,7 @@ public class Resize extends Application {
         }
     }
 
-    Rectangle srCreate(Cursor cursor) {
+    public static Rectangle srCreate(Cursor cursor) {
     	//Resize rectangle
         Rectangle rectangle = new Rectangle(a, a, Color.BLACK);
         rectangle.setCursor(cursor);
@@ -316,7 +249,7 @@ public class Resize extends Application {
         return rectangle;
     }
 
-    void handleMouse(Node node) {
+    public static void handleMouse(Node node) {
         node.setOnMousePressed(me -> {
             lX = me.getX();
             lY = me.getY();
@@ -361,12 +294,12 @@ public class Resize extends Application {
         });
     }
 
-    double snap(double value) {
+    static double snap(double value) {
         double gridSize = slider2.getValue();
         return Math.round(value / gridSize) * gridSize;
     }
 
-    void setHSize(double h, boolean b) {
+    static void setHSize(double h, boolean b) {
         double x = selectedElement.getLayoutX(), w = selectedElement.widthProperty().get(), width;
         double as = (a * 3) / slider1.getValue();
         if (h < area.getMinX()) h = area.getMinX();
@@ -383,7 +316,7 @@ public class Resize extends Application {
         selectedElement.widthProperty().set(width);
     }
 
-    void setVSize(double v, boolean b) {
+    static void setVSize(double v, boolean b) {
         double y = selectedElement.getLayoutY(), h = selectedElement.heightProperty().get(), height;
         double as = (a * 3) / slider1.getValue();
         if (v < area.getMinY()) v = area.getMinY();
@@ -399,7 +332,7 @@ public class Resize extends Application {
         selectedElement.heightProperty().set(height);
     }
 
-    void relocate(double x, double y) {
+    static void relocate(double x, double y) {
         double maxX = area.getMaxX() - selectedElement.widthProperty().get();
         double maxY = area.getMaxY() - selectedElement.heightProperty().get();
         if (x < area.getMinX()) x = area.getMinX();
@@ -422,7 +355,7 @@ public class Resize extends Application {
         second.endLines.add(line);
     }
 
-    void updateLines()
+    static void updateLines()
     {
     	for (Node n : group.getChildren())
     	{
@@ -445,19 +378,19 @@ public class Resize extends Application {
     	}
     }
 
-    void displayPoint(Point2D point)
+    public static void displayPoint(Point2D point)
     {
     	Circle c = new Circle (point.getX(), point.getY(), 10);
     	group.getChildren().add(c);
     }
 
-    Point2D createPoint( double x, double y)
+    public static Point2D createPoint( double x, double y)
     {
     	return new Point2D( x, y);
     }
 
 
-    void showClosest( Point2D mouseLoc)
+    public static void showClosest( Point2D mouseLoc)
     {
     	Line l = getClosest(mouseLoc);
     	if (l != null)
@@ -499,7 +432,7 @@ public class Resize extends Application {
 
     }
 
-    Point2D getClosestPoint(Line l, Point2D mouseLoc)
+    public static Point2D getClosestPoint(Line l, Point2D mouseLoc)
     {
     	Point2D first = new Point2D( l.getStartX(), l.getStartY());
     	Point2D second = new Point2D( l.getEndX(), l.getEndY());
@@ -509,7 +442,7 @@ public class Resize extends Application {
     	return closest2;
     }
 
-    ComplexLine getComplex( Line l)
+    public static ComplexLine getComplex( Line l)
     {
     	for (Node n : group.getChildren())
     	{
@@ -523,7 +456,7 @@ public class Resize extends Application {
     	return null;
     }
 
-    Line getClosest( Point2D mouseLoc)
+    public static Line getClosest( Point2D mouseLoc)
     {
     	double range = 99999999999.0;
     	Line closestLine = null;
