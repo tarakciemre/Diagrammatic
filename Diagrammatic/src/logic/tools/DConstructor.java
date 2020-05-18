@@ -14,8 +14,8 @@ public class DConstructor implements Extractable
 {
    private ArrayList<DConstructorProperty> properties;
    private String className;
-   
-   public DConstructor(DClass c)
+
+   public DConstructor(DGeneralClass c)
    {
       properties = new ArrayList<DConstructorProperty>();
       for(int i = 0; i < c.getProperties().size(); i++)
@@ -24,13 +24,13 @@ public class DConstructor implements Extractable
       }
       className = c.getName();
    }
-   
+
    public ArrayList<String> extract()
    {
       ArrayList<String> lines = new ArrayList<String>();
       String firstLine = "";
       firstLine = "public " + className + "( ";
-      for( int i = 0; i < properties.size(); i++)  
+      for( int i = 0; i < properties.size(); i++)
       {
          DConstructorProperty cp = properties.get(i);
          if( cp.isIncluded())
@@ -41,12 +41,12 @@ public class DConstructor implements Extractable
       }
       firstLine = firstLine.substring(0, firstLine.length() - 2);
       firstLine += ")";
-      
+
       lines.add( firstLine);
-      
+
       lines.add( "{");
-      
-      for( int i = 0; i < properties.size(); i++)  
+
+      for( int i = 0; i < properties.size(); i++)
       {
          DConstructorProperty cp = properties.get(i);
          if( cp.isIncluded())
@@ -55,9 +55,9 @@ public class DConstructor implements Extractable
             lines.add( "\tthis." + p.getName() + " = " + p.getName() + ";");
          }
       }
-      
+
       lines.add( "}");
-      
+
       return lines;
    }
 
@@ -82,7 +82,7 @@ public class DConstructor implements Extractable
       output = output.substring(0, output.length() - 1);
       return output;
    }
-   
+
    public ArrayList<DConstructorProperty> getProperties()
    {
       return properties;

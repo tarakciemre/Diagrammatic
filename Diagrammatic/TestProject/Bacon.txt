@@ -1,0 +1,32 @@
+public class Bacon
+{
+
+	//Properties
+
+	private Taste taste;
+	private boolean withPancake;
+	private boolean jakeMadeIt;
+
+	//Constructors
+
+	public Bacon( Taste taste, boolean withPancake, boolean jakeMadeIt)
+	{
+		this.taste = taste;
+		this.withPancake = withPancake;
+		this.jakeMadeIt = jakeMadeIt;
+	}
+
+	//Methods
+
+	public boolean getEaten()
+	{
+		return null;
+	}
+
+	public void setEaten( Taste taste, boolean withPancake)
+	{
+		return;
+	}
+
+
+}
