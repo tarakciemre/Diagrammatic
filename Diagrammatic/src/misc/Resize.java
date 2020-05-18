@@ -16,6 +16,7 @@ import javafx.scene.transform.*;
 import javafx.scene.image.*;
 import javafx.geometry.*;
 import logic.object_source.*;
+import logic.tools.DProperty;
 
 public class Resize extends Application {
 
@@ -65,13 +66,22 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
+        stage.setHeight(1000);
+        stage.setWidth(1700);
         Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GOLD, true);
         Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.SEASHELL, true);
         Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.LIME, true);
+        
+        
+        Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, true);
+        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, true);
+        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, true);
+        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, true);
+
 
         group = new Group();
 
-        closest = new Circle(10);
+        closest = new Circle(3);
         closest.setFill(Color.RED);
 
         zoomPane = new Pane(group);
@@ -171,7 +181,14 @@ public class Resize extends Application {
         newObject.setOnAction(e -> {
             displayObjectOptions( canvas.getGraphicsContext2D());
         });
-        addMenu.getItems().add(newObject);
+        MenuItem newField = new MenuItem("New Property");
+        newField.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		displayFieldOptions( selectedElement);
+        	else
+        		displayErrorMessage("No Class Selected");
+        });
+        addMenu.getItems().addAll( newObject, newField);
 
         //Help menu
         Menu helpMenu = new Menu("Help");
@@ -205,7 +222,10 @@ public class Resize extends Application {
 
         stage.setScene( scene);
 
+
+
         stage.show();
+        scrollPane.setPannable(true);
 
         drawCenteredLine ( r1, r2);
         drawCenteredLine ( r1, r3);
@@ -213,12 +233,12 @@ public class Resize extends Application {
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setHvalue(offset + 300);
         scrollPane.setVvalue(offset + 300);
-        group.getChildren().addAll(r1, r2, r3, closest);
+        group.getChildren().addAll(r1, r2, r3, cornerNE, cornerNW, cornerSE, cornerSW, closest);
         scrollPane.setPannable(true);
     }
 
     void updateGrid() {
-        double size = slider1.getValue() * slider2.getValue();
+        double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
         if (!checkBox.isSelected() || size < 4) size = 0;
         if (gridSize != size) {
             if (size <= 0) {
@@ -516,7 +536,6 @@ public class Resize extends Application {
     	}
     	else
     		closest.setRadius(0);
-
     }
 
     public static Point2D getClosestPoint(Line l, Point2D mouseLoc)
@@ -601,8 +620,24 @@ public class Resize extends Application {
         window.setMinWidth(400);
         window.setMinHeight(400);
 
+
         Label message = new Label( "Name of the class:");
         name = new TextField();
+        
+        
+        Label messageTwo = new Label( "Parent Class:");
+        
+        // Adding drop - down choice 
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+
+        //getItems returns the ObservableList object which you can add items to
+        choiceBox.getItems().add("Apples");
+        choiceBox.getItems().add("Bananas");
+        choiceBox.getItems().addAll("Bacon", "Ham", "Meatballs");
+
+        //Set a default value
+        choiceBox.setValue("Apples");
+
         create = new Button("create object");
 
         create.setOnAction( e -> {
@@ -612,9 +647,10 @@ public class Resize extends Application {
 
 
 
-        VBox layout = new VBox();
-        layout.getChildren().addAll(  message, name, create);
+        VBox layout = new VBox(15);
+        layout.getChildren().addAll(  message, name, messageTwo, choiceBox, create);
         layout.setAlignment( Pos.CENTER);
+
 
         window.setScene( new Scene( layout));
         window.showAndWait();
@@ -630,5 +666,81 @@ public class Resize extends Application {
         gc.strokeRoundRect( 160, 60, 20, 20, 100, 100);
 
         return object;
+    }
+    
+    public void displayFieldOptions( Element element) {
+        Button create;
+        TextField name, type;
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Object");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Name of the field:");
+        name = new TextField();
+        Label messageType = new Label( "Name of the field:");
+        type = new TextField();
+        create = new Button("add field");
+
+        create.setOnAction( e -> {
+
+        	if ( name.getText().equals("") && type.getText().equals("") ){
+        		displayErrorMessage( "No name or type found");
+        		displayFieldOptions( element);
+        		window.close();
+        	}
+        	else if ( type.getText().equals("") ) {
+        		displayErrorMessage( "No type found");
+        		displayFieldOptions( element);
+        		window.close();
+        	}
+            else if ( name.getText().equals("") ) {
+            	displayErrorMessage( "No name found");
+            	displayFieldOptions( element);
+            	window.close();
+            }
+            else {
+        		addProperty( name.getText(), type.getText(), element);
+            }
+
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, name, messageType, type, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public void displayErrorMessage(String message) {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+        window.setTitle("New Object");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( message);
+
+        Button ok = new Button("OK");
+        ok.setOnAction( e ->  window.close());
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public void addProperty( String name, String type, Element element) {
+    	DProperty prop = new DProperty( name, type);
+    	System.out.println( prop);
     }
 }

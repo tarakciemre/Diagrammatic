@@ -73,7 +73,7 @@ public class ComplexLine extends Group
 		for (int i = 0; i < points.size(); i++)
 		{
 			Point2D p = points.get(i);
-			Circle c = new Circle( p.getX(), p.getY(), 10);
+			Circle c = new Circle( p.getX(), p.getY(), 5);
 			circles.add(c);
 			final int FINALINDEX = i;
 			c.setOnMouseDragged(me -> {

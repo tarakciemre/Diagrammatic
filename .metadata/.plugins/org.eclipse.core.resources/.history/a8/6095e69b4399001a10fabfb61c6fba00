@@ -1,0 +1,741 @@
+package misc;
+
+import gui.tools.ComplexLine;
+import gui.tools.Element;
+import javafx.application.*;
+import javafx.event.ActionEvent;
+import javafx.stage.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.layout.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.scene.canvas.*;
+import javafx.scene.transform.*;
+import javafx.scene.image.*;
+import javafx.geometry.*;
+import logic.object_source.*;
+import logic.tools.DProperty;
+
+public class Resize extends Application {
+
+    static double a = 6;
+	static double a2 = a / 2;
+    double gridSize = -1;
+    double lastX, lastY;
+    static double lX;
+	static double lY;
+	static double sX;
+	static double sY;
+	static double sWidth;
+	static double sHeight;
+    public static Slider slider1;
+	static Slider slider2;
+    static CheckBox checkBox;
+    public static ScrollPane scrollPane;
+    static Group group;
+	static Group overlay = null;
+    static Pane zoomPane;
+    public static Rectangle srBnd;
+    static Rectangle srNW;
+	static Rectangle srN;
+	static Rectangle srNE;
+	static Rectangle srE;
+	static Rectangle srSE;
+	static Rectangle srS;
+	static Rectangle srSW;
+	static Rectangle srW;
+    static Element selectedElement;
+    public static Rectangle2D area; // sets the borders for moving objects
+    Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
+    BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
+    Canvas canvas = new Canvas();
+    SnapshotParameters sp = new SnapshotParameters();
+    static Circle closest;
+
+    static int offset = 5000;
+
+    public static void main( String[] args)
+    {
+        launch(args);
+    }
+
+    @Override
+    public void start( Stage stage) {
+    	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
+        BorderPane layout = new BorderPane();
+        stage.setScene(new Scene(layout, 500, 300));
+        stage.setHeight(1000);
+        stage.setWidth(1700);
+        Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GOLD, true);
+        Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.SEASHELL, true);
+        Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.LIME, true);
+        
+        
+        Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, true);
+        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, true);
+        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, true);
+        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, true);
+
+
+        group = new Group();
+
+        closest = new Circle(3);
+        closest.setFill(Color.RED);
+
+        zoomPane = new Pane(group);
+
+        zoomPane.setOnMousePressed(me -> {
+        	boolean onCircle = false;
+        	Point2D mouseLoc = new Point2D(me.getX(), me.getY());
+        	for (Node n : group.getChildren())
+        	{
+        		if (n instanceof ComplexLine)
+        		{
+        			ComplexLine cl = (ComplexLine) n;
+        			for (Point2D clp : cl.getPoints())
+        			{
+        				if (mouseLoc.distance(clp) <= 5 )
+        				{
+        					onCircle = true;
+        				}
+        			}
+        		}
+        	}
+        	Point2D mouseP = new Point2D( me.getX(), me.getY());
+
+        	Point2D cP = new Point2D( closest.getCenterX(), closest.getCenterY());
+
+        	Line l = getClosest(mouseP);
+        	ComplexLine cl = getComplex(l);
+
+        	if (l != null && !onCircle)
+        	{
+        		cl.addPoint(cP, cl.getLineIndex(l) + 1);
+        	}
+        	select(null);
+        });
+
+
+        zoomPane.setOnMouseMoved(me -> {
+            showClosest(new Point2D(me.getX(), me.getY()));
+            me.consume();
+        });
+
+        Scale scale = new Scale();
+        group.getTransforms().add(scale);
+        slider1 = new Slider(.1, 5, 1);
+        slider1.setMinWidth(150);
+        slider1.setMaxWidth(150);
+        slider1.setPadding(new Insets(6));
+        slider1.setTooltip(new Tooltip("Zoom"));
+        slider1.valueProperty().addListener((v, o, n) -> {
+            scale.setX(n.doubleValue());
+            scale.setY(n.doubleValue());
+            updateGrid();
+            updateZoomPane();
+            updateOverlay();
+        });
+        slider2 = new Slider(5, 35, 15);
+        slider2.setMinWidth(150);
+        slider2.setMaxWidth(150);
+        slider2.setPadding(new Insets(6));
+        slider2.setTooltip(new Tooltip("Grid size"));
+        slider2.valueProperty().addListener((v, o, n) -> {
+            updateGrid();
+        });
+        checkBox = new CheckBox();
+        checkBox.setPadding(new Insets(6));
+        checkBox.setTooltip(new Tooltip("Show grid"));
+        checkBox.selectedProperty().addListener((v, o, n) -> {
+            slider2.setDisable(!n.booleanValue());
+            updateGrid();
+        });
+        checkBox.setSelected(true);
+        scrollPane = new ScrollPane(new Group(zoomPane));
+        scrollPane.viewportBoundsProperty().addListener((v, o, n) -> {
+            updateZoomPane();
+            Platform.runLater(() -> zoomPane.requestLayout());
+        });
+        layout.setCenter(scrollPane);
+        layout.setBottom(new FlowPane(slider1, checkBox, slider2));
+        //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
+
+        // Layout
+        VBox leftLayout = new VBox(10);
+        VBox rightLayout = new VBox(10);
+        BorderPane parentLayout = new BorderPane();
+
+        // Project Scene
+        Canvas canvas = new Canvas( 300, 300);
+        Group root = new Group();
+
+        root.getChildren().add(canvas);
+
+        //ProjectScene p = new ProjectScene( root, canvas);
+
+        // Menu
+        Menu addMenu = new Menu("Add");
+        MenuItem newObject = new MenuItem("New Object");
+        newObject.setOnAction(e -> {
+            displayObjectOptions( canvas.getGraphicsContext2D());
+        });
+        MenuItem newField = new MenuItem("New Property");
+        newField.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		displayFieldOptions( selectedElement);
+        	else
+        		displayErrorMessage("No Class Selected");
+        });
+        addMenu.getItems().addAll( newObject, newField);
+
+        //Help menu
+        Menu helpMenu = new Menu("Help");
+
+        CheckMenuItem autoSave = new CheckMenuItem("Enable Autosave");
+        autoSave.setSelected(true);
+        helpMenu.getItems().add(autoSave);
+
+        //Difficulty RadioMenuItems
+        Menu extractMenu = new Menu("Extract...");
+        MenuItem extractAll = new MenuItem( "extract all");
+        MenuItem extractMethods = new MenuItem( "extract methods");
+        MenuItem extractFields = new MenuItem( "extract fields");
+
+        extractAll.setOnAction(e -> extractAll(e) );
+        extractMethods.setOnAction(e -> extractMethods(e));
+        extractFields.setOnAction(e -> extractFields(e));
+
+        extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
+
+        //Main menu bar
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu);
+
+        parentLayout.setCenter( layout);
+        parentLayout.setLeft( leftLayout );
+        parentLayout.setRight( rightLayout );
+        parentLayout.setTop(menuBar);
+
+        Scene scene = new Scene( parentLayout, 300, 250);
+
+        stage.setScene( scene);
+
+
+
+        stage.show();
+        scrollPane.setPannable(true);
+
+        drawCenteredLine ( r1, r2);
+        drawCenteredLine ( r1, r3);
+        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setHvalue(offset + 300);
+        scrollPane.setVvalue(offset + 300);
+        group.getChildren().addAll(r1, r2, r3, cornerNE, cornerNW, cornerSE, cornerSW, closest);
+        scrollPane.setPannable(true);
+    }
+
+    void updateGrid() {
+        double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
+        if (!checkBox.isSelected() || size < 4) size = 0;
+        if (gridSize != size) {
+            if (size <= 0) {
+                zoomPane.setBackground(new Background(backgroundFill1));
+            } else {
+                Paint bg2 = patternTransparent(size);
+                BackgroundFill backgroundFill2 = new BackgroundFill(bg2, null, null);
+                zoomPane.setBackground(new Background(backgroundFill1, backgroundFill2));
+            }
+            gridSize = size;
+        }
+    }
+
+    public static void updateZoomPane() {
+        zoomPane.setPrefWidth(Math.max(scrollPane.getViewportBounds().getWidth(), group.getBoundsInParent().getMaxX()));
+        zoomPane.setPrefHeight(Math.max(scrollPane.getViewportBounds().getHeight(), group.getBoundsInParent().getMaxY()));
+    }
+
+    ImagePattern patternTransparent(double size) {
+        canvas.setHeight(size);
+        canvas.setWidth(size);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, size, size);
+        gc.setFill(Color.BLACK);
+        //gc.setLineWidth(2);
+        gc.strokeLine(0, 0, 0, size);
+        gc.strokeLine(1, 0, size, 0);
+        sp.setFill(Color.TRANSPARENT);
+        WritableImage image = canvas.snapshot(sp, null);
+        return new ImagePattern(image, 0, 0, size, size, false);
+    }
+
+    Element createElement(double x, double y, double width, double height, Paint fill, boolean listener) {
+        return new Element(x, y, width, height, fill, listener);
+    }
+
+
+    public static void select(Element element) {
+        if (overlay == null && element != null) iniOverlay();
+        if (element != selectedElement) {
+            overlay.setVisible(element != null);
+            if (element != null) element.toFront();
+            selectedElement = element;
+            updateOverlay();
+        }
+    }
+
+    public static void iniOverlay() {
+        overlay = new Group();
+        //overlay.setVisible(false);
+        srBnd = new Rectangle();
+        srBnd.setStroke(Color.BLACK);
+        srBnd.setStrokeType(StrokeType.INSIDE);
+        srBnd.setStrokeWidth(1);
+        srBnd.getStrokeDashArray().addAll(2d, 4d);
+        srBnd.setFill(Color.TRANSPARENT);
+        handleMouse(srBnd);
+        srNW = srCreate(Cursor.NW_RESIZE);
+        srN = srCreate(Cursor.N_RESIZE);
+        srNE = srCreate(Cursor.NE_RESIZE);
+        srE = srCreate(Cursor.E_RESIZE);
+        srSE = srCreate(Cursor.SE_RESIZE);
+        srS = srCreate(Cursor.S_RESIZE);
+        srSW = srCreate(Cursor.SW_RESIZE);
+        srW = srCreate(Cursor.W_RESIZE);
+        overlay.getChildren().addAll(srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW);
+        zoomPane.getChildren().add(overlay);
+    }
+
+    public static void updateOverlay() {
+        if (selectedElement != null) {
+            double zoom = slider1.getValue();
+            srBnd.setX(selectedElement.getLayoutX() * zoom);
+            srBnd.setY(selectedElement.getLayoutY() * zoom);
+            srBnd.setWidth(selectedElement.widthProperty().get() * zoom);
+            srBnd.setHeight(selectedElement.heightProperty().get() * zoom);
+            srNW.setX(selectedElement.getLayoutX() * zoom);
+            srNW.setY(selectedElement.getLayoutY() * zoom);
+            srN.setX((selectedElement.getLayoutX() + selectedElement.widthProperty().get() / 2) * zoom - a2);
+            srN.setY(selectedElement.getLayoutY() * zoom);
+            srNE.setX((selectedElement.getLayoutX() + selectedElement.widthProperty().get()) * zoom - a);
+            srNE.setY(selectedElement.getLayoutY() * zoom);
+            srE.setX((selectedElement.getLayoutX() + selectedElement.widthProperty().get()) * zoom - a);
+            srE.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get() / 2) * zoom - a2);
+            srSE.setX((selectedElement.getLayoutX() + selectedElement.widthProperty().get()) * zoom - a);
+            srSE.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get()) * zoom - a);
+            srS.setX((selectedElement.getLayoutX() + selectedElement.widthProperty().get() / 2) * zoom - a2);
+            srS.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get()) * zoom - a);
+            srSW.setX(selectedElement.getLayoutX() * zoom);
+            srSW.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get()) * zoom - a);
+            srW.setX(selectedElement.getLayoutX() * zoom);
+            srW.setY((selectedElement.getLayoutY() + selectedElement.heightProperty().get() / 2) * zoom - a2);
+        }
+    }
+
+    public static Rectangle srCreate(Cursor cursor) {
+    	//Resize rectangle
+        Rectangle rectangle = new Rectangle(a, a, Color.BLACK);
+        rectangle.setCursor(cursor);
+        handleMouse(rectangle);
+        return rectangle;
+    }
+
+    public static void handleMouse(Node node) {
+        node.setOnMousePressed(me -> {
+            lX = me.getX();
+            lY = me.getY();
+            sX = selectedElement.getLayoutX();
+            sY = selectedElement.getLayoutY();
+            sWidth = selectedElement.widthProperty().get();
+            sHeight = selectedElement.heightProperty().get();
+            me.consume();
+        });
+        node.setOnMouseDragged(me -> {
+            double zoom = slider1.getValue();
+            double dx = (me.getX() - lX) / zoom;
+            double dy = (me.getY() - lY) / zoom;
+            Object source = me.getSource();
+            if (source == srBnd) relocate(sX + dx, sY + dy);
+            else if (source == srNW) { setHSize(sX + dx, true); setVSize(sY + dy, true); }
+            else if (source == srN) setVSize(sY + dy, true);
+            else if (source == srNE) { setHSize(sX + sWidth + dx, false); setVSize(sY + dy, true); }
+            else if (source == srE) setHSize(sX + sWidth + dx, false);
+            else if (source == srSE) { setHSize(sX + sWidth + dx, false); setVSize(sY + sHeight + dy, false); }
+            else if (source == srS) setVSize(sY + sHeight + dy, false);
+            else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
+            else if (source == srW) setHSize(sX + dx, true);
+            updateZoomPane();
+            updateLines();
+            scrollPane.setPannable(false);
+            me.consume();
+        });
+        node.setOnMouseReleased(me -> { //snap to grid
+            if (checkBox.isSelected() && slider2.getValue() > 0) {
+                Object source = me.getSource();
+                if (source == srBnd) relocate(snap(selectedElement.getLayoutX()), snap(selectedElement.getLayoutY()));
+                else {
+                    if (source == srNW || source == srN || source == srNE) setVSize(snap(selectedElement.getLayoutY()), true);
+                    else if (source == srSW || source == srS || source == srSE) setVSize(snap(selectedElement.getLayoutY() + selectedElement.heightProperty().get()), false);
+                    if (source == srNW || source == srW || source == srSW) setHSize(snap(selectedElement.getLayoutX()), true);
+                    else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
+                }
+                updateZoomPane();
+                updateLines();
+                scrollPane.setPannable(true);
+            }
+            me.consume();
+        });
+    }
+
+    static double snap(double value) {
+        double gridSize = slider2.getValue();
+        return Math.round(value / gridSize) * gridSize;
+    }
+
+    static void setHSize(double h, boolean b) {
+        double x = selectedElement.getLayoutX(), w = selectedElement.widthProperty().get(), width;
+        double as = (a * 3) / slider1.getValue();
+        if (h < area.getMinX()) h = area.getMinX();
+        if (h > area.getMaxX()) h = area.getMaxX();
+
+        if (b) {
+            width = w + x - h;
+            if (width < as + selectedElement.limitWidth()) { width = as + selectedElement.limitWidth(); h = x + w - width; }
+            selectedElement.setLayoutX(h);
+        } else {
+            width = h - x;
+            if (width < as + selectedElement.limitWidth()) width = as + selectedElement.limitWidth();
+        }
+        selectedElement.widthProperty().set(width);
+    }
+
+    static void setVSize(double v, boolean b) {
+        double y = selectedElement.getLayoutY(), h = selectedElement.heightProperty().get(), height;
+        double as = (a * 3) / slider1.getValue();
+        if (v < area.getMinY()) v = area.getMinY();
+        if (v > area.getMaxY()) v = area.getMaxY();
+        if (b) {
+            height = h + y - v;
+            if (height < as + selectedElement.limitHeight()) { height = as + selectedElement.limitHeight(); v = y + h - height; }
+            selectedElement.setLayoutY(v);
+        } else {
+            height = v - y;
+            if (height < as + selectedElement.limitHeight()) height = as + selectedElement.limitHeight();
+        }
+        selectedElement.heightProperty().set(height);
+    }
+
+    static void relocate(double x, double y) {
+        double maxX = area.getMaxX() - selectedElement.widthProperty().get();
+        double maxY = area.getMaxY() - selectedElement.heightProperty().get();
+        if (x < area.getMinX()) x = area.getMinX();
+        if (y < area.getMinY()) y = area.getMinY();
+        if (x > maxX) x = maxX;
+        if (y > maxY) y = maxY;
+        selectedElement.setLayoutX(x);
+        selectedElement.setLayoutY(y);
+    }
+
+    void drawCenteredLine( Element first, Element second)
+    {
+    	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
+    	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
+    	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
+    	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
+        ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
+        group.getChildren().add(line);
+        first.startLines.add(line);
+        second.endLines.add(line);
+    }
+
+    static void updateLines()
+    {
+    	for (Node n : group.getChildren())
+    	{
+    		if ( n instanceof Element)
+    		{
+    			Element e = (Element) n;
+    	    	double cX = e.getLayoutX() + e.widthProperty().get() / 2;
+    	    	double cY = e.getLayoutY() + e.heightProperty().get() / 2;
+    			for (ComplexLine sl : e.startLines)
+    			{
+    				sl.setStartPoint(new Point2D( cX, cY));
+    			}
+
+    			for (ComplexLine el : e.endLines)
+    			{
+    				el.setEndPoint(new Point2D( cX, cY));
+    			}
+
+    		}
+    	}
+    }
+
+    public static void displayPoint(Point2D point)
+    {
+    	Circle c = new Circle (point.getX(), point.getY(), 10);
+    	group.getChildren().add(c);
+    }
+
+    public static Point2D createPoint( double x, double y)
+    {
+    	return new Point2D( x, y);
+    }
+
+
+    public static void showClosest( Point2D mouseLoc)
+    {
+    	Line l = getClosest(mouseLoc);
+    	if (l != null)
+    	{
+    		Point2D first = new Point2D( l.getStartX(), l.getStartY());
+        	Point2D second = new Point2D( l.getEndX(), l.getEndY());
+        	double lambda = (mouseLoc.subtract(first)).dotProduct(second.subtract(first))
+        			/ ((second.subtract(first)).dotProduct(second.subtract(first)));
+        	Point2D closest2 = new Point2D (second.subtract(first).getX() * lambda, second.subtract(first).getY() * lambda).add(first);
+
+        	boolean inShape = false;
+        	for (Node n : group.getChildren())
+        	{
+        		if (n instanceof Element)
+        		{
+        			Element e = (Element) n;
+        			if ( e.contains(closest2))
+        			{
+        				inShape = true;
+        				System.out.println(closest2);
+        			}
+        		}
+        		if (n instanceof ComplexLine)
+        		{
+        			ComplexLine cl = (ComplexLine) n;
+        			for (Point2D clp : cl.getPoints())
+        			{
+        				if (mouseLoc.distance(clp) <= 5 )
+        				{
+        					inShape = true;
+        				}
+        			}
+        		}
+        	}
+
+
+        	if (inShape)
+        	{
+        		closest.setRadius(0);
+        	}
+        	else
+        	{
+        		closest.setCenterX(closest2.getX() / slider1.getValue());
+            	closest.setCenterY(closest2.getY() / slider1.getValue());
+            	closest.setRadius(10);
+        	}
+
+    	}
+    	else
+    		closest.setRadius(0);
+    }
+
+    public static Point2D getClosestPoint(Line l, Point2D mouseLoc)
+    {
+    	Point2D first = new Point2D( l.getStartX(), l.getStartY());
+    	Point2D second = new Point2D( l.getEndX(), l.getEndY());
+    	double lambda = (mouseLoc.subtract(first)).dotProduct(second.subtract(first))
+    			/ ((second.subtract(first)).dotProduct(second.subtract(first)));
+    	Point2D closest2 = new Point2D (second.subtract(first).getX() * lambda, second.subtract(first).getY() * lambda).add(first);
+    	return closest2;
+    }
+
+    public static ComplexLine getComplex( Line l)
+    {
+    	for (Node n : group.getChildren())
+    	{
+    		if (n instanceof ComplexLine)
+    		{
+    			ComplexLine cl = (ComplexLine) n;
+    			if (cl.getLineIndex(l) != -1)
+    				return cl;
+    		}
+    	}
+    	return null;
+    }
+
+    public static Line getClosest( Point2D mouseLoc)
+    {
+    	double range = 99999999999.0;
+    	Line closestLine = null;
+
+    	for (Node n : group.getChildren())
+    	{
+    		if (n instanceof ComplexLine)
+    		{
+    			ComplexLine cl = (ComplexLine) n;
+    			for (Line l : cl.getLines())
+    			{
+    				Point2D closest2 = getClosestPoint(l, mouseLoc);
+
+    				if( closest2.distance(mouseLoc) < range && closest2.distance(mouseLoc) < 50 * slider1.getValue() && l.contains(closest2))
+    				{
+    					range = closest2.distance(mouseLoc);
+    					closestLine = l;
+    				}
+    			}
+    		}
+    	}
+    	return closestLine;
+    }
+
+    public static void extractAll( ActionEvent e) {
+        System.out.println("extracting all...");
+    }
+
+    public static void extractMethods( ActionEvent e) {
+        System.out.println("extracting methods...");
+    }
+
+    public static void extractFields( ActionEvent e) {
+        System.out.println("extracting fields...");
+    }
+
+    public void openProject( DObject d) {
+
+        Group g = new Group();
+        Pane p = new Pane();
+
+        p.getChildren().add(g);
+        //projectScene = new ProjectScene( p, d);
+
+    }
+
+    public static void displayObjectOptions( GraphicsContext g) {
+        Button create;
+        TextField name;
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Object");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label message = new Label( "Name of the class:");
+        name = new TextField();
+        
+        // Adding drop - down choice 
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+
+        //getItems returns the ObservableList object which you can add items to
+        choiceBox.getItems().add("Apples");
+        choiceBox.getItems().add("Bananas");
+        choiceBox.getItems().addAll("Bacon", "Ham", "Meatballs");
+
+        //Set a default value
+        choiceBox.setValue("Apples");
+
+        create = new Button("create object");
+
+        create.setOnAction( e -> {
+            createObject( name, g);
+            window.close();
+        });
+
+
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll(  message, name, choiceBox, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+
+    public static DObject createObject( TextField name, GraphicsContext gc) {
+        DClass object = new DClass( name.getText());
+        System.out.println( object);
+
+        gc.setStroke(Color.BLUE);
+
+        gc.strokeRoundRect( 160, 60, 20, 20, 100, 100);
+
+        return object;
+    }
+    
+    public void displayFieldOptions( Element element) {
+        Button create;
+        TextField name, type;
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Object");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Name of the field:");
+        name = new TextField();
+        Label messageType = new Label( "Name of the field:");
+        type = new TextField();
+        create = new Button("add field");
+
+        create.setOnAction( e -> {
+
+        	if ( name.getText().equals("") && type.getText().equals("") ){
+        		displayErrorMessage( "No name or type found");
+        		displayFieldOptions( element);
+        		window.close();
+        	}
+        	else if ( type.getText().equals("") ) {
+        		displayErrorMessage( "No type found");
+        		displayFieldOptions( element);
+        		window.close();
+        	}
+            else if ( name.getText().equals("") ) {
+            	displayErrorMessage( "No name found");
+            	displayFieldOptions( element);
+            	window.close();
+            }
+            else {
+        		addProperty( name.getText(), type.getText(), element);
+            }
+
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, name, messageType, type, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public void displayErrorMessage(String message) {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+        window.setTitle("New Object");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( message);
+
+        Button ok = new Button("OK");
+        ok.setOnAction( e ->  window.close());
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public void addProperty( String name, String type, Element element) {
+    	DProperty prop = new DProperty( name, type);
+    	System.out.println( prop);
+    }
+}
