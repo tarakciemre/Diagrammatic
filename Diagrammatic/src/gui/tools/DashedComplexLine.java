@@ -33,7 +33,7 @@ public class DashedComplexLine extends ComplexLine {
 		getChildren().addAll(lines);
 	}
 
-	public void updateLP()
+	public void updateLP() //buggy code
 	{
 		getChildren().removeAll(getChildren());
 

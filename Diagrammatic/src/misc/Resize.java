@@ -4,6 +4,7 @@ import gui.tools.ComplexLine;
 import gui.tools.Element;
 import javafx.application.*;
 import javafx.event.ActionEvent;
+import javafx.scene.input.MouseButton;
 import javafx.stage.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -64,10 +65,18 @@ public class Resize extends Application {
 
         stage.setTitle("Diagrammatic 0.1.1");
         stage.setScene(new Scene(layout, 500, 300));
-        stage.setHeight(700);
-        stage.setWidth(700);
+        //set the location of the window
+        stage.setX(50);
+        stage.setY(50);
+        //set the size of the window
+        stage.setWidth(1820);
+        stage.setHeight(900);
 
+
+        // init project
         project = new DProject();
+
+        // init prj objects
         DObject albanian = new DObject();
         albanian.setName("Albanian");
         DObject albanianable = new DObject();
@@ -75,25 +84,13 @@ public class Resize extends Application {
         DObject kosovan = new DObject();
         kosovan.setName("Kosovan");
 
-        Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GHOSTWHITE, true);
-        Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.MEDIUMAQUAMARINE, true);
-        Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.BISQUE, true);
-        r1.setObject(albanian);
-        r2.setObject(kosovan);
-        r3.setObject(albanianable);
-        r1.updateObject();
-        r2.updateObject();
-        r3.updateObject();
-
-        elements = new ArrayList<Element>();
-        elements.add(r1);
-        elements.add(r2);
-        elements.add(r3);
-
+        // adding prj objects to prj
         project.addObject(albanian);
         project.addObject(kosovan);
         project.addObject(albanianable);
 
+        // init elements
+        iniElements(project);
 
         Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, true);
         Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, true);
@@ -133,8 +130,17 @@ public class Resize extends Application {
 
         	if (l != null && !onCircle)
         	{
-        		cl.addPoint(cP, cl.getLineIndex(l) + 1);
+        	    if (me.getButton() == MouseButton.PRIMARY)
+        		    cl.addPoint(cP, cl.getLineIndex(l) + 1);
         	}
+
+        	if (cl != null && onCircle)
+        	{
+                if (me.getButton() == MouseButton.SECONDARY)
+                {
+                    cl.removePoint( cP);
+                }
+            }
         	select(null);
         });
 
@@ -249,14 +255,14 @@ public class Resize extends Application {
         stage.show();
         scrollPane.setPannable(true);
 
-        drawCenteredLine ( r1, r2);
-        drawCenteredDashedLine ( r1, r3);
+        drawHierarchy( project);
 
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setHvalue(offset + 300);
         scrollPane.setVvalue(offset + 300);
-        group.getChildren().addAll(r1, r2, r3, cornerNE, cornerNW, cornerSE, cornerSW, closest);
+        group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, closest);
+        addElements( group);
         scrollPane.setPannable(true);
     }
 
@@ -478,7 +484,7 @@ public class Resize extends Application {
         second.endLines.add(line);
     }
 
-    void drawCenteredDashedLine( Element first, Element second)
+    static void drawCenteredDashedLine( Element first, Element second)
     {
     	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
@@ -892,7 +898,7 @@ public class Resize extends Application {
         	for ( int i = 0; i < params.size(); i++) {
         		for ( int j = 0; j < params.get(i).getText().length(); j++){
         			if ( params.get(i).getText().charAt(j) == ',') {
-        				meth.addParameter(params.get(i).getText().substring(0,j) , params.get(i).getText().substring(j+1));
+                        meth.addParameter( params.get(i).getText().substring(j+1), params.get(i).getText().substring(0,j) );
         			}
         		}
         	}
@@ -948,6 +954,31 @@ public class Resize extends Application {
     	System.out.print( m);
     }
 
+    void iniElements( DProject prj) {
+        elements = new ArrayList<Element>();
+        for ( int i = 0; i < prj.getObjects().size(); i++) {
+            elements.add( new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        }
 
+
+        for ( int i = 0; i < prj.getObjects().size(); i++) {
+            elements.get(i).setObject( prj.getObjects().get(i));
+            elements.get(i).updateObject();
+        }
+
+
+    }
+
+    static void drawHierarchy( DProject prj) {
+        ArrayList<Boolean> bunch = new ArrayList<Boolean>();
+
+        drawCenteredLine( elements.get(0), elements.get(1));
+        drawCenteredDashedLine( elements.get(0), elements.get(2));
+    }
+
+    static void addElements( Group group) {
+        for ( int i = 0; i < elements.size(); i++)
+            group.getChildren().add( elements.get(i));
+    }
 
 }

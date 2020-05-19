@@ -13,8 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import misc.Resize;
-import java.util.ArrayList;
-import logic.*;
+
 import logic.object_source.*;
 import logic.tools.*;
 

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import misc.Resize;
@@ -76,6 +77,19 @@ public class ComplexLine extends Group
 			Circle c = new Circle( p.getX(), p.getY(), 5);
 			circles.add(c);
 			final int FINALINDEX = i;
+
+			c.setOnMousePressed(event ->
+			{
+				if (event.getButton() == MouseButton.SECONDARY)
+				{
+					removePoint( p);
+					updateLP();
+					updateL();
+					event.consume();
+				}
+
+			});
+
 			c.setOnMouseDragged(me -> {
 				double x = me.getX();
 				double y = me.getY();
@@ -165,6 +179,10 @@ public class ComplexLine extends Group
 		return points;
 	}
 
-
+	public void removePoint( Point2D point)
+	{
+		points.remove( point);
+		updateLP();
+	}
 }
 
