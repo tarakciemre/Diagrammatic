@@ -1,6 +1,8 @@
 package misc;
 
+import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
+import gui.tools.DashedComplexLine;
 import gui.tools.Element;
 import javafx.application.*;
 import javafx.event.ActionEvent;
@@ -228,7 +230,7 @@ public class Resize extends Application {
         scrollPane.setPannable(true);
 
         drawCenteredLine ( r1, r2);
-        drawCenteredLine ( r1, r3);
+        drawCenteredDashedLine ( r1, r3);
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setHvalue(offset + 300);
@@ -446,10 +448,26 @@ public class Resize extends Application {
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
         ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
         group.getChildren().add(line);
+        ArrowHead a = new ArrowHead( first, line);
+    	group.getChildren().addAll(a);
         first.startLines.add(line);
         second.endLines.add(line);
     }
 
+    void drawCenteredDashedLine( Element first, Element second)
+    {
+    	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
+    	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
+    	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
+    	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
+        DashedComplexLine line = new DashedComplexLine(fcX, fcY, scX, scY);
+        group.getChildren().add(line);
+        ArrowHead a = new ArrowHead( first, line);
+    	group.getChildren().addAll(a);
+        first.startLines.add(line);
+        second.endLines.add(line);
+    }
+    
     static void updateLines()
     {
     	for (Node n : group.getChildren())
@@ -470,9 +488,24 @@ public class Resize extends Application {
     			}
 
     		}
+    		
+    		if ( n instanceof ArrowHead) {
+    			ArrowHead a = ( ArrowHead) n;
+    			a.updateArrow();
+    		}
     	}
     }
 
+    public static void updateArrow() {
+    	for (Node n : group.getChildren())
+    	{
+    		if ( n instanceof ArrowHead) {
+    			ArrowHead a = ( ArrowHead) n;
+    			a.updateArrow();
+    		}
+    	}
+    }
+    
     public static void displayPoint(Point2D point)
     {
     	Circle c = new Circle (point.getX(), point.getY(), 10);
