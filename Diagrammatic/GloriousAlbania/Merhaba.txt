@@ -1,0 +1,23 @@
+public class Merhaba
+{
+
+	//Properties
+
+	private asdf asdf;
+
+	//Constructors
+
+	//Methods
+
+	public static asd asd()
+	{
+		return null;
+	}
+
+	public static asdf asdf()
+	{
+		return null;
+	}
+
+
+}

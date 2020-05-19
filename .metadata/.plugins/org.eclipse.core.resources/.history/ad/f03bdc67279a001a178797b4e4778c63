@@ -3,7 +3,7 @@ package gui;
 //import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
-import logic.object_source.*;
+import logic.*;
 
 import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
@@ -110,7 +110,7 @@ public class DApp extends Application {
 
         Image icon = new Image("file:icon.png");
         Image albaniaIcon = new Image("file:albaniaicon.jpg");
-        //stage.getIcons().add(albaniaIcon);
+        stage.getIcons().add(albaniaIcon);
         stage.getIcons().add(icon);
 
         // init project
@@ -233,14 +233,6 @@ public class DApp extends Application {
         VBox leftLayout = new VBox(10);
         VBox rightLayout = new VBox(10);
         BorderPane parentLayout = new BorderPane();
-        
-        // File Menu
-        Menu fileMenu = new Menu("File");
-        MenuItem openProject = new MenuItem( "Open");
-        MenuItem saveProject = new MenuItem( "Save");
-        MenuItem saveProjectAs = new MenuItem( "Save As...");
-        
-        fileMenu.getItems().addAll(openProject, saveProject, saveProjectAs);
 
         // Add Menu
         Menu addMenu = new Menu("Add");
@@ -326,7 +318,7 @@ public class DApp extends Application {
 
         //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(fileMenu, addMenu, helpMenu, extractMenu, editMenu, preferencesMenu, ytpMenu);
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, editMenu, preferencesMenu, ytpMenu);
 
         parentLayout.setCenter( layout);
         parentLayout.setLeft( leftLayout );
@@ -373,8 +365,8 @@ public class DApp extends Application {
         for ( DObject o : prj.getObjects()){
             if ( o instanceof DGeneralClass && ((DGeneralClass) o).getSuperClass() != null){
                 if ( o instanceof DClass && ((DGeneralClass) o).getSuperClass() instanceof DClass) {
-//                    for ( int j = 0; j < elements.size(); j++)
-//                        if ( elements.get(j).getObject().getName().equals )
+                    for ( int j = 0; j < elements.size(); j++)
+                        if ( elements.get(j).getObject().getName().equals )
                 }
             }
         }
