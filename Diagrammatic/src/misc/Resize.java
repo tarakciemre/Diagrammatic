@@ -19,8 +19,9 @@ import javafx.geometry.*;
 import logic.object_source.*;
 import logic.tools.*;
 
-import java.lang.reflect.Array;
+//import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 import gui.tools.*;
 
 public class Resize extends Application {
@@ -63,7 +64,7 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
-        stage.setTitle("Diagrammatic 0.1.1");
+        stage.setTitle("Diagrammatic 0.1.2");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
@@ -72,6 +73,8 @@ public class Resize extends Application {
         stage.setWidth(1820);
         stage.setHeight(900);
 
+        Image icon = new Image("file:icon.png");
+        stage.getIcons().add(icon);
 
         // init project
         project = new DProject();
@@ -697,7 +700,7 @@ public class Resize extends Application {
     public static void displayObjectOptions() {
         Button create;
         TextField name;
-        DObject parent;
+
 
         Stage window = new Stage();
 
@@ -730,7 +733,7 @@ public class Resize extends Application {
 
 
         VBox layout = new VBox();
-        layout.getChildren().addAll(  messageName, name, choiceBox, create);
+        layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, create);
         layout.setAlignment( Pos.CENTER);
 
         window.setScene( new Scene( layout));
@@ -741,7 +744,8 @@ public class Resize extends Application {
         DClass object = new DClass( name.getText());
         System.out.println( object);
 
-        Element r = new Element( offset + 500 - Math.random()*100, offset + 500 - Math.random()*100, 200, 200, Color.SEASHELL, true);
+        Random rand = new Random();
+        Element r = new Element( offset + 500 + (int)((Math.pow(-1, rand.nextInt(3))*(rand.nextInt(12)))), offset + 500 - (int)((Math.pow(-1, rand.nextInt(3))*(rand.nextInt(40)))), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
         r.setObject(object);
         elements.add(r);
         project.addObject(object);
@@ -751,7 +755,7 @@ public class Resize extends Application {
         return object;
     }
 
-    public static void getInheritanceChoice( ChoiceBox cb, DObject child) {
+    public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
     	for ( DObject o : project.getObjects() ) {
     		if ( cb.getValue().equals(o.getName()))
     			setInheritance(o , child);
@@ -831,7 +835,7 @@ public class Resize extends Application {
 
     public static void displayMethodOptions( Element element) {
         Button create;
-        TextField name, returnType, param;
+        TextField name, returnType;
         CheckBox cb, cb2;
         Stage window = new Stage();
 
@@ -970,11 +974,13 @@ public class Resize extends Application {
     public static void addProperty( String name, String type, Element element) {
     	DProperty prop = new DProperty( name, type);
     	element.addField(prop);
+    	((DClass)element.getObject()).addProperty(prop);
     	System.out.println( prop);
     }
 
     public static void addMethod( DMethod m, Element element) {
     	element.addMethod(m);
+    	((DClass)element.getObject()).addMethod(m);
     	System.out.print( m);
     }
 

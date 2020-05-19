@@ -3,10 +3,18 @@ public class Kosovan
 
 	//Properties
 
+	private adsfasdf dsafa;
+	private asdfasdf asdfasd;
+	private sdafsadf sadf;
 
 	//Constructors
 
 	//Methods
+
+	public sadfasd sadfsadf( tpye name, tpye name, tpye name, tpye name)
+	{
+		return null;
+	}
 
 
 }
