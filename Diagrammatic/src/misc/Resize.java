@@ -740,7 +740,7 @@ public class Resize extends Application {
     	for ( Node n : group.getChildren()) {
 			if ( n instanceof Element && ((Element) n).hasObject()){
 				if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
-					lastAdded = (Element)n;
+					selected = (Element)n;
 			}
 		}
 
