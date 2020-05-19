@@ -369,7 +369,7 @@ public class DApp extends Application {
 
     static void drawHierarchy( DProject prj) {
     	ArrayList<DObject> bunch = new ArrayList<DObject>();
-        Element from, to;
+        Element from = null, to = null;
 
         for ( DObject o : prj.getObjects()){
             if ( o instanceof DGeneralClass && ((DGeneralClass) o).getSuperClass() != null){
