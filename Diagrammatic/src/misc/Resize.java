@@ -1,8 +1,6 @@
 package misc;
 
-import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
-import gui.tools.DashedComplexLine;
 import gui.tools.Element;
 import javafx.application.*;
 import javafx.event.ActionEvent;
@@ -18,45 +16,38 @@ import javafx.scene.transform.*;
 import javafx.scene.image.*;
 import javafx.geometry.*;
 import logic.object_source.*;
-import logic.tools.DProperty;
+import logic.tools.*;
+import java.util.ArrayList;
+import gui.tools.*;
 
 public class Resize extends Application {
 
-    static double a = 6;
-	static double a2 = a / 2;
-    double gridSize = -1;
-    double lastX, lastY;
-    static double lX;
-	static double lY;
-	static double sX;
-	static double sY;
-	static double sWidth;
-	static double sHeight;
-    public static Slider slider1;
-	static Slider slider2;
-    static CheckBox checkBox;
+	// App Properties
+
+	// Helpers
+    static double a = 6, a2 = a / 2, lX, lY, sX, sY, sWidth, sHeight;
+    double gridSize = -1, lastX, lastY;
+    static int offset = 5000;
+
+    // Members
+    public static Slider slider1, slider2;
+    public static CheckBox checkBox;
     public static ScrollPane scrollPane;
     static Group group;
 	static Group overlay = null;
     static Pane zoomPane;
-    public static Rectangle srBnd;
-    static Rectangle srNW;
-	static Rectangle srN;
-	static Rectangle srNE;
-	static Rectangle srE;
-	static Rectangle srSE;
-	static Rectangle srS;
-	static Rectangle srSW;
-	static Rectangle srW;
+    public static Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
+    static Circle closest;
     static Element selectedElement;
     public static Rectangle2D area; // sets the borders for moving objects
+    public static DProject project;
+
+    // Color of the background
     Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
+    // canvas & sp
     Canvas canvas = new Canvas();
     SnapshotParameters sp = new SnapshotParameters();
-    static Circle closest;
-
-    static int offset = 5000;
 
     public static void main( String[] args)
     {
@@ -68,18 +59,33 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
         stage.setScene(new Scene(layout, 500, 300));
-        stage.setHeight(1000);
-        stage.setWidth(1700);
-        Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GOLD, true);
-        Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.SEASHELL, true);
-        Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.LIME, true);
-        
-        
+        stage.setHeight(700);
+        stage.setWidth(700);
+
+        project = new DProject();
+        DObject albanian = new DObject();
+        albanian.setName("Albanian");
+        DObject albanianable = new DObject();
+        albanianable.setName("Albanianable");
+        DObject kosovan = new DObject();
+        kosovan.setName("Kosovan");
+
+        Element r1 = new Element( offset + 0, offset + 0, 300, 300, Color.GHOSTWHITE, true);
+        Element r2 = new Element( offset + 500, offset + 500, 200, 200, Color.MEDIUMAQUAMARINE, true);
+        Element r3 = new Element( offset + 700, offset + 300, 200, 200, Color.BISQUE, true);
+        r1.setObject(albanian);
+        r2.setObject(kosovan);
+        r3.setObject(albanianable);
+
+        project.addObject(albanian);
+        project.addObject(kosovan);
+        project.addObject(albanianable);
+
+
         Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, true);
         Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, true);
         Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, true);
         Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, true);
-
 
         group = new Group();
 
@@ -169,19 +175,11 @@ public class Resize extends Application {
         VBox rightLayout = new VBox(10);
         BorderPane parentLayout = new BorderPane();
 
-        // Project Scene
-        Canvas canvas = new Canvas( 300, 300);
-        Group root = new Group();
-
-        root.getChildren().add(canvas);
-
-        //ProjectScene p = new ProjectScene( root, canvas);
-
         // Menu
         Menu addMenu = new Menu("Add");
         MenuItem newObject = new MenuItem("New Object");
         newObject.setOnAction(e -> {
-            displayObjectOptions( canvas.getGraphicsContext2D());
+            displayObjectOptions();
         });
         MenuItem newField = new MenuItem("New Property");
         newField.setOnAction( e -> {
@@ -190,7 +188,14 @@ public class Resize extends Application {
         	else
         		displayErrorMessage("No Class Selected");
         });
-        addMenu.getItems().addAll( newObject, newField);
+        MenuItem newMethod = new MenuItem("New Method");
+        newMethod.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		displayMethodOptions( selectedElement);
+        	else
+        		displayErrorMessage("No Class Selected");
+        });
+        addMenu.getItems().addAll( newObject, newField, newMethod);
 
         //Help menu
         Menu helpMenu = new Menu("Help");
@@ -200,20 +205,25 @@ public class Resize extends Application {
         helpMenu.getItems().add(autoSave);
 
         //Difficulty RadioMenuItems
-        Menu extractMenu = new Menu("Extract...");
+        /*Menu extractMenu = new Menu("Extract...");
         MenuItem extractAll = new MenuItem( "extract all");
         MenuItem extractMethods = new MenuItem( "extract methods");
         MenuItem extractFields = new MenuItem( "extract fields");
+
 
         extractAll.setOnAction(e -> extractAll(e) );
         extractMethods.setOnAction(e -> extractMethods(e));
         extractFields.setOnAction(e -> extractFields(e));
 
+
         extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
+         */
+
+        Menu ytpMenu = new Menu("YTP modes");
 
         //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu);
+        menuBar.getMenus().addAll(addMenu, helpMenu, ytpMenu);
 
         parentLayout.setCenter( layout);
         parentLayout.setLeft( leftLayout );
@@ -223,7 +233,7 @@ public class Resize extends Application {
         Scene scene = new Scene( parentLayout, 300, 250);
 
         stage.setScene( scene);
-
+        stage.setTitle("Diagrammatic 0.1");
 
 
         stage.show();
@@ -231,6 +241,7 @@ public class Resize extends Application {
 
         drawCenteredLine ( r1, r2);
         drawCenteredDashedLine ( r1, r3);
+
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setHvalue(offset + 300);
@@ -420,11 +431,16 @@ public class Resize extends Application {
         if (v > area.getMaxY()) v = area.getMaxY();
         if (b) {
             height = h + y - v;
-            if (height < as + selectedElement.limitHeight()) { height = as + selectedElement.limitHeight(); v = y + h - height; }
+            if (height < as + selectedElement.limitHeight()) {
+            	height = as + selectedElement.limitHeight();
+            	v = y + h - height;
+            }
             selectedElement.setLayoutY(v);
-        } else {
+        }
+        else {
             height = v - y;
-            if (height < as + selectedElement.limitHeight()) height = as + selectedElement.limitHeight();
+            if (height < as + selectedElement.limitHeight())
+            	height = as + selectedElement.limitHeight();
         }
         selectedElement.heightProperty().set(height);
     }
@@ -448,8 +464,6 @@ public class Resize extends Application {
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
         ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
         group.getChildren().add(line);
-        ArrowHead a = new ArrowHead( first, line);
-    	group.getChildren().addAll(a);
         first.startLines.add(line);
         second.endLines.add(line);
     }
@@ -467,7 +481,7 @@ public class Resize extends Application {
         first.startLines.add(line);
         second.endLines.add(line);
     }
-    
+
     static void updateLines()
     {
     	for (Node n : group.getChildren())
@@ -488,7 +502,7 @@ public class Resize extends Application {
     			}
 
     		}
-    		
+
     		if ( n instanceof ArrowHead) {
     			ArrowHead a = ( ArrowHead) n;
     			a.updateArrow();
@@ -505,7 +519,7 @@ public class Resize extends Application {
     		}
     	}
     }
-    
+
     public static void displayPoint(Point2D point)
     {
     	Circle c = new Circle (point.getX(), point.getY(), 10);
@@ -620,6 +634,7 @@ public class Resize extends Application {
     	return closestLine;
     }
 
+    /*
     public static void extractAll( ActionEvent e) {
         System.out.println("extracting all...");
     }
@@ -630,19 +645,15 @@ public class Resize extends Application {
 
     public static void extractFields( ActionEvent e) {
         System.out.println("extracting fields...");
-    }
+    }*/
 
+    // for loading from file
     public void openProject( DObject d) {
 
-        Group g = new Group();
-        Pane p = new Pane();
-
-        p.getChildren().add(g);
-        //projectScene = new ProjectScene( p, d);
 
     }
 
-    public static void displayObjectOptions( GraphicsContext g) {
+    public static void displayObjectOptions() {
         Button create;
         TextField name;
 
@@ -653,70 +664,61 @@ public class Resize extends Application {
         window.setMinWidth(400);
         window.setMinHeight(400);
 
-
-        Label message = new Label( "Name of the class:");
+        Label messageName = new Label( "Name of the class:");
         name = new TextField();
-        
-        
-        Label messageTwo = new Label( "Parent Class:");
-        
-        // Adding drop - down choice 
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
 
-        //getItems returns the ObservableList object which you can add items to
-        choiceBox.getItems().add("Apples");
-        choiceBox.getItems().add("Bananas");
-        choiceBox.getItems().addAll("Bacon", "Ham", "Meatballs");
+        Label messageInh = new Label( "This class extends:");
+        ChoiceBox<DClass> choiceBox = new ChoiceBox<>();
 
-        //Set a default value
-        choiceBox.setValue("Apples");
+        // Going to add the elements in project
+        choiceBox.getItems().add( null);
+        //choiceBox.getItems().add( r1.getObject());
+
 
         create = new Button("create object");
 
         create.setOnAction( e -> {
-            createObject( name, g);
+            createObject( name);
             window.close();
         });
 
 
 
-        VBox layout = new VBox(15);
-        layout.getChildren().addAll(  message, name, messageTwo, choiceBox, create);
+        VBox layout = new VBox();
+        layout.getChildren().addAll(  messageName, name, create);
         layout.setAlignment( Pos.CENTER);
-
 
         window.setScene( new Scene( layout));
         window.showAndWait();
     }
 
-
-    public static DObject createObject( TextField name, GraphicsContext gc) {
+    public static void createObject( TextField name) {
         DClass object = new DClass( name.getText());
         System.out.println( object);
 
-        gc.setStroke(Color.BLUE);
+        Element r = new Element( offset + 500 - Math.random()*100, offset + 500 - Math.random()*100, 200, 200, Color.SEASHELL, true);
+        r.setObject(object);
+        project.addObject(object);
 
-        gc.strokeRoundRect( 160, 60, 20, 20, 100, 100);
-
-        return object;
+        group.getChildren().add(r);
     }
-    
-    public void displayFieldOptions( Element element) {
+
+    public static void displayFieldOptions( Element element) {
         Button create;
         TextField name, type;
 
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("New Object");
+        window.setTitle("New Property");
         window.setMinWidth(400);
         window.setMinHeight(400);
 
-        Label messageName = new Label( "Name of the field:");
+        Label messageName = new Label( "Type of the property:");
         name = new TextField();
-        Label messageType = new Label( "Name of the field:");
+        Label messageType = new Label( "Name of the property:");
         type = new TextField();
-        create = new Button("add field");
+        create = new Button("add property");
 
         create.setOnAction( e -> {
 
@@ -742,6 +744,8 @@ public class Resize extends Application {
             window.close();
         });
 
+
+
         VBox layout = new VBox();
         layout.getChildren().addAll( messageName, name, messageType, type, create);
         layout.setAlignment( Pos.CENTER);
@@ -750,7 +754,123 @@ public class Resize extends Application {
         window.showAndWait();
     }
 
-    public void displayErrorMessage(String message) {
+    public static void displayMethodOptions( Element element) {
+        Button create;
+        TextField name, returnType, param;
+        CheckBox cb, cb2;
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Method");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Name of the method:");
+        name = new TextField();
+        Label messageType = new Label( "Return type of the method:");
+        returnType = new TextField();
+        //Label messageParam = new Label( "Add parameters below");
+        cb = new CheckBox();
+        cb2 = new CheckBox();
+        cb.setTooltip(  new Tooltip("void"));
+        cb2.setTooltip(new Tooltip("static"));
+        create = new Button("create method");
+
+        create.setOnAction( e -> {
+        	final boolean stat = cb2.isSelected();
+
+        	if ( name.getText().equals("") && returnType.getText().equals("") ){
+        		displayErrorMessage( "No name or return type found");
+        		displayMethodOptions( element);
+        		window.close();
+        	}
+        	else if ( returnType.getText().equals("") ) {
+        		displayErrorMessage( "No return type found");
+        		displayMethodOptions( element);
+        		window.close();
+        	}
+            else if ( name.getText().equals("") ) {
+            	displayErrorMessage( "No name found");
+            	displayMethodOptions( element);
+            	window.close();
+            }
+            else {
+            	final DMethod meth = new DMethod( name.getText(), returnType.getText(), stat);
+        		if ( !cb.isSelected())
+        			displayParameterOptions( meth, element);
+        		else
+        			addMethod(meth);
+            }
+
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static void displayParameterOptions( DMethod meth, Element element) {
+    	Button addParam, addNew;
+
+    	ArrayList<TextField> params = new ArrayList<TextField>();
+
+        Stage window = new Stage();
+        VBox layout = new VBox();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("Method Parameters for " + meth.getName());
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+
+        Label messageParam = new Label( "Add parameters below");
+        layout.getChildren().add(messageParam);
+
+
+
+        addNew = new Button("add another");
+        addNew.setOnAction( e -> {
+        	final TextField tf = new TextField("tpye, name");
+        	params.add(tf);
+        	layout.getChildren().add( tf);
+        	e.consume();
+        });
+
+        addParam = new Button("create method");
+
+        addParam.setOnAction( e -> {
+
+        	for ( int i = 0; i < params.size(); i++) {
+        		for ( int j = 0; j < params.get(i).getText().length(); j++){
+        			if ( params.get(i).getText().charAt(j) == ',') {
+        				meth.addParameter(params.get(i).getText().substring(0,j) , params.get(i).getText().substring(j+1));
+        			}
+        		}
+        	}
+        	addMethod(meth);
+
+            window.close();
+        });
+
+        layout.setAlignment( Pos.CENTER_LEFT);
+        addNew.setAlignment(Pos.CENTER_RIGHT);
+        addParam.setAlignment( Pos.BOTTOM_CENTER);
+
+        BorderPane parentLayout = new BorderPane();
+        parentLayout.setLeft( layout);
+        parentLayout.setRight( addNew);
+        parentLayout.setBottom( addParam);
+
+        window.setScene( new Scene( parentLayout));
+        window.showAndWait();
+
+    }
+
+    public static void displayErrorMessage(String message) {
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -772,8 +892,16 @@ public class Resize extends Application {
         window.showAndWait();
     }
 
-    public void addProperty( String name, String type, Element element) {
+    public static void addProperty( String name, String type, Element element) {
     	DProperty prop = new DProperty( name, type);
     	System.out.println( prop);
     }
+
+    public static void addMethod( DMethod m) {
+
+    	System.out.print( m);
+    }
+
+
+
 }
