@@ -796,6 +796,8 @@ public class Resize extends Application {
 		}
 
     	drawCenteredLine( selected, lastAdded);
+        select(selected);
+        select(lastAdded);
     }
 
 
