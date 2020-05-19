@@ -100,7 +100,7 @@ public class ArrowHead extends Group{
 
 			polygon.setFill(Color.WHITE);
 			polygon.setStroke(Color.BLACK);
-			polygon.setStrokeWidth(2.5);
+			polygon.setStrokeWidth(2);
 			polygon.getTransforms().add(new Rotate(degree,intersectionX,intersectionY));
 			getChildren().add( polygon);
 			return true;

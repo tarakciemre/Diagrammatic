@@ -62,7 +62,6 @@ public class DApp extends Application {
     static int offset = 5000;
 
     // Members
-    public static final double INDICATOR_RADIUS = 7;
     public static Slider slider1, slider2;
     public static CheckBox checkBox;
     public static ScrollPane scrollPane;
@@ -244,7 +243,7 @@ public class DApp extends Application {
         	if ( selectedElement != null)
         		displayFieldOptions( selectedElement);
         	else
-        		displayErrorMessage("No class selected");
+        		displayErrorMessage("No Class Selected");
         });
         MenuItem newMethod = new MenuItem("New Method");
         newMethod.setOnAction( e -> {
@@ -253,7 +252,7 @@ public class DApp extends Application {
         	else
         		displayErrorMessage("No Class Selected");
         });
-        MenuItem newConstr = new MenuItem("New Constructor");
+        MenuItem newConstr = new MenuItem("add constructor to a class");
         newConstr.setOnAction( e -> {
         	if ( selectedElement != null)
         		displayConstructorMakerWindow( selectedElement);
@@ -272,9 +271,9 @@ public class DApp extends Application {
 
         //Difficulty RadioMenuItems
         Menu extractMenu = new Menu("Extract...");
-        MenuItem extractAll = new MenuItem( "Extract All");
-        MenuItem extractMethods = new MenuItem( "Extract Methods");
-        MenuItem extractFields = new MenuItem( "Extract Fields");
+        MenuItem extractAll = new MenuItem( "extract all");
+        MenuItem extractMethods = new MenuItem( "extract methods");
+        MenuItem extractFields = new MenuItem( "extract fields");
 
 
         extractAll.setOnAction(e -> extractAll(e, project) );
@@ -288,10 +287,10 @@ public class DApp extends Application {
         Menu ytpMenu = new Menu("YTP modes");
         
         // Preferences
-        Menu preferencesMenu = new Menu("Preferences");
-        MenuItem themes = new MenuItem( "Themes");
+        Menu preferencesMenu = new Menu("Extract...");
+        MenuItem themes = new MenuItem( "themes");
         
-        preferencesMenu.getItems().addAll(themes);
+        preferencesMenu.getItems().addAll)(themes);
 
         // edit menu
         Menu editMenu = new Menu("Edit");
@@ -317,7 +316,7 @@ public class DApp extends Application {
 
         //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, editMenu, preferencesMenu, ytpMenu);
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, editMenu, ytpMenu);
 
         parentLayout.setCenter( layout);
         parentLayout.setLeft( leftLayout );
@@ -706,24 +705,12 @@ public class DApp extends Application {
         	{
         		closest.setCenterX(closest2.getX() / slider1.getValue());
             	closest.setCenterY(closest2.getY() / slider1.getValue());
-            	closest.setRadius(INDICATOR_RADIUS);
+            	closest.setRadius(10);
         	}
 
     	}
     	else
     		closest.setRadius(0);
-    }
-    
-    public static void setIndicatorVisibility(boolean visibility)
-    {
-    	if(visibility)
-    	{
-    		closest.setRadius(INDICATOR_RADIUS);
-    	}
-    	else
-    	{
-    		closest.setRadius(0);
-    	}
     }
 
     public static Point2D getClosestPoint(Line l, Point2D mouseLoc)

@@ -62,7 +62,6 @@ public class DApp extends Application {
     static int offset = 5000;
 
     // Members
-    public static final double INDICATOR_RADIUS = 7;
     public static Slider slider1, slider2;
     public static CheckBox checkBox;
     public static ScrollPane scrollPane;

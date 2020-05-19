@@ -62,7 +62,6 @@ public class DApp extends Application {
     static int offset = 5000;
 
     // Members
-    public static final double INDICATOR_RADIUS = 7;
     public static Slider slider1, slider2;
     public static CheckBox checkBox;
     public static ScrollPane scrollPane;
@@ -706,7 +705,7 @@ public class DApp extends Application {
         	{
         		closest.setCenterX(closest2.getX() / slider1.getValue());
             	closest.setCenterY(closest2.getY() / slider1.getValue());
-            	closest.setRadius(INDICATOR_RADIUS);
+            	closest.setRadius(10);
         	}
 
     	}
@@ -716,14 +715,7 @@ public class DApp extends Application {
     
     public static void setIndicatorVisibility(boolean visibility)
     {
-    	if(visibility)
-    	{
-    		closest.setRadius(INDICATOR_RADIUS);
-    	}
-    	else
-    	{
-    		closest.setRadius(0);
-    	}
+    	
     }
 
     public static Point2D getClosestPoint(Line l, Point2D mouseLoc)
