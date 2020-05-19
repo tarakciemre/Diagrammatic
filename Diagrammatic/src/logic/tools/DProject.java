@@ -4,23 +4,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import logic.interfaces.Accesible;
 import logic.object_source.DAbstractClass;
 import logic.object_source.DClass;
 import logic.object_source.DInterface;
 import logic.object_source.DObject;
 
-public class DProject implements Accesible {
-	private String accesibility;
-	final static String PROTECTED = "protected";
-	final static String PUBLIC = "public";
-	final static String DEFAULT = "default";
-	final static String PRIVATE = "private";
+public class DProject {
 
 	ArrayList<DObject> objects;
 	String projectName;
-	final static String KAAN_LOCAL = "";
+
 	public DProject()
 	{
 		objects = new ArrayList<DObject>();
@@ -170,17 +163,5 @@ public class DProject implements Accesible {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@Override
-	public String getAcccessability() {
-		return accesibility;
-	}
-
-	@Override
-	public void setAccessability( String s) {
-		if ( s.equals(PROTECTED) || s.equals(PUBLIC) || s.equals(DEFAULT) || s.equals(PRIVATE) )
-			accesibility = s;
-
 	}
 }

@@ -4,10 +4,11 @@ import logic.tools.*;
 import logic.interfaces.*;
 import java.util.ArrayList;
 
-public class DObject implements Extractable{
+public class DObject implements Extractable, Accesible{
 
    // Properties
    protected String name;
+   private String accesibility;
    private ArrayList<DMethod> methodCollector;
    private ArrayList<DProperty> propertyCollector;
    private ArrayList<DConstructor> constructorCollector;
@@ -59,5 +60,17 @@ public class DObject implements Extractable{
 
 	public void setConstructorCollector(ArrayList<DConstructor> constructorCollector) {
 		this.constructorCollector = constructorCollector;
+	}
+
+	@Override
+	public String getAcccessability() {
+		return accesibility;
+	}
+
+	@Override
+	public void setAccessability( String s) {
+		if ( s.equals(ProjectManager.PROTECTED) || s.equals( ProjectManager.PUBLIC) || s.equals( ProjectManager.DEFAULT) || s.equals( ProjectManager.PRIVATE) )
+			accesibility = s;
+
 	}
 }

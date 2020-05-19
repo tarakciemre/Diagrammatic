@@ -15,6 +15,11 @@ import logic.object_source.DAbstractClass;
 public class ProjectManager
 {
 
+	public final static String PROTECTED = "protected";
+    public final static String PUBLIC = "public";
+    public final static String DEFAULT = "default";
+    public final static String PRIVATE = "private";
+
     public static DClass textToClass( ArrayList<String> lines, DProject project)
     {
         DClass dc = new DClass( "Unnamed"); //Means an error occurred while loading the class
