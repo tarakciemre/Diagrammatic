@@ -68,9 +68,9 @@ public class Element extends Group {
         rectangle.setFill(fill);
         rectangle.setArcHeight(20.0d);
         rectangle.setArcWidth(20.0d);
-        l = new Label( nameOfClass+ "\n--------------\n");
-        l2 = new Label( properties.toUpperCase()+ "\n--------------\n");
-        l3 = new Label( methods.toUpperCase() + "\n--------------\n");
+        l = new Label(  "   " + nameOfClass + "\n");
+        l2 = new Label(  "   " + properties.toUpperCase()+ "\n");
+        l3 = new Label(  "   " + methods.toUpperCase() + "\n");
         if (dObject != null) {
         	for ( int i = 0; i < dObject.getProperties().size(); i++)
         		props.add( new Label( dObject.getProperties().get(i).toString()));
@@ -151,8 +151,8 @@ public class Element extends Group {
     	return dObject != null;
     }
     public void addField( DProperty prop) {
-    	String out = new String(prop.getType() + " ");
-    	out += prop.getName();
+    	String out = new String("   -"+prop.getName() + ": ");
+    	out += prop.getType();
 
 
     	props.add( new Label(out));
@@ -160,12 +160,18 @@ public class Element extends Group {
     }
 
     public void addMethod( DMethod meth) {
-    	String out = new String(meth.getReturnType() + " ");
-    	out += meth.getName();
-    	for ( DProperty param : meth.getParameters()) {
-    		out += param + "/n";
+    	String out = new String( "   +"+meth.getName() + "(");
 
+    	if ( meth.getParameters() != null) {
+    		for ( DProperty param : meth.getParameters()) {
+    			out += param.getType() + ", ";
+
+    		}
+    		out = out.substring(0,out.length()-2);
     	}
+    	out += ")";
+
+    	out += ": "+ meth.getReturnType();
 
     	meths.add( new Label(out));
     	updateObject();
@@ -198,7 +204,7 @@ public class Element extends Group {
     	// updating name
     	for ( int i = 0; i < contentsH.getChildren().size(); i++)
     		if ( contentsH.getChildren().get(i) instanceof Label)
-    			contentsH.getChildren().set( i, new Label( dObject.getName() + "\n--------------\n"));
+    			contentsH.getChildren().set( i, new Label( "   " + dObject.getName() + "\n\n"));
 
     	// updating properties
     	for ( Label label : props) {
