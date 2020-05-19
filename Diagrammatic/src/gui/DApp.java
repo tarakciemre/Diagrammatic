@@ -819,12 +819,17 @@ public class DApp extends Application {
     }
 
     public static DObject createObject( TextField name) {
-        DClass object = new DClass( name.getText());
+    	Element r;
+    	DClass object = new DClass( name.getText());
         System.out.println( object);
 
         Random rand = new Random();
-        Element r = new Element( offset + 500 + (int)((Math.pow(-1, rand.nextInt(3))*(rand.nextInt(12)))), offset + 500 - (int)((Math.pow(-1, rand.nextInt(3))*(rand.nextInt(40)))), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
-        r.setObject(object);
+        if ( selectedElement != null)
+        	r = new Element(  selectedElement.getLayoutX() + 30 + rand.nextInt(7) , selectedElement.getLayoutY()+ 30 + rand.nextInt(7), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
+        else
+        	r = new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true);
+
+        	r.setObject(object);
         elements.add(r);
         project.addObject(object);
 
@@ -1161,29 +1166,32 @@ public class DApp extends Application {
 						if ( group.getChildren().get(j) instanceof ArrowHead ) {
 							ArrowHead  a = (ArrowHead)group.getChildren().get(j);
 
-							if (  element.getEndLines().contains( a.getComplexLine())){
+							if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
 								group.getChildren().remove( a);
-
 							}
 						}
 					if ( element.startLines.contains(cl) || element.endLines.contains(cl))
-						group.getChildren().remove(group.getChildren().get(i));
+						group.getChildren().remove(cl);
 
 				}
-				if ( group.getChildren().get(i) instanceof ArrowHead ) {
-					ArrowHead  a = (ArrowHead)group.getChildren().get(i);
-					if ( element.startLines.contains(a) || element.endLines.contains(a))
-						group.getChildren().remove(group.getChildren().get(i));
+				if ( group.getChildren().get(i) instanceof DashedComplexLine ) {
+
+					DashedComplexLine cdl = (DashedComplexLine)group.getChildren().get(i);
+
+					for ( int j =0; j < group.getChildren().size();j++)
+						if ( group.getChildren().get(j) instanceof ArrowHead ) {
+							ArrowHead  a = (ArrowHead)group.getChildren().get(j);
+
+							if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
+								group.getChildren().remove( a);
+							}
+						}
+					if ( element.startLines.contains(cdl) || element.endLines.contains(cdl))
+						group.getChildren().remove(cdl);
+
 				}
 			}
-			// deleting the damn arrows
-			for ( int i =0; i < group.getChildren().size();i++) {
-				if ( group.getChildren().get(i) instanceof ArrowHead ) {
-					ArrowHead  a = (ArrowHead)group.getChildren().get(i);
-					if ( element.startLines.contains(a) || element.endLines.contains(a))
-						group.getChildren().remove(group.getChildren().get(i));
-				}
-			}
+
 			updateArrow();
 			updateLines();
 			updateOverlay();
