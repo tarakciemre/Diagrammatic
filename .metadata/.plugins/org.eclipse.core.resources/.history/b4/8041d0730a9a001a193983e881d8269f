@@ -85,6 +85,7 @@ public class Resize extends Application {
     public static Rectangle2D area; // sets the borders for moving objects
     public static DProject project;
 
+
     // Colors
     public static Paint lineColor;
     public static Paint backgroundColor;

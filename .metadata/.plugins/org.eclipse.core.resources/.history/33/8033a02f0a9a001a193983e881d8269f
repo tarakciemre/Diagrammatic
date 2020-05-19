@@ -60,7 +60,6 @@ import logic.object_source.DObject;
 import logic.tools.DMethod;
 import logic.tools.DProject;
 import logic.tools.DProperty;
-import gui.tools.pannablecanvas.*;
 
 public class Resize extends Application {
 
@@ -84,6 +83,7 @@ public class Resize extends Application {
     public static ArrayList<Element> elements;
     public static Rectangle2D area; // sets the borders for moving objects
     public static DProject project;
+
 
     // Colors
     public static Paint lineColor;
