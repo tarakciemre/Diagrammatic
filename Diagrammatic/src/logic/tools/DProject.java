@@ -46,30 +46,83 @@ public class DProject {
 
 	public ArrayList<String> projectToText()
 	{
+		// done interfaces array
+		ArrayList<DInterface> doneInt = new ArrayList<DInterface>();
+		// done classes array
+		ArrayList<DClass> doneCla = new ArrayList<DClass>();
+		ArrayList<DAbstractClass> doneAbCla = new ArrayList<DAbstractClass>();
+
 		ArrayList<String> projectText = new ArrayList<String>();
 		projectText.add("PRO: " + getName());
 		projectText.add("");
 		for (DObject o : objects)
 		{
-			if (o instanceof DClass)
+
+			// interfaces without supers
+			if (o instanceof DInterface)
 			{
-				DClass c = (DClass) o;
-				projectText.addAll(c.classToString());
-				projectText.add("");
+				if ( ((DInterface)o).getSuperInterface().isEmpty() )
+				{
+					DInterface i = (DInterface) o;
+					doneInt.add(i);
+					projectText.addAll(i.classToString());
+					projectText.add("");
+				}
+				// interfaces with done interfaces
+				else {
+					if ( doneInt.contains(((DInterface)o).getSuperInterface()) );
+					{
+						DInterface i = (DInterface) o;
+						doneInt.add(i);
+						projectText.addAll(i.classToString());
+						projectText.add("");
+					}
+				}
 			}
 
-			else if (o instanceof DInterface)
+
+			// classes without supers
+
+			else if (o instanceof DClass)
 			{
-				DInterface i = (DInterface) o;
-				projectText.addAll(i.classToString());
-				projectText.add("");
+				if ( ((DClass)o).getSuperClass() == null )
+				{
+					DClass i = (DClass) o;
+					doneCla.add(i);
+					projectText.addAll(i.classToString());
+					projectText.add("");
+				}
+				// classes with done supers
+				else {
+					if ( doneCla.contains(((DClass)o).getSuperClass()) );
+					{
+						DClass i = (DClass) o;
+						doneCla.add(i);
+						projectText.addAll(i.classToString());
+						projectText.add("");
+					}
+				}
 			}
 
 			else if (o instanceof DAbstractClass)
 			{
-				DAbstractClass a = (DAbstractClass) o;
-				projectText.addAll(a.classToString());
-				projectText.add("");
+				if ( ((DAbstractClass)o).getSuperClass() == null )
+				{
+					DAbstractClass i = (DAbstractClass) o;
+					doneAbCla.add(i);
+					projectText.addAll(i.classToString());
+					projectText.add("");
+				}
+				// classes with done supers
+				else {
+					if ( doneAbCla.contains(((DAbstractClass) o).getSuperClass()) );
+					{
+						DAbstractClass i = (DAbstractClass) o;
+						doneAbCla.add(i);
+						projectText.addAll(i.classToString());
+						projectText.add("");
+					}
+				}
 			}
 		}
 

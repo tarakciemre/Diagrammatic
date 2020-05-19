@@ -62,14 +62,25 @@ public class Element extends Group {
 
         widthProperty.set(width);
         heightProperty.set(height);
-        rectangle.setFill(Color.BLACK);
-        rectangle.setFill(Color.BISQUE);
+
         rectangle.setFill(fill);
+
         rectangle.setArcHeight(20.0d);
         rectangle.setArcWidth(20.0d);
+
         l = new Label(  "   " + nameOfClass + "\n");
         l2 = new Label(  "   " + properties.toUpperCase()+ "\n");
         l3 = new Label(  "   " + methods.toUpperCase() + "\n");
+        /*
+        final int fontSize = 9;
+        final String fontType = "Arial";
+        final Font font = new Font(fontType, fontSize);
+
+        l.setFont(font);
+        l2.setFont(font);
+        l3.setFont(font);
+        */
+
         if (dObject != null) {
         	for ( int i = 0; i < dObject.getProperties().size(); i++)
         		props.add( new Label( dObject.getProperties().get(i).toString()));

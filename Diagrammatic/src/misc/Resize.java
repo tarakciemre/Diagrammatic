@@ -47,7 +47,10 @@ public class Resize extends Application {
     public static Rectangle2D area; // sets the borders for moving objects
     public static DProject project;
 
-    // Color of the background
+
+    // Colors
+    public static Paint lineColor;
+    public static Paint backgroundColor;
     Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
     BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     // canvas & sp
@@ -64,7 +67,7 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
-        stage.setTitle("Diagrammatic 0.1.2");
+        stage.setTitle("Diagrammatic 0.1.3");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
@@ -191,6 +194,9 @@ public class Resize extends Application {
         layout.setBottom(new FlowPane(slider1, checkBox, slider2));
         //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
 
+        setLineColor(Color.DIMGREY);
+        setBackgroundColor(Color.DARKGRAY);
+
         // Layout
         VBox leftLayout = new VBox(10);
         VBox rightLayout = new VBox(10);
@@ -253,6 +259,8 @@ public class Resize extends Application {
         Scene scene = new Scene( parentLayout, 300, 250);
 
         stage.setScene( scene);
+
+
         stage.show();
         scrollPane.setPannable(true);
 
@@ -308,10 +316,12 @@ public class Resize extends Application {
         }
     }
 
+
     public static void updateZoomPane() {
         zoomPane.setPrefWidth(Math.max(scrollPane.getViewportBounds().getWidth(), group.getBoundsInParent().getMaxX()));
         zoomPane.setPrefHeight(Math.max(scrollPane.getViewportBounds().getHeight(), group.getBoundsInParent().getMaxY()));
     }
+
 
     ImagePattern patternTransparent(double size) {
         canvas.setHeight(size);
@@ -320,12 +330,17 @@ public class Resize extends Application {
         gc.clearRect(0, 0, size, size);
         gc.setFill(Color.BLACK);
         //gc.setLineWidth(2);
+        Paint paint =  lineColor;
+        gc.setStroke( paint);
+
         gc.strokeLine(0, 0, 0, size);
         gc.strokeLine(1, 0, size, 0);
-        sp.setFill(Color.TRANSPARENT);
+        //setStroke(Color.RED);
+        sp.setFill(backgroundColor);
         WritableImage image = canvas.snapshot(sp, null);
         return new ImagePattern(image, 0, 0, size, size, false);
     }
+
 
     Element createElement(double x, double y, double width, double height, Paint fill, boolean listener) {
         return new Element(x, y, width, height, fill, listener);
@@ -1000,4 +1015,17 @@ public class Resize extends Application {
     public static void extractFields( ActionEvent e) {
         System.out.println("extracting fields...");
     }
+
+    static void setLineColor( Paint color)
+    {
+    	lineColor = color;
+    }
+    static void setBackgroundColor(Paint color)
+    {
+    	backgroundColor = color;
+    	Paint bg1 = color;
+        BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
+    }
+
+
 }

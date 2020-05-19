@@ -112,6 +112,10 @@ public class DGeneralClass extends DObject {
 		superClass = dg;
 	}
 
+	public DGeneralClass getSuperClass() {
+		return superClass;
+	}
+
 	public String toString()
 	{
 		return "You shouldn't have created such an object";

@@ -50,6 +50,9 @@ public class DInterface extends DObject {
 		superInterfaces.add(di);
 	}
 
+	public ArrayList<DInterface> getSuperInterface() {
+		return superInterfaces;
+	}
 	public void removeSuperInterface( DInterface di)
 	{
 		superInterfaces.remove(di);
