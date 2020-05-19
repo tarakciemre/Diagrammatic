@@ -838,7 +838,7 @@ public class Resize extends Application {
     public static void displayMethodOptions( Element element) {
         Button create;
         TextField name, returnType;
-        CheckBox cb, cb2;
+        CheckBox cb, cb2, cb3;
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -853,8 +853,10 @@ public class Resize extends Application {
         //Label messageParam = new Label( "Add parameters below");
         cb = new CheckBox();
         cb2 = new CheckBox();
+        cb3 = new CheckBox();
         cb.setTooltip(  new Tooltip("void"));
         cb2.setTooltip(new Tooltip("static"));
+        cb3.setTooltip( new Tooltip("no parameters"));
         create = new Button("create method");
 
         create.setOnAction( e -> {
@@ -877,17 +879,17 @@ public class Resize extends Application {
             }
             else {
             	final DMethod meth = new DMethod( name.getText(), returnType.getText(), stat);
-        		if ( !cb.isSelected())
+        		if ( !cb3.isSelected())
         			displayParameterOptions( meth, element);
         		else
-        			addMethod(meth, element);
+        			addMethod( meth, element);
             }
 
             window.close();
         });
 
         VBox layout = new VBox();
-        layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, create);
+        layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, cb3, create);
         layout.setAlignment( Pos.CENTER);
 
         window.setScene( new Scene( layout));
