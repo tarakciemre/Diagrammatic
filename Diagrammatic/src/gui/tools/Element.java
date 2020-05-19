@@ -35,6 +35,8 @@ public class Element extends Group {
 	HBox contentsH;
 	HBox contentsH2;
 	HBox contentsH3;
+	VBox proper;
+	VBox metho;
 	VBox contentsV;
 	Label l;
 	Label l2;
@@ -77,13 +79,19 @@ public class Element extends Group {
         		meths.add( new Label( dObject.getProperties().get(i).toString()));
         }
         contentsH = new HBox();
+
         contentsH2 = new HBox();
+        proper = new VBox();
+
         contentsH3 = new HBox();
+        metho = new VBox();
+
         contentsV = new VBox();
+
         contentsH.getChildren().addAll(l);
         contentsH2.getChildren().addAll(l2);
         contentsH3.getChildren().addAll(l3);
-        contentsV.getChildren().addAll( contentsH, contentsH2, contentsH3);
+        contentsV.getChildren().addAll( contentsH, contentsH2, proper, contentsH3, metho);
 
         //setPickOnBounds(true);
         getChildren().addAll(rectangle, contentsV);
@@ -111,11 +119,14 @@ public class Element extends Group {
     }
 
     public void updateSize() {
-    	for( Node n : contentsH.getChildren())
-    		((Label) n).setPrefWidth(((Label) n).getText().length() * 7);
+    	//for( Node n : contentsH.getChildren())
+    		//((Label) n).setPrefWidth(((Label) n).getText().length() * 7);
     	for( Node n : contentsV.getChildren()) {
-    		for(Node m : ((HBox)n).getChildren())
-    			((Label) m).setPrefHeight( 15);
+    		if ( n instanceof HBox) {
+    			//for(Node m : ((HBox)n).getChildren())
+    				//((Label) m).setPrefHeight( 15);
+
+    		}
     	}
     }
 
@@ -132,49 +143,72 @@ public class Element extends Group {
     public void setObject( DObject dc) {
     	nameOfClass = dc.getName();
     	this.dObject = dc;
+
     	updateObject();
     }
 
     public void addField( DProperty prop) {
+    	String out = new String(prop.getType() + " ");
+    	out += prop.getName();
 
+
+    	props.add( new Label(out));
+    	updateObject();
     }
 
     public void addMethod( DMethod meth) {
+    	String out = new String(meth.getReturnType() + " ");
+    	out += meth.getName();
+    	for ( DProperty param : meth.getParameters()) {
+    		out += param + "/n";
 
+    	}
 
+    	meths.add( new Label(out));
+    	updateObject();
     }
 
     public void updateObject() {
 
-    	Label lp = null;
-    	for (int i = 0; i < getChildren().size(); i++) {
+    	/*for (int i = 0; i < contentsV.getChildren().size(); i++) {
     		if ( getChildren().get(i) instanceof HBox)
     			getChildren().remove(i);
-    	}
+    	}*/
 
-    	if (dObject != null) {
 
-    		lp = new Label( dObject.getName()+ "\n--------------\n");
-            Label l2p = new Label( properties.toUpperCase()+ "\n--------------\n");
-            Label l3p = new Label( methods.toUpperCase() + "\n--------------\n");
+    	/*if (dObject != null) {
 
-    		/*
+
     		for ( int i = 0; i < dObject.getProperties().size(); i++)
         		props.add( new Label( dObject.getProperties().get(i).toString()));
 
         	for ( int i = 0; i < dObject.getMethods().size(); i++)
         		meths.add( new Label( dObject.getProperties().get(i).toString()));
-        	 */
+
+
+    	}*/
+    	/*for ( int i = 0; i < contentsV.getChildren().size(); i++)
+    		if ( contentsV.getChildren().get(i) instanceof VBox)
+    			contentsH.getChildren().add( new Label( dObject.getName() + "\n--------------\n"));
+    	*/
+
+    	// updating name
+    	for ( int i = 0; i < contentsH.getChildren().size(); i++)
+    		if ( contentsH.getChildren().get(i) instanceof Label)
+    			contentsH.getChildren().set( i, new Label( dObject.getName() + "\n--------------\n"));
+
+    	// updating properties
+    	for ( Label label : props) {
+    		if (!proper.getChildren().contains(label))
+    			proper.getChildren().add(label);
     	}
 
-    	contentsH.getChildren().addAll(lp);
-    	//contentsH2.getChildren().addAll(l2p);
-    	for ( Label l : props)
-    		contentsH2.getChildren().addAll(l);
 
-    	//contentsH3.getChildren().addAll(l3);
-        for ( Label l : meths)
-        	contentsH3.getChildren().addAll(l);
+    	// updating methods
+        for ( Label label : meths) {
+        	if (!metho.getChildren().contains(label))
+        		metho.getChildren().addAll(label);
+        }
     }
 
     public DObject getObject() {

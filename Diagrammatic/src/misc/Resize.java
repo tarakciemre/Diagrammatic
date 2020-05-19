@@ -58,6 +58,8 @@ public class Resize extends Application {
     public void start( Stage stage) {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
+
+        stage.setTitle("Diagrammatic 0.1.1");
         stage.setScene(new Scene(layout, 500, 300));
         stage.setHeight(700);
         stage.setWidth(700);
@@ -76,6 +78,9 @@ public class Resize extends Application {
         r1.setObject(albanian);
         r2.setObject(kosovan);
         r3.setObject(albanianable);
+        r1.updateObject();
+        r2.updateObject();
+        r3.updateObject();
 
         project.addObject(albanian);
         project.addObject(kosovan);
@@ -233,9 +238,6 @@ public class Resize extends Application {
         Scene scene = new Scene( parentLayout, 300, 250);
 
         stage.setScene( scene);
-        stage.setTitle("Diagrammatic 0.1");
-
-
         stage.show();
         scrollPane.setPannable(true);
 
@@ -799,7 +801,7 @@ public class Resize extends Application {
         		if ( !cb.isSelected())
         			displayParameterOptions( meth, element);
         		else
-        			addMethod(meth);
+        			addMethod(meth, element);
             }
 
             window.close();
@@ -851,7 +853,7 @@ public class Resize extends Application {
         			}
         		}
         	}
-        	addMethod(meth);
+        	addMethod(meth, element);
 
             window.close();
         });
@@ -894,11 +896,12 @@ public class Resize extends Application {
 
     public static void addProperty( String name, String type, Element element) {
     	DProperty prop = new DProperty( name, type);
+    	element.addField(prop);
     	System.out.println( prop);
     }
 
-    public static void addMethod( DMethod m) {
-
+    public static void addMethod( DMethod m, Element element) {
+    	element.addMethod(m);
     	System.out.print( m);
     }
 
