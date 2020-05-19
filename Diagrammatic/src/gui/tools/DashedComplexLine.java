@@ -4,7 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import misc.Resize;
+import gui.*;
 
 public class DashedComplexLine extends ComplexLine {
 
@@ -67,9 +67,9 @@ public class DashedComplexLine extends ComplexLine {
 					if (y < 5)
 						me.consume();
 
-					if (x > Resize.area.getMaxX())
+					if (x > DApp.area.getMaxX())
 						me.consume();
-					if (y > Resize.area.getMaxY())
+					if (y > DApp.area.getMaxY())
 						me.consume();
 
 					if( !me.isConsumed())
@@ -78,10 +78,10 @@ public class DashedComplexLine extends ComplexLine {
 						c.setCenterY(y);
 						points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
 						updateL();
-						Resize.updateOverlay();
-						Resize.updateZoomPane();
-						Resize.updateArrow();
-				        Resize.scrollPane.setPannable(false);
+						DApp.updateOverlay();
+						DApp.updateZoomPane();
+						DApp.updateArrow();
+				        DApp.scrollPane.setPannable(false);
 					}
 				}
 				else
@@ -94,7 +94,7 @@ public class DashedComplexLine extends ComplexLine {
 				{
 					removePoint( p);
 					updateLP();
-					Resize.updateArrow();
+					DApp.updateArrow();
 					event.consume();
 				}
 
@@ -102,7 +102,7 @@ public class DashedComplexLine extends ComplexLine {
 
 			c.setOnMouseReleased(me -> {
 				updateLP();
-		        Resize.scrollPane.setPannable(true);
+		        DApp.scrollPane.setPannable(true);
 			});
 		}
 

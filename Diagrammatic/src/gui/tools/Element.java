@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import misc.Resize;
+import gui.*;
 
 import logic.object_source.*;
 import logic.tools.*;
@@ -43,13 +43,13 @@ public class Element extends Group {
     public Element( boolean listener) {
     	if (listener) {
             setOnMousePressed(me -> {
-            	Resize.select(this);
-                Resize.srBnd.fireEvent(me);
+            	DApp.select(this);
+                DApp.srBnd.fireEvent(me);
                 me.consume();
             });
-            setOnMouseDragged(me -> Resize.srBnd.fireEvent(me));
-            setOnMouseReleased(me -> Resize.srBnd.fireEvent(me));
-            boundsInParentProperty().addListener((v, o, n) -> Resize.updateOverlay());
+            setOnMouseDragged(me -> DApp.srBnd.fireEvent(me));
+            setOnMouseReleased(me -> DApp.srBnd.fireEvent(me));
+            boundsInParentProperty().addListener((v, o, n) -> DApp.updateOverlay());
     	}
     }
     public Element(double x, double y, double width, double height, Paint fill, boolean listener) {
@@ -106,14 +106,14 @@ public class Element extends Group {
         getChildren().addAll(rectangle, contentsV);
         if(listener) {
         	setOnMousePressed(me -> {
-        		Resize.select(this);
-        		Resize.srBnd.fireEvent(me);
+        		DApp.select(this);
+        		DApp.srBnd.fireEvent(me);
                 me.consume();
                 System.out.println("S: " + toString());
             });
-            setOnMouseDragged(me -> Resize.srBnd.fireEvent(me));
-            setOnMouseReleased(me -> Resize.srBnd.fireEvent(me));
-            boundsInParentProperty().addListener((v, o, n) -> Resize.updateOverlay());
+            setOnMouseDragged(me -> DApp.srBnd.fireEvent(me));
+            setOnMouseReleased(me -> DApp.srBnd.fireEvent(me));
+            boundsInParentProperty().addListener((v, o, n) -> DApp.updateOverlay());
         }
 
     }
