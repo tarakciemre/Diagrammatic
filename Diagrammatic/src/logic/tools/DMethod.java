@@ -3,7 +3,9 @@ package logic.tools;
 
 import java.util.ArrayList;
 
-public class DMethod {
+import logic.interfaces.Accesible;
+
+public class DMethod implements Accesible{
  
    // Properties
    private String name;
@@ -11,6 +13,11 @@ public class DMethod {
    private boolean isStatic;
    private ArrayList<DProperty> parameters;
 
+   private String accesibility;
+   final static String PROTECTED = "protected";
+   final static String PUBLIC = "public";
+   final static String DEFAULT = "default";
+   final static String PRIVATE = "private";
    
    // Constructors  
    public DMethod() {
@@ -24,6 +31,7 @@ public class DMethod {
       this.returnType = returnType.trim();
       this.name = name.trim();
       this.isStatic = isStatic;
+      accesibility = DEFAULT;
    }
    
    // Methods
@@ -147,5 +155,19 @@ public class DMethod {
       
       return lines;
    }
+
+@Override
+public String getAcccessability() {
+	return accesibility;
+}
+
+@Override
+public void setAccessability( String s) {
+	if ( s.equals(PROTECTED) || s.equals(PUBLIC) || s.equals(DEFAULT) || s.equals(PRIVATE) )
+		accesibility = s;
+	
+}
+   
+   
    
 }
