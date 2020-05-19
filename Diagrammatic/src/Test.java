@@ -7,7 +7,7 @@ import logic.tools.*;
 public class Test {
 
    // for stage 1
-	static DProject project;
+   static DProject project;
    static DGeneralClass cg;
    static DInterface i;
    static DClass c;

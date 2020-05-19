@@ -17,6 +17,8 @@ import javafx.scene.image.*;
 import javafx.geometry.*;
 import logic.object_source.*;
 import logic.tools.*;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import gui.tools.*;
 
@@ -39,6 +41,7 @@ public class Resize extends Application {
     public static Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
     static Circle closest;
     static Element selectedElement;
+    public static ArrayList<Element> elements;
     public static Rectangle2D area; // sets the borders for moving objects
     public static DProject project;
 
@@ -81,6 +84,11 @@ public class Resize extends Application {
         r1.updateObject();
         r2.updateObject();
         r3.updateObject();
+
+        elements = new ArrayList<Element>();
+        elements.add(r1);
+        elements.add(r2);
+        elements.add(r3);
 
         project.addObject(albanian);
         project.addObject(kosovan);
@@ -458,7 +466,7 @@ public class Resize extends Application {
         selectedElement.setLayoutY(y);
     }
 
-    void drawCenteredLine( Element first, Element second)
+    static void drawCenteredLine( Element first, Element second)
     {
     	double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
@@ -652,12 +660,14 @@ public class Resize extends Application {
     // for loading from file
     public void openProject( DObject d) {
 
+    	// sometimes foreshadowing is relatively obvious
 
     }
 
     public static void displayObjectOptions() {
         Button create;
         TextField name;
+        DObject parent;
 
         Stage window = new Stage();
 
@@ -670,40 +680,73 @@ public class Resize extends Application {
         name = new TextField();
 
         Label messageInh = new Label( "This class extends:");
-        ChoiceBox<DClass> choiceBox = new ChoiceBox<>();
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
 
         // Going to add the elements in project
-        choiceBox.getItems().add( null);
-        //choiceBox.getItems().add( r1.getObject());
+        choiceBox.getItems().add("Object");
+        for ( DObject obj : project.getObjects())
+        	choiceBox.getItems().add( obj.getName());
+
 
 
         create = new Button("create object");
 
         create.setOnAction( e -> {
-            createObject( name);
+
+            getInheritanceChoice( choiceBox, createObject( name));
             window.close();
         });
 
 
 
         VBox layout = new VBox();
-        layout.getChildren().addAll(  messageName, name, create);
+        layout.getChildren().addAll(  messageName, name, choiceBox, create);
         layout.setAlignment( Pos.CENTER);
 
         window.setScene( new Scene( layout));
         window.showAndWait();
     }
 
-    public static void createObject( TextField name) {
+    public static DObject createObject( TextField name) {
         DClass object = new DClass( name.getText());
         System.out.println( object);
 
         Element r = new Element( offset + 500 - Math.random()*100, offset + 500 - Math.random()*100, 200, 200, Color.SEASHELL, true);
         r.setObject(object);
+        elements.add(r);
         project.addObject(object);
 
         group.getChildren().add(r);
+
+        return object;
     }
+
+    public static void getInheritanceChoice( ChoiceBox cb, DObject child) {
+    	for ( DObject o : project.getObjects() ) {
+    		if ( cb.getValue().equals(o.getName()))
+    			setInheritance(o , child);
+    	}
+    }
+
+    public static void setInheritance( DObject parent, DObject child) {
+    	Element lastAdded = null, selected = null;
+
+    	for ( Node n : group.getChildren()) {
+			if ( n instanceof Element && ((Element) n).hasObject()){
+				if ( (((Element) n).getObject().getName()).equals( child.getName()) )
+					lastAdded = (Element)n;
+			}
+		}
+    	for ( Node n : group.getChildren()) {
+			if ( n instanceof Element && ((Element) n).hasObject()){
+				if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
+					lastAdded = (Element)n;
+			}
+		}
+
+    	drawCenteredLine( selected, lastAdded);
+    }
+
 
     public static void displayFieldOptions( Element element) {
         Button create;

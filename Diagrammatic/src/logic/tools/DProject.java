@@ -78,6 +78,10 @@ public class DProject {
 		return projectText;
 	}
 
+	public ArrayList<DObject> getObjects() {
+		return objects;
+	}
+
 	public void addObject( DObject d)
 	{
 		objects.add(d);

@@ -147,6 +147,9 @@ public class Element extends Group {
     	updateObject();
     }
 
+    public boolean hasObject() {
+    	return dObject != null;
+    }
     public void addField( DProperty prop) {
     	String out = new String(prop.getType() + " ");
     	out += prop.getName();
@@ -212,7 +215,7 @@ public class Element extends Group {
     }
 
     public DObject getObject() {
-    	return dObject;
+    	return this.dObject;
     }
 
 }
