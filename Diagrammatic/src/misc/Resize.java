@@ -507,6 +507,8 @@ public class Resize extends Application {
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
         ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
         group.getChildren().add(line);
+        ArrowHead a = new ArrowHead( first, line);
+    	group.getChildren().addAll(a);
         first.startLines.add(line);
         second.endLines.add(line);
     }
