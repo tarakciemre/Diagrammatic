@@ -1,0 +1,12 @@
+public class Albanian
+{
+
+	//Properties
+
+
+	//Constructors
+
+	//Methods
+
+
+}

@@ -1,0 +1,12 @@
+public class Kosovan
+{
+
+	//Properties
+
+
+	//Constructors
+
+	//Methods
+
+
+}

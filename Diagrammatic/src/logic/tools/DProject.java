@@ -14,7 +14,7 @@ public class DProject {
 
 	ArrayList<DObject> objects;
 	String projectName;
-
+	final static String KAAN_LOCAL = "";
 	public DProject()
 	{
 		objects = new ArrayList<DObject>();

@@ -75,14 +75,13 @@ public class Resize extends Application {
 
         // init project
         project = new DProject();
+        project.setName("GloriousAlbania");
+
 
         // init prj objects
-        DObject albanian = new DObject();
-        albanian.setName("Albanian");
-        DObject albanianable = new DObject();
-        albanianable.setName("Albanianable");
-        DObject kosovan = new DObject();
-        kosovan.setName("Kosovan");
+        DObject albanian = new DClass("Albanian");
+        DObject albanianable = new DClass("Albanianable");
+        DObject kosovan = new DClass("Kosovan");
 
         // adding prj objects to prj
         project.addObject(albanian);
@@ -224,25 +223,24 @@ public class Resize extends Application {
         helpMenu.getItems().add(autoSave);
 
         //Difficulty RadioMenuItems
-        /*Menu extractMenu = new Menu("Extract...");
+        Menu extractMenu = new Menu("Extract...");
         MenuItem extractAll = new MenuItem( "extract all");
         MenuItem extractMethods = new MenuItem( "extract methods");
         MenuItem extractFields = new MenuItem( "extract fields");
 
 
-        extractAll.setOnAction(e -> extractAll(e) );
+        extractAll.setOnAction(e -> extractAll(e, project) );
         extractMethods.setOnAction(e -> extractMethods(e));
         extractFields.setOnAction(e -> extractFields(e));
 
 
         extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
-         */
 
         Menu ytpMenu = new Menu("YTP modes");
 
         //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(addMenu, helpMenu, ytpMenu);
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, ytpMenu);
 
         parentLayout.setCenter( layout);
         parentLayout.setLeft( leftLayout );
@@ -264,6 +262,32 @@ public class Resize extends Application {
         group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, closest);
         addElements( group);
         scrollPane.setPannable(true);
+    }
+    void iniElements( DProject prj) {
+        elements = new ArrayList<Element>();
+        for ( int i = 0; i < prj.getObjects().size(); i++) {
+            elements.add( new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        }
+
+
+        for ( int i = 0; i < prj.getObjects().size(); i++) {
+            elements.get(i).setObject( prj.getObjects().get(i));
+            elements.get(i).updateObject();
+        }
+
+
+    }
+
+    static void drawHierarchy( DProject prj) {
+        ArrayList<Boolean> bunch = new ArrayList<Boolean>();
+
+        drawCenteredLine( elements.get(0), elements.get(1));
+        drawCenteredDashedLine( elements.get(0), elements.get(2));
+    }
+
+    static void addElements( Group group) {
+        for ( int i = 0; i < elements.size(); i++)
+            group.getChildren().add( elements.get(i));
     }
 
     void updateGrid() {
@@ -954,31 +978,16 @@ public class Resize extends Application {
     	System.out.print( m);
     }
 
-    void iniElements( DProject prj) {
-        elements = new ArrayList<Element>();
-        for ( int i = 0; i < prj.getObjects().size(); i++) {
-            elements.add( new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
-        }
-
-
-        for ( int i = 0; i < prj.getObjects().size(); i++) {
-            elements.get(i).setObject( prj.getObjects().get(i));
-            elements.get(i).updateObject();
-        }
-
-
+    public static void extractAll( ActionEvent e, DProject prj) {
+        System.out.println("extracting all...");
+        prj.extract("");
     }
 
-    static void drawHierarchy( DProject prj) {
-        ArrayList<Boolean> bunch = new ArrayList<Boolean>();
-
-        drawCenteredLine( elements.get(0), elements.get(1));
-        drawCenteredDashedLine( elements.get(0), elements.get(2));
+    public static void extractMethods( ActionEvent e) {
+        System.out.println("extracting methods...");
     }
 
-    static void addElements( Group group) {
-        for ( int i = 0; i < elements.size(); i++)
-            group.getChildren().add( elements.get(i));
+    public static void extractFields( ActionEvent e) {
+        System.out.println("extracting fields...");
     }
-
 }
