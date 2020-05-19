@@ -104,6 +104,9 @@ public class Resize extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
+        setLineColor(Color.DIMGREY);
+        setBackgroundColor(Color.DARKGRAY);
+
         stage.setTitle("Diagrammatic 0.1.3");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
@@ -114,6 +117,8 @@ public class Resize extends Application {
         stage.setHeight(900);
 
         Image icon = new Image("file:icon.png");
+        Image albaniaIcon = new Image("file:albaniaicon.jpg");
+        stage.getIcons().add(albaniaIcon);
         stage.getIcons().add(icon);
 
         // init project
@@ -230,9 +235,6 @@ public class Resize extends Application {
         layout.setCenter(scrollPane);
         layout.setBottom(new FlowPane(slider1, checkBox, slider2));
         //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
-
-        setLineColor(Color.DIMGREY);
-        setBackgroundColor(Color.DARKGRAY);
 
         // Layout
         VBox leftLayout = new VBox(10);
