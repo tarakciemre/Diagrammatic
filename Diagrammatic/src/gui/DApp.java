@@ -22,19 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
@@ -55,6 +44,7 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import logic.object_source.DClass;
 import logic.object_source.DObject;
 import logic.tools.DMethod;
@@ -135,6 +125,9 @@ public class DApp extends Application {
         project.addObject(albanian);
         project.addObject(kosovan);
         project.addObject(albanianable);
+
+        //TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTTTTTTTTTTTT
+        displayConstructorMakerWindow();
 
         // init elements
         iniElements(project);
@@ -1068,5 +1061,35 @@ public class DApp extends Application {
         BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     }
 
+    public static void displayConstructorMakerWindow() {
+        Stage window = new Stage();
+        Scene scene;
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.DECORATED);
+        window.setTitle("Constructor Maker");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+        TableView table = new TableView();
 
+        table.setEditable(true);
+
+        TableColumn firstNameCol = new TableColumn("Accessibility");
+        TableColumn lastNameCol = new TableColumn("Parameters");
+
+        firstNameCol.setPrefWidth( 60);
+        lastNameCol.setPrefWidth( 60);
+
+        table.getColumns().addAll(firstNameCol, lastNameCol);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        vbox.getChildren().addAll( table);
+
+        scene = new Scene(vbox);
+        //((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        window.setScene(scene);
+        window.show();
+    }
 }
