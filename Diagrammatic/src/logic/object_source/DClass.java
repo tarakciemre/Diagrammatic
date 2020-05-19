@@ -84,10 +84,23 @@ public class DClass extends DGeneralClass {
 		output = new ArrayList<String>();
 		output.add( "CLA: " + getName());
 		output.add( "");
-		output.add( "EXT");
-		output.add( "");
-		output.add( "IMP");
-		output.add( "");
+		if (superClass != null)
+		{
+			output.add( "EXT: ");
+			output.add( "");
+		}
+		if (!interfaces.isEmpty())
+		{
+			String interfaceLine = "IMP: ";
+			for (DInterface di : interfaces)
+			{
+				interfaceLine += di.getName() + ",";
+			}
+			interfaceLine = interfaceLine.substring(0, interfaceLine.length() - 1);
+			output.add(interfaceLine);
+			output.add( "");
+		}
+
 		for( DProperty prop: getProperties())
 		{
 			output.add("PRO " + prop);

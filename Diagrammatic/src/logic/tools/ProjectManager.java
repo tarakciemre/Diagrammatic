@@ -2,7 +2,9 @@ package logic.tools;
 
 import java.util.ArrayList;
 import logic.object_source.DClass;
+import logic.object_source.DGeneralClass;
 import logic.object_source.DInterface;
+import logic.object_source.DObject;
 import logic.object_source.DAbstractClass;
 
 /*
@@ -13,7 +15,7 @@ import logic.object_source.DAbstractClass;
 public class ProjectManager
 {
 
-    public static DClass textToClass( ArrayList<String> lines)
+    public static DClass textToClass( ArrayList<String> lines, DProject project)
     {
         DClass dc = new DClass( "Unnamed"); //Means an error occurred while loading the class
         String line = "";
@@ -31,14 +33,43 @@ public class ProjectManager
             {
                 if( line.length() > 3)
                 {
-                    String lineInfo = line.substring( 4, line.length());
+                	String lineInfo = line.substring( 4, line.length());
                     if(line.startsWith( "EXT"))
                     {
+                    	for (DObject o : project.getObjects())
+                    	{
+                    		if (o instanceof DGeneralClass)
+                    		{
+                    			DGeneralClass generalClass = (DGeneralClass) o;
 
+                    			if (o.getName().equalsIgnoreCase(lineInfo))
+                    			{
+                    				dc.setSuperClass(generalClass);
+                    			}
+                    		}
+
+                    	}
                     }
                     else if(line.startsWith( "IMP"))
                     {
+                    	String[] interfaces = lineInfo.split(",");
 
+                    	for (DObject o : project.getObjects())
+                    	{
+                    		if (o instanceof DInterface)
+                    		{
+                    			DInterface dInterface = (DInterface) o;
+
+                    			for (String intName : interfaces)
+                        		{
+                        			if (o.getName().equalsIgnoreCase(intName))
+                        			{
+                        				dc.addInterface(dInterface);
+                        			}
+                        		}
+                    		}
+
+                    	}
                     }
                     else if (line.startsWith( "PRO"))
                     {
@@ -94,7 +125,7 @@ public class ProjectManager
         return dc;
     }
 
-    public static DAbstractClass textToAbsClass( ArrayList<String> lines)
+    public static DAbstractClass textToAbsClass( ArrayList<String> lines, DProject project)
     {
         DAbstractClass da = new DAbstractClass( "Unnamed"); //Means an error occurred while loading the class
         String line = "";
@@ -115,11 +146,40 @@ public class ProjectManager
                     String lineInfo = line.substring( 4, line.length());
                     if(line.startsWith( "EXT"))
                     {
+                    	for (DObject o : project.getObjects())
+                    	{
+                    		if (o instanceof DGeneralClass)
+                    		{
+                    			DGeneralClass generalClass = (DGeneralClass) o;
 
+                    			if (o.getName().equalsIgnoreCase(lineInfo))
+                    			{
+                    				da.setSuperClass(generalClass);
+                    			}
+                    		}
+
+                    	}
                     }
                     else if(line.startsWith( "IMP"))
                     {
+                    	String[] interfaces = lineInfo.split(",");
 
+                    	for (DObject o : project.getObjects())
+                    	{
+                    		if (o instanceof DInterface)
+                    		{
+                    			DInterface dInterface = (DInterface) o;
+
+                    			for (String intName : interfaces)
+                        		{
+                        			if (o.getName().equalsIgnoreCase(intName))
+                        			{
+                        				da.addInterface(dInterface);
+                        			}
+                        		}
+                    		}
+
+                    	}
                     }
                     else if (line.startsWith( "PRO"))
                     {
@@ -175,7 +235,7 @@ public class ProjectManager
         return da;
     }
 
-    public static DInterface textToInterface( ArrayList<String> lines)
+    public static DInterface textToInterface( ArrayList<String> lines, DProject project)
     {
         DInterface di = new DInterface( "Unnamed"); //Means an error occurred while loading the class
         String line = "";
@@ -196,7 +256,24 @@ public class ProjectManager
                     String lineInfo = line.substring( 4, line.length());
                     if(line.startsWith( "EXT"))
                     {
+                    	String[] superInterfaces = lineInfo.split(",");
 
+                    	for (DObject o : project.getObjects())
+                    	{
+                    		if (o instanceof DInterface)
+                    		{
+                    			DInterface dInterface = (DInterface) o;
+
+                    			for (String superInterface : superInterfaces)
+                        		{
+                        			if (o.getName().equalsIgnoreCase(superInterface))
+                        			{
+                        				di.addSuperInterface(dInterface);
+                        			}
+                        		}
+                    		}
+
+                    	}
                     }
                     else if(line.startsWith( "MET"))
                     {
@@ -262,7 +339,7 @@ public class ProjectManager
             		}
             		classInfo.add("END");
             		i++;
-            		DClass dc = textToClass(classInfo);
+            		DClass dc = textToClass(classInfo, dp);
             		dp.addObject(dc);
             	}
             	else if (line.startsWith( "INT"))
@@ -276,7 +353,7 @@ public class ProjectManager
             		}
             		intInfo.add("END");
             		i++;
-            		DInterface di = textToInterface(intInfo);
+            		DInterface di = textToInterface(intInfo, dp);
             		dp.addObject(di);
             	}
             	else if (line.startsWith( "ABS"))
@@ -290,7 +367,7 @@ public class ProjectManager
             		}
             		absInfo.add("END");
             		i++;
-            		DAbstractClass da = textToAbsClass(absInfo);
+            		DAbstractClass da = textToAbsClass(absInfo, dp);
             		dp.addObject(da);
             	}
             	else

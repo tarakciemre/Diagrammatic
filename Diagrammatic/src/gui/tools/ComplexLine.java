@@ -78,41 +78,45 @@ public class ComplexLine extends Group
 			circles.add(c);
 			final int FINALINDEX = i;
 
+			c.setOnMouseDragged(me -> {
+				if (me.getButton() == MouseButton.PRIMARY)
+				{
+					double x = me.getX();
+					double y = me.getY();
+					if (x < 5)
+						me.consume();
+					if (y < 5)
+						me.consume();
+
+					if (x > Resize.area.getMaxX())
+						me.consume();
+					if (y > Resize.area.getMaxY())
+						me.consume();
+
+					if( !me.isConsumed())
+					{
+						c.setCenterX(x);
+						c.setCenterY(y);
+						points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
+						updateL();
+						Resize.updateOverlay();
+						Resize.updateZoomPane();
+						Resize.updateArrow();
+				        Resize.scrollPane.setPannable(false);
+					}
+				}
+				else
+					me.consume();
+			});
+
 			c.setOnMousePressed(event ->
 			{
 				if (event.getButton() == MouseButton.SECONDARY)
 				{
 					removePoint( p);
 					updateLP();
-					updateL();
-					event.consume();
-				}
-
-			});
-
-			c.setOnMouseDragged(me -> {
-				double x = me.getX();
-				double y = me.getY();
-				if (x < 5)
-					me.consume();
-				if (y < 5)
-					me.consume();
-
-				if (x > Resize.area.getMaxX())
-					me.consume();
-				if (y > Resize.area.getMaxY())
-					me.consume();
-
-				if( !me.isConsumed())
-				{
-					c.setCenterX(x);
-					c.setCenterY(y);
-					points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
-					updateL();
-					Resize.updateOverlay();
-					Resize.updateZoomPane();
 					Resize.updateArrow();
-			        Resize.scrollPane.setPannable(false);
+					event.consume();
 				}
 
 			});
@@ -182,7 +186,6 @@ public class ComplexLine extends Group
 	public void removePoint( Point2D point)
 	{
 		points.remove( point);
-		updateLP();
 	}
 }
 

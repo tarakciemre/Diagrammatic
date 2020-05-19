@@ -92,10 +92,10 @@ public class Resize extends Application {
         // init elements
         iniElements(project);
 
-        Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, true);
-        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, true);
-        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, true);
-        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, true);
+        Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, false);
+        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
+        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
+        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
         group = new Group();
 

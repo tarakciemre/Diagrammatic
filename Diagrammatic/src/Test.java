@@ -142,7 +142,7 @@ public class Test {
 
    public static void translateTest()
    {
-      DClass copydc = ProjectManager.textToClass( c.classToString());
+      DClass copydc = ProjectManager.textToClass( c.classToString(), project);
 
       for( int k = 0; k < copydc.extract().size(); k++)
          System.out.println( copydc.extract().get(k));

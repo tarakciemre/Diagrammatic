@@ -1,17 +1,19 @@
 package gui.tools;
 
 import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import misc.Resize;
 
 public class DashedComplexLine extends ComplexLine {
-	
+
 	public DashedComplexLine( double x1, double y1, double x2, double y2)
 	{
 		super( x1, y1, x2, y2);
 	}
-	
+
+	@Override
 	public void updateL()
 	{
 		for (int i = 0; i < getChildren().size(); i++)
@@ -33,7 +35,8 @@ public class DashedComplexLine extends ComplexLine {
 		getChildren().addAll(lines);
 	}
 
-	public void updateLP() //buggy code
+
+	public void updateLP()
 	{
 		getChildren().removeAll(getChildren());
 
@@ -53,29 +56,46 @@ public class DashedComplexLine extends ComplexLine {
 			Circle c = new Circle( p.getX(), p.getY(), 5);
 			circles.add(c);
 			final int FINALINDEX = i;
+
 			c.setOnMouseDragged(me -> {
-				double x = me.getX();
-				double y = me.getY();
-				if (x < 5)
-					me.consume();
-				if (y < 5)
-					me.consume();
-
-				if (x > Resize.area.getMaxX())
-					me.consume();
-				if (y > Resize.area.getMaxY())
-					me.consume();
-
-				if( !me.isConsumed())
+				if (me.getButton() == MouseButton.PRIMARY)
 				{
-					c.setCenterX(x);
-					c.setCenterY(y);
-					points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
-					updateL();
-					Resize.updateOverlay();
-					Resize.updateZoomPane();
+					double x = me.getX();
+					double y = me.getY();
+					if (x < 5)
+						me.consume();
+					if (y < 5)
+						me.consume();
+
+					if (x > Resize.area.getMaxX())
+						me.consume();
+					if (y > Resize.area.getMaxY())
+						me.consume();
+
+					if( !me.isConsumed())
+					{
+						c.setCenterX(x);
+						c.setCenterY(y);
+						points.set(FINALINDEX, new Point2D(me.getX(), me.getY()));
+						updateL();
+						Resize.updateOverlay();
+						Resize.updateZoomPane();
+						Resize.updateArrow();
+				        Resize.scrollPane.setPannable(false);
+					}
+				}
+				else
+					me.consume();
+			});
+
+			c.setOnMousePressed(event ->
+			{
+				if (event.getButton() == MouseButton.SECONDARY)
+				{
+					removePoint( p);
+					updateLP();
 					Resize.updateArrow();
-			        Resize.scrollPane.setPannable(false);
+					event.consume();
 				}
 
 			});
