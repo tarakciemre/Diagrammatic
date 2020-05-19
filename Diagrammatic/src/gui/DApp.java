@@ -122,6 +122,7 @@ public class DApp extends Application {
         DObject albanian = new DClass("Albanian");
         DObject albanianable = new DClass("Albanianable");
         DObject kosovan = new DClass("Kosovan");
+        ((DClass) kosovan).setSuperClass((DClass) albanian);
 
         // adding prj objects to prj
         project.addObject(albanian);
@@ -373,13 +374,20 @@ public class DApp extends Application {
         for ( DObject o : prj.getObjects()){
             if ( o instanceof DGeneralClass && ((DGeneralClass) o).getSuperClass() != null){
                 if ( o instanceof DClass && ((DGeneralClass) o).getSuperClass() instanceof DClass) {
-//                    for ( int j = 0; j < elements.size(); j++)
-//                        if ( elements.get(j).getObject().getName().equals )
+                	for ( int j = 0; j < elements.size(); j++) {
+                		if ( elements.get(j).getObject().getName().equals( ((DGeneralClass) o).getSuperClass().getName()) )
+                			from = elements.get(j);
+                		else if ( elements.get(j).getObject().getName().equals( ((DGeneralClass) o).getName()) )
+                			to = elements.get(j);
+                	}
+
                 }
             }
+            if ( from != null && to != null)
+            	drawCenteredLine(from,to);
         }
 
-        drawCenteredLine( elements.get(0), elements.get(1));
+        //drawCenteredLine( elements.get(0), elements.get(1));
         drawCenteredDashedLine( elements.get(0), elements.get(2));
     }
 
@@ -732,7 +740,7 @@ public class DApp extends Application {
     	else
     		closest.setRadius(0);
     }
-    
+
     public static void setIndicatorVisibility(boolean visibility)
     {
     	if(visibility)
