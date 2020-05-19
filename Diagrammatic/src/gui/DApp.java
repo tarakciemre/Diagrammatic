@@ -126,8 +126,6 @@ public class DApp extends Application {
         project.addObject(kosovan);
         project.addObject(albanianable);
 
-        //TESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSTTTTTTTTTTTT
-        displayConstructorMakerWindow();
 
         // init elements
         iniElements(project);
@@ -234,7 +232,7 @@ public class DApp extends Application {
         VBox rightLayout = new VBox(10);
         BorderPane parentLayout = new BorderPane();
 
-        // Menu
+        // Add Menu
         Menu addMenu = new Menu("Add");
         MenuItem newObject = new MenuItem("New Object");
         newObject.setOnAction(e -> {
@@ -254,7 +252,15 @@ public class DApp extends Application {
         	else
         		displayErrorMessage("No Class Selected");
         });
-        addMenu.getItems().addAll( newObject, newField, newMethod);
+        MenuItem newConstr = new MenuItem("add constructor to a class");
+        newConstr.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		displayConstructorMakerWindow( selectedElement);
+        	else
+        		displayErrorMessage("No Class Selected");
+        });
+
+        addMenu.getItems().addAll( newObject, newField, newMethod, newConstr);
 
         //Help menu
         Menu helpMenu = new Menu("Help");
@@ -277,11 +283,34 @@ public class DApp extends Application {
 
         extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
 
+        // most important menu
         Menu ytpMenu = new Menu("YTP modes");
+
+        // edit menu
+        Menu editMenu = new Menu("Edit");
+		MenuItem editRelations = new MenuItem("Edit Relations");
+		MenuItem editClass = new MenuItem("Edit Class");
+		MenuItem removeClass = new MenuItem("Remove Class");
+
+		editRelations.setOnAction(e -> {
+			//displayObjectOptions();
+		});
+
+		editClass.setOnAction(e -> {
+			//displayObjectOptions();
+		});
+
+		removeClass.setOnAction(e -> {
+			if (selectedElement != null)
+				displayRemoveOptions( selectedElement);
+			else
+				displayErrorMessage( "No Selected Class");
+		});
+		editMenu.getItems().addAll( editRelations, editClass, removeClass);
 
         //Main menu bar
         MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, ytpMenu);
+        menuBar.getMenus().addAll(addMenu, helpMenu, extractMenu, editMenu, ytpMenu);
 
         parentLayout.setCenter( layout);
         parentLayout.setLeft( leftLayout );
@@ -1061,7 +1090,7 @@ public class DApp extends Application {
         BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     }
 
-    public static void displayConstructorMakerWindow() {
+    public static void displayConstructorMakerWindow( Element element) {
         Stage window = new Stage();
         Scene scene;
         window.initModality(Modality.APPLICATION_MODAL);
@@ -1092,4 +1121,84 @@ public class DApp extends Application {
         window.setScene(scene);
         window.show();
     }
+    public static void displayRemoveOptions( Element element) {
+		Stage window = new Stage();
+
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("Are you sure");
+		window.setMinWidth(200);
+		window.setMinHeight(160);
+
+		Label messageName = new Label( "Deleting " + selectedElement.getObject().getName() + "...\n" + "Are you sure?");
+
+		Button ok = new Button("Yes");
+		Button notOk = new Button("cancel");
+		ok.setOnAction(e -> {
+			select(null);
+
+			//deleting overlay
+			for ( int i =0; i < group.getChildren().size();i++) {
+				if ( group.getChildren().get(i) instanceof Group && ((Group) group).getChildren().get(i) == overlay)
+					group.getChildren().remove(group.getChildren().get(i));
+			}
+			// forgeting element
+			elements.remove(element);
+			// deleting element
+			for ( int i =0; i < group.getChildren().size();i++) {
+				if ( group.getChildren().get(i) instanceof Element && ((Element) group.getChildren().get(i)).listener &&((Element)group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
+					group.getChildren().remove(group.getChildren().get(i));
+			}
+			// removing from project
+			project.getObjects().remove(element.getObject());
+			//deleting line from group
+			for ( int i =0; i < group.getChildren().size();i++) {
+
+				if ( group.getChildren().get(i) instanceof ComplexLine ) {
+
+					ComplexLine cl = (ComplexLine)group.getChildren().get(i);
+
+					for ( int j =0; j < group.getChildren().size();j++)
+						if ( group.getChildren().get(j) instanceof ArrowHead ) {
+							ArrowHead  a = (ArrowHead)group.getChildren().get(j);
+
+							if (  element.getEndLines().contains( a.getComplexLine())){
+								group.getChildren().remove( a);
+
+							}
+						}
+					if ( element.startLines.contains(cl) || element.endLines.contains(cl))
+						group.getChildren().remove(group.getChildren().get(i));
+
+				}
+				if ( group.getChildren().get(i) instanceof ArrowHead ) {
+					ArrowHead  a = (ArrowHead)group.getChildren().get(i);
+					if ( element.startLines.contains(a) || element.endLines.contains(a))
+						group.getChildren().remove(group.getChildren().get(i));
+				}
+			}
+			// deleting the damn arrows
+			for ( int i =0; i < group.getChildren().size();i++) {
+				if ( group.getChildren().get(i) instanceof ArrowHead ) {
+					ArrowHead  a = (ArrowHead)group.getChildren().get(i);
+					if ( element.startLines.contains(a) || element.endLines.contains(a))
+						group.getChildren().remove(group.getChildren().get(i));
+				}
+			}
+			updateArrow();
+			updateLines();
+			updateOverlay();
+			updateZoomPane();
+			//drawHierarchy(project);
+			window.close();
+		});
+		notOk.setOnAction( e ->  window.close());
+
+		VBox layout = new VBox();
+		layout.getChildren().addAll( messageName, ok, notOk);
+		layout.setAlignment( Pos.CENTER);
+
+		window.setScene( new Scene( layout));
+		window.showAndWait();
+	}
+
 }

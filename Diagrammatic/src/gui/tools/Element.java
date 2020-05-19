@@ -27,6 +27,7 @@ public class Element extends Group {
     DoubleProperty heightProperty = new SimpleDoubleProperty();
     public ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
 	public ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
+	public boolean listener;
 
 	ArrayList<Label> props = new ArrayList<Label>();
 	ArrayList<Label> meths = new ArrayList<Label>();
@@ -42,6 +43,7 @@ public class Element extends Group {
 
     public Element( boolean listener) {
     	if (listener) {
+    		this.listener = listener;
             setOnMousePressed(me -> {
             	DApp.select(this);
                 DApp.srBnd.fireEvent(me);
@@ -58,6 +60,8 @@ public class Element extends Group {
 
         setLayoutX(x);
         setLayoutY(y);
+
+        this.listener = listener;
 
         widthProperty.set(width);
         heightProperty.set(height);
@@ -229,6 +233,13 @@ public class Element extends Group {
         }
     }
 
+    public ArrayList<ComplexLine> getStartLines() {
+    	return startLines;
+    }
+
+    public ArrayList<ComplexLine> getEndLines() {
+    	return endLines;
+    }
     public DObject getObject() {
     	return this.dObject;
     }

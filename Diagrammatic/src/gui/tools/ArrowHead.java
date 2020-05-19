@@ -12,10 +12,10 @@ public class ArrowHead extends Group{
 	// properties
 	Element e;
 	ComplexLine l;
-	
-	double x1;    
+
+	double x1;
 	double y1;
-	double x2;      
+	double x2;
 	double y2;
 	LinkedList<Point2D> linePoints;
 
@@ -25,22 +25,22 @@ public class ArrowHead extends Group{
 	double rh;
 
 	Polygon polygon;
-	
+
 	// constructors
 	public ArrowHead( Element element, ComplexLine line) {
 		e = element;
 		l = line;
-		
+
 		x1 = l.getPoints().get(0).getX();
-		y1 = l.getPoints().get(0).getY(); 
+		y1 = l.getPoints().get(0).getY();
 		x2 = l.getPoints().get(1).getX();
 		y2 = l.getPoints().get(1).getY();
-		
+
 		rx = e.getLayoutX();
 		ry = e.getLayoutY();
-		rw = e.widthProperty().doubleValue(); 
+		rw = e.widthProperty().doubleValue();
 		rh = e.heightProperty().doubleValue();
-		
+
 		polygon = new Polygon();
 		lineRect( x1, y1, x2, y2, rx, ry, rw, rh);
 
@@ -54,7 +54,7 @@ public class ArrowHead extends Group{
 		boolean right = false;
 		boolean top = false;
 		boolean bottom = false;
-		
+
 		left = lineLine(x1,y1,x2,y2, rx,ry,rx, ry+rh);
 		if (!left)
 			right =  lineLine(x1,y1,x2,y2, rx+rw,ry, rx+rw,ry+rh);
@@ -86,7 +86,7 @@ public class ArrowHead extends Group{
 			// optionally, draw a circle where the lines meet
 			double intersectionX = x1 + (uA * (x2-x1));
 			double intersectionY = y1 + (uA * (y2-y1));
-			
+
 			Double degree;
 			if (y2 > y1)
 				degree = Math.toDegrees( Math.atan(-(x2-x1)/(y2-y1) ) );
@@ -106,20 +106,28 @@ public class ArrowHead extends Group{
 		}
 		return false;
 	}
-	
+
 	public void updateArrow() {
 		x1 = l.getPoints().get(0).getX();
-		y1 = l.getPoints().get(0).getY(); 
+		y1 = l.getPoints().get(0).getY();
 		x2 = l.getPoints().get(1).getX();
 		y2 = l.getPoints().get(1).getY();
-		
+
 		rx = e.getLayoutX();
 		ry = e.getLayoutY();
-		rw = e.widthProperty().doubleValue(); 
+		rw = e.widthProperty().doubleValue();
 		rh = e.heightProperty().doubleValue();
-		
+
 		getChildren().removeAll(getChildren());
 		polygon = new Polygon();
 		lineRect( x1, y1, x2, y2, rx, ry, rw, rh);
+	}
+
+	public Element getElement() {
+		return e;
+	}
+
+	public ComplexLine getComplexLine() {
+		return l;
 	}
 }
