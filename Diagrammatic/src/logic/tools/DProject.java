@@ -5,12 +5,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import logic.interfaces.Accesible;
 import logic.object_source.DAbstractClass;
 import logic.object_source.DClass;
 import logic.object_source.DInterface;
 import logic.object_source.DObject;
 
-public class DProject {
+public class DProject implements Accesible {
+	private String accesibility;
+	final static String PROTECTED = "protected";
+	final static String PUBLIC = "public";
+	final static String DEFAULT = "default";
+	final static String PRIVATE = "private";
 
 	ArrayList<DObject> objects;
 	String projectName;
@@ -166,4 +172,15 @@ public class DProject {
 		}
 	}
 
+	@Override
+	public String getAcccessability() {
+		return accesibility;
+	}
+
+	@Override
+	public void setAccessability( String s) {
+		if ( s.equals(PROTECTED) || s.equals(PUBLIC) || s.equals(DEFAULT) || s.equals(PRIVATE) )
+			accesibility = s;
+
+	}
 }
