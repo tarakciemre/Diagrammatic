@@ -26,12 +26,13 @@ public class Test {
 	static int cardinality;
 
 	/**
+	 * main method
 	 * @param args
 	 */
 	public static void main( String[] args) {
 		init();
 
-		// TO TEST SOMETHÝNG, UNCOMMENT THE NECESSARY LINE BELOW:
+		// TO TEST SOMETHï¿½NG, UNCOMMENT THE NECESSARY LINE BELOW:
 		//dMethodTest();
 		//dClassTest();
 		//dAbstractTest();
@@ -42,7 +43,7 @@ public class Test {
 
 	// Test Constructor
 	/**
-	 * 
+	 * test method for constructor
 	 */
 	public static void testConstructor()
 	{
@@ -50,7 +51,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 * This method initializes the objects in the program
 	 */
 	public static void init()
 	{
@@ -69,7 +70,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 * this method tests the dmethods
 	 */
 	public static void dMethodTest()
 	{
@@ -81,7 +82,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 * test method for dclasses
 	 */
 	public static void dClassTest()
 	{
@@ -110,7 +111,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void dAbstractTest()
 	{

@@ -2,7 +2,6 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
 import gui.tools.DashedComplexLine;
@@ -36,11 +35,14 @@ import logic.tools.DMethod;
 import logic.tools.DProject;
 import logic.tools.DProperty;
 
-
-
-
+/**
+ * DMenuWizard class which controls menu events and has methods about it.
+ * @author  Group 2F
+ * @version 20.05.2020
+ */
 public class DMenuWizard {
 	/**
+	 * This method opens a new project for program
 	 * @param d
 	 */
 	public void openProject( DObject d) {
@@ -50,7 +52,7 @@ public class DMenuWizard {
 	}
 
 	/**
-	 * 
+	 * This method displays the object options in the menu to create classes, methods or properties etc.
 	 */
 	public static void displayObjectOptions() {
 		Button create;
@@ -95,8 +97,9 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method creates new object in the program
 	 * @param name
-	 * @return
+	 * @return DObject
 	 */
 	public static DObject createObject( TextField name) {
 		Element r;
@@ -105,9 +108,11 @@ public class DMenuWizard {
 
 		Random rand = new Random();
 		if ( DApp.selectedElement != null)
-			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
+			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
+					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(12)].substring(1).toUpperCase(), 1.0), true);
 		else
-			r = new Element( DApp.offset + 0 - Math.random()*1000, DApp.offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true);
+			r = new Element( DApp.offset + 0 - Math.random()*1000, DApp.offset + 0 - Math.random()*1000, 300, 300,
+					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(12)].substring(1).toUpperCase(), 1.0), true);
 
 		r.setObject(object);
 		DApp.elements.add(r);
@@ -119,6 +124,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method allows user to choose parent class for new class
 	 * @param cb
 	 * @param child
 	 */
@@ -130,6 +136,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method allows user to set the inheritance of the class
 	 * @param parent
 	 * @param child
 	 */
@@ -156,6 +163,7 @@ public class DMenuWizard {
 
 
 	/**
+	 * This method gives options to the user to demonstrate a field in a class
 	 * @param element
 	 */
 	public static void displayFieldOptions( Element element) {
@@ -214,6 +222,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method gives options to the user to demonstrate a method in a class
 	 * @param element
 	 */
 	public static void displayMethodOptions( Element element) {
@@ -278,6 +287,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method displays the parameter options
 	 * @param meth
 	 * @param element
 	 */
@@ -339,6 +349,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method displays error message in a different window
 	 * @param message
 	 */
 	public static void displayErrorMessage(String message) {
@@ -364,6 +375,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method adds property to the specified element
 	 * @param name
 	 * @param type
 	 * @param element
@@ -385,6 +397,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method adds methods to the specified element.
 	 * @param m
 	 * @param element
 	 */
@@ -403,6 +416,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method extracts the all java code from uml scheme which made by user
 	 * @param e
 	 * @param prj
 	 */
@@ -412,6 +426,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method extracts the java code of only methods from uml scheme which made by user
 	 * @param e
 	 */
 	public static void extractMethods( ActionEvent e) {
@@ -419,6 +434,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method extracts the java code of only fields from uml scheme which made by user
 	 * @param e
 	 */
 	public static void extractFields( ActionEvent e) {
@@ -426,6 +442,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method sets the line color for DApp
 	 * @param color
 	 */
 	static void setLineColor( Paint color)
@@ -433,6 +450,7 @@ public class DMenuWizard {
 		DApp.lineColor = color;
 	}
 	/**
+	 * This method sets the background color for the program
 	 * @param color
 	 */
 	static void setBackgroundColor(Paint color)
@@ -443,6 +461,7 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method displays the constructor maker window
 	 * @param element
 	 */
 	public static void displayConstructorMakerWindow( Element element) {
@@ -477,6 +496,7 @@ public class DMenuWizard {
 		window.show();
 	}
 	/**
+	 * This method displays remove options
 	 * @param element
 	 */
 	public static void displayRemoveOptions( Element element) {
@@ -563,7 +583,7 @@ public class DMenuWizard {
 	}
 
 	/**
-	 * 
+	 * This method displays the project options
 	 */
 	public static void displayProjectOptions() {
 		Stage window = new Stage();
@@ -599,7 +619,7 @@ public class DMenuWizard {
 	}
 
 	/**
-	 * 
+	 * This method allows user to save the project
 	 */
 	private static void saveProject() {
 		// TODO Auto-generated method stub
@@ -607,7 +627,7 @@ public class DMenuWizard {
 	}
 
 	/**
-	 * 
+	 * This method clears te view of the project by removing them
 	 */
 	public static void cleanProjectView() {
 		DApp.select(null);

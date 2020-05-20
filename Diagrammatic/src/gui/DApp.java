@@ -410,10 +410,10 @@ public class DApp extends Application {
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
 			if ( prj.getObjects().get(i) instanceof DClass)
 				elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
-						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
+						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(11)].substring(1).toUpperCase(), 1.0), true));
 			else if  (prj.getObjects().get(i) instanceof DInterface)
 				elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
-						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
+						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(11)].substring(1).toUpperCase(), 1.0), true));
 		}
 
 
