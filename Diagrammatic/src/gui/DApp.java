@@ -66,13 +66,7 @@ public class DApp extends Application {
 	"0xd9f89a"};
 	static double a = 6, a2 = a / 2, lX, lY, sX, sY, sWidth, sHeight;
 	static double gridSize = -1;
-	/**
-	 * 
-	 */
 	double lastX;
-	/**
-	 * 
-	 */
 	double lastY;
 	static int offset = 5000;
 
@@ -104,17 +98,11 @@ public class DApp extends Application {
 	static Canvas canvas = new Canvas();
 	static SnapshotParameters sp = new SnapshotParameters();
 
-	/**
-	 * @param args
-	 */
 	public static void main( String[] args)
 	{
 		launch(args);
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public void start( Stage stage) {
 		area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
@@ -264,8 +252,8 @@ public class DApp extends Application {
 		});
 
 		//sliders' default values
-		slider1.setValue(DEFAULT_ZOOM);
-		slider2.setValue(DEFAULT_GRIDSIZE);
+		//slider1.setValue(DEFAULT_ZOOM);
+		//slider2.setValue(DEFAULT_GRIDSIZE);
 
 		layout.setCenter(scrollPane);
 		layout.setBottom(new FlowPane(slider1, checkBox, slider2));
@@ -409,22 +397,22 @@ public class DApp extends Application {
 		scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
 		scrollPane.setHvalue(offset + 300);
 		scrollPane.setVvalue(offset + 300);
-		group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, closest);
+		group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW);
+		group.getChildren().add(closest);
+		closest.setRadius(1000);
+
 		addElements( group);
 		scrollPane.setPannable(true);
 	}
-	/**
-	 * @param prj
-	 */
 	void iniElements( DProject prj) {
 		elements = new ArrayList<Element>();
 		Random random = new Random();
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
 			if ( prj.getObjects().get(i) instanceof DClass)
-				elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 
+				elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
 			else if  (prj.getObjects().get(i) instanceof DInterface)
-				elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 
+				elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
 		}
 
@@ -436,9 +424,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * @param prj
-	 */
 	static void drawHierarchy( DProject prj) {
 		ArrayList<DObject> bunch = new ArrayList<DObject>();
 		Element from = null, to = null;
@@ -463,17 +448,11 @@ public class DApp extends Application {
 		drawCenteredDashedLine( elements.get(0), elements.get(2));
 	}
 
-	/**
-	 * @param group
-	 */
 	static void addElements( Group group) {
 		for ( int i = 0; i < elements.size(); i++)
 			group.getChildren().add( elements.get(i));
 	}
 
-	/**
-	 * 
-	 */
 	static void updateGrid() {
 		double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
 		if (!checkBox.isSelected() || size < 4) size = 0;
@@ -492,19 +471,12 @@ public class DApp extends Application {
 	}
 
 
-	/**
-	 * 
-	 */
 	public static void updateZoomPane() {
 		zoomPane.setPrefWidth(Math.max(scrollPane.getViewportBounds().getWidth(), group.getBoundsInParent().getMaxX()));
 		zoomPane.setPrefHeight(Math.max(scrollPane.getViewportBounds().getHeight(), group.getBoundsInParent().getMaxY()));
 	}
 
 
-	/**
-	 * @param size
-	 * @return
-	 */
 	static ImagePattern patternTransparent(double size) {
 		canvas.setHeight(size);
 		canvas.setWidth(size);
@@ -524,23 +496,11 @@ public class DApp extends Application {
 	}
 
 
-	/**
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param fill
-	 * @param listener
-	 * @return
-	 */
 	Element createElement(double x, double y, double width, double height, Paint fill, boolean listener) {
 		return new Element(x, y, width, height, fill, listener);
 	}
 
 
-	/**
-	 * @param element
-	 */
 	public static void select(Element element) {
 		if (overlay == null && element != null) iniOverlay();
 		if (element != selectedElement) {
@@ -551,9 +511,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public static void iniOverlay() {
 		overlay = new Group();
 		//overlay.setVisible(false);
@@ -576,9 +533,6 @@ public class DApp extends Application {
 		zoomPane.getChildren().add(overlay);
 	}
 
-	/**
-	 * 
-	 */
 	public static void updateOverlay() {
 		if (selectedElement != null) {
 			double zoom = slider1.getValue();
@@ -605,10 +559,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * @param cursor
-	 * @return
-	 */
 	public static Rectangle srCreate(Cursor cursor) {
 		//Resize rectangle
 		Rectangle rectangle = new Rectangle(a, a, Color.BLACK);
@@ -617,9 +567,6 @@ public class DApp extends Application {
 		return rectangle;
 	}
 
-	/**
-	 * @param node
-	 */
 	public static void handleMouse(Node node) {
 		node.setOnMousePressed(me -> {
 			lX = me.getX();
@@ -668,19 +615,11 @@ public class DApp extends Application {
 		});
 	}
 
-	/**
-	 * @param value
-	 * @return
-	 */
 	static double snap(double value) {
 		double gridSize = slider2.getValue();
 		return Math.round(value / gridSize) * gridSize;
 	}
 
-	/**
-	 * @param h
-	 * @param b
-	 */
 	static void setHSize(double h, boolean b) {
 		double x = selectedElement.getLayoutX(), w = selectedElement.widthProperty().get(), width;
 		double as = (a * 3) / slider1.getValue();
@@ -698,10 +637,6 @@ public class DApp extends Application {
 		selectedElement.widthProperty().set(width);
 	}
 
-	/**
-	 * @param v
-	 * @param b
-	 */
 	static void setVSize(double v, boolean b) {
 		double y = selectedElement.getLayoutY(), h = selectedElement.heightProperty().get(), height;
 		double as = (a * 3) / slider1.getValue();
@@ -723,10 +658,6 @@ public class DApp extends Application {
 		selectedElement.heightProperty().set(height);
 	}
 
-	/**
-	 * @param x
-	 * @param y
-	 */
 	static void relocate(double x, double y) {
 		double maxX = area.getMaxX() - selectedElement.widthProperty().get();
 		double maxY = area.getMaxY() - selectedElement.heightProperty().get();
@@ -738,10 +669,6 @@ public class DApp extends Application {
 		selectedElement.setLayoutY(y);
 	}
 
-	/**
-	 * @param first
-	 * @param second
-	 */
 	static void drawCenteredLine( Element first, Element second)
 	{
 		double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
@@ -756,10 +683,6 @@ public class DApp extends Application {
 		second.endLines.add(line);
 	}
 
-	/**
-	 * @param first
-	 * @param second
-	 */
 	static void drawCenteredDashedLine( Element first, Element second)
 	{
 		double fcX = first.getLayoutX() + first.widthProperty().get() / 2;
@@ -774,9 +697,6 @@ public class DApp extends Application {
 		second.endLines.add(line);
 	}
 
-	/**
-	 * 
-	 */
 	static void updateLines()
 	{
 		for (Node n : group.getChildren())
@@ -805,9 +725,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public static void updateArrow() {
 		for (Node n : group.getChildren())
 		{
@@ -818,29 +735,18 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * @param point
-	 */
 	public static void displayPoint(Point2D point)
 	{
 		Circle c = new Circle (point.getX(), point.getY(), 10);
 		group.getChildren().add(c);
 	}
 
-	/**
-	 * @param x
-	 * @param y
-	 * @return
-	 */
 	public static Point2D createPoint( double x, double y)
 	{
 		return new Point2D( x, y);
 	}
 
 
-	/**
-	 * @param mouseLoc
-	 */
 	public static void showClosest( Point2D mouseLoc)
 	{
 		Line l = getClosest(mouseLoc);
@@ -891,12 +797,12 @@ public class DApp extends Application {
 
 		}
 		else
+		{
 			closest.setRadius(0);
+		}
+
 	}
 
-	/**
-	 * @param visibility
-	 */
 	public static void setIndicatorVisibility(boolean visibility)
 	{
 		if(visibility)
@@ -909,11 +815,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * @param l
-	 * @param mouseLoc
-	 * @return
-	 */
 	public static Point2D getClosestPoint(Line l, Point2D mouseLoc)
 	{
 		Point2D first = new Point2D( l.getStartX(), l.getStartY());
@@ -924,10 +825,6 @@ public class DApp extends Application {
 		return closest2;
 	}
 
-	/**
-	 * @param l
-	 * @return
-	 */
 	public static ComplexLine getComplex( Line l)
 	{
 		for (Node n : group.getChildren())
@@ -942,10 +839,6 @@ public class DApp extends Application {
 		return null;
 	}
 
-	/**
-	 * @param mouseLoc
-	 * @return
-	 */
 	public static Line getClosest( Point2D mouseLoc)
 	{
 		double range = 99999999999.0;
@@ -972,19 +865,12 @@ public class DApp extends Application {
 	}
 
 	// for loading from file
-	/**
-	 * @param d
-	 */
 	public void openProject( DObject d) {
 
 		// sometimes foreshadowing is relatively obvious
 
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	public static DObject createObject( TextField name) {
 		Element r;
 		DClass object = new DClass( name.getText());
@@ -1005,10 +891,6 @@ public class DApp extends Application {
 		return object;
 	}
 
-	/**
-	 * @param cb
-	 * @param child
-	 */
 	public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
 		for ( DObject o : project.getObjects() ) {
 			if ( cb.getValue().equals(o.getName()))
@@ -1016,10 +898,6 @@ public class DApp extends Application {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @param child
-	 */
 	public static void setInheritance( DObject parent, DObject child) {
 		Element lastAdded = null, selected = null;
 
@@ -1043,11 +921,6 @@ public class DApp extends Application {
 
 
 
-	/**
-	 * @param name
-	 * @param type
-	 * @param element
-	 */
 	public static void addProperty( String name, String type, Element element) {
 		DProperty prop = new DProperty( name, type);
 		element.addField(prop);
@@ -1055,26 +928,16 @@ public class DApp extends Application {
 		System.out.println( prop);
 	}
 
-	/**
-	 * @param m
-	 * @param element
-	 */
 	public static void addMethod( DMethod m, Element element) {
 		element.addMethod(m);
 		((DClass)element.getObject()).addMethod(m);
 		System.out.print( m);
 	}
 
-	/**
-	 * @param color
-	 */
 	static void setLineColor( Paint color)
 	{
 		lineColor = color;
 	}
-	/**
-	 * @param color
-	 */
 	static void setBackgroundColor(Paint color)
 	{
 		backgroundColor = color;
@@ -1082,9 +945,6 @@ public class DApp extends Application {
 		BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
 	}
 
-	/**
-	 * @param element
-	 */
 	public static void displayConstructorMakerWindow( Element element) {
 		Stage window = new Stage();
 		Scene scene;
@@ -1179,17 +1039,11 @@ public class DApp extends Application {
 
 
 
-	/**
-	 * 
-	 */
 	private static void saveProject() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/**
-	 * 
-	 */
 	public static void cleanProjectView() {
 		select(null);
 
@@ -1216,9 +1070,6 @@ public class DApp extends Application {
 		updateZoomPane();
 	}
 
-	/**
-	 * @param mode
-	 */
 	public static void setColorMode( String mode)
 	{
 		System.out.println("This is setcolormode");
