@@ -2,9 +2,7 @@ package gui;
 
 import java.util.ArrayList;
 import java.util.Random;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
-import logic.object_source.*;
+
 import gui.tools.ArrowHead;
 import gui.tools.ClassElement;
 import gui.tools.ComplexLine;
@@ -13,10 +11,8 @@ import gui.tools.Element;
 import gui.tools.InterfaceElement;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
@@ -25,11 +21,27 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
@@ -41,11 +53,14 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import logic.object_source.DClass;
+import logic.object_source.DGeneralClass;
+import logic.object_source.DInterface;
 import logic.object_source.DObject;
-import logic.tools.*;
-import gui.tools.pannablecanvas.*;
+import logic.tools.DConstructor;
+import logic.tools.DConstructorProperty;
+import logic.tools.DProject;
+import logic.tools.DProperty;
 
 public class DApp extends Application {
 
@@ -54,7 +69,6 @@ public class DApp extends Application {
 	// Helpers
 	public static final String[] colors = { "0xfeff99",
 			"0xffed99",
-			"0xfdc98",
 			"0xffc79a",
 			"0xff999a",
 			"0xeb99c7",
@@ -76,6 +90,7 @@ public class DApp extends Application {
 	public static final double DEFAULT_ZOOM = 1.1606;
 	public static final double DEFAULT_GRIDSIZE = 15.7377;
 	public static final double INDICATOR_RADIUS = 7;
+	public static final double RANDOMNESS = 250.0;
 	public static Slider slider1, slider2;
 	public static CheckBox checkBox;
 	public static ScrollPane scrollPane;
@@ -104,259 +119,247 @@ public class DApp extends Application {
 	}
 
 	@Override
-	public void start( Stage stage) {
-		area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
-		BorderPane layout = new BorderPane();
+    public void start( Stage stage) {
+    	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
+        BorderPane layout = new BorderPane();
 
-		setLineColor(Color.DIMGREY);
-		setBackgroundColor(Color.DARKGRAY);
+        setLineColor(Color.DIMGREY);
+        setBackgroundColor(Color.DARKGRAY);
 
-		stage.setTitle("Diagrammatic 0.1.4");
-		stage.setScene(new Scene(layout, 500, 300));
-		//set the location of the window
-		stage.setX(50);
-		stage.setY(50);
-		//set the size of the window
-		stage.setWidth(1820);
-		stage.setHeight(900);
+        stage.setTitle("Diagrammatic 0.1.4");
+        stage.setScene(new Scene(layout, 500, 300));
+        //set the location of the window
+        stage.setX(50);
+        stage.setY(50);
+        //set the size of the window
+        stage.setWidth(1820);
+        stage.setHeight(900);
 
+        Image icon = new Image("file:icon.png");
+        //Image albaniaIcon = new Image("file:albaniaicon.jpg");
+        //stage.getIcons().add(albaniaIcon);
+        stage.getIcons().add(icon);
 
+        // init project
+        project = new DProject();
+        project.setName("Test Project");
 
-		Image icon = new Image("file:icon.png");
-		Image albaniaIcon = new Image("file:albaniaicon.jpg");
-		//stage.getIcons().add(albaniaIcon);
-		stage.getIcons().add(icon);
-
-		// init project
-		project = new DProject();
-		project.setName("GloriousAlbania");
-
-		// init prj objects
-		DObject animalClass = new DClass("Animal");
-		DObject moveableInterface = new DInterface("Moveable");
-		DObject catClass = new DClass("Cat");
-		((DClass) catClass).setSuperClass((DClass) animalClass);
-
-		//testing prop
-		((DClass) catClass).addProperty( new DProperty( "age","int"));
-		((DClass) catClass).addProperty( new DProperty( "name", "String"));
-		((DClass) catClass).addProperty( new DProperty( "length", "double"));
-		((DClass) catClass).addProperty( new DProperty( "color", "String"));
-		((DClass) catClass).addProperty( new DProperty( "isHungry", "boolean"));
-
-		// adding prj objects to prj
-		project.addObject(animalClass);
-		project.addObject(catClass);
-		project.addObject(moveableInterface);
+        // init prj objects
+        DObject albanian = new DClass("Albanian");
+        DObject albanianable = new DInterface("Albanianable");
+        DObject kosovan = new DClass("Kosovan");
+        ((DClass) kosovan).setSuperClass((DClass) albanian);
 
 
-		// init elements
-		iniElements(project);
+        //testing prop
+        ((DClass) kosovan).addProperty( new DProperty( "isBased","boolean"));
+        ((DClass) kosovan).addProperty( new DProperty( "hatesSerbs", "boolean"));
 
-		Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, false);
-		Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
-		Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
-		Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
-
-		System.out.println(cornerSE.elementToString());
-
-		group = new Group();
-
-		closest = new Circle(3);
-		closest.setFill(Color.RED);
-
-		zoomPane = new Pane(group);
-
-		zoomPane.setOnMousePressed(me -> {
-			boolean onCircle = false;
-			Point2D mouseLoc = new Point2D(me.getX(), me.getY());
-			for (Node n : group.getChildren())
-			{
-				if (n instanceof ComplexLine)
-				{
-					ComplexLine cl = (ComplexLine) n;
-					for (Point2D clp : cl.getPoints())
-					{
-						if (mouseLoc.distance(clp) <= 5 )
-						{
-							onCircle = true;
-						}
-					}
-				}
-			}
-			Point2D mouseP = new Point2D( me.getX(), me.getY());
-
-			Point2D cP = new Point2D( closest.getCenterX(), closest.getCenterY());
-
-			Line l = getClosest(mouseP);
-			ComplexLine cl = getComplex(l);
-
-			if (l != null && !onCircle)
-			{
-				if (me.getButton() == MouseButton.PRIMARY)
-					cl.addPoint(cP, cl.getLineIndex(l) + 1);
-			}
-
-			if (cl != null && onCircle)
-			{
-				if (me.getButton() == MouseButton.SECONDARY)
-				{
-					cl.removePoint( cP);
-				}
-			}
-			select(null);
-		});
+        // adding prj objects to prj
+        project.addObject(albanian);
+        project.addObject(kosovan);
+        project.addObject(albanianable);
 
 
-		zoomPane.setOnMouseMoved(me -> {
-			showClosest(new Point2D(me.getX(), me.getY()));
-			me.consume();
-		});
+        // init elements
+        iniElements(project);
 
-		Scale scale = new Scale();
-		group.getTransforms().add(scale);
-		slider1 = new Slider(.1, 5, 1);
-		slider1.setMinWidth(150);
-		slider1.setMaxWidth(150);
-		slider1.setPadding(new Insets(6));
-		slider1.setTooltip(new Tooltip("Zoom"));
-		slider1.valueProperty().addListener((v, o, n) -> {
-			scale.setX(n.doubleValue());
-			scale.setY(n.doubleValue());
-			updateGrid();
-			updateZoomPane();
-			updateOverlay();
-		});
-		slider2 = new Slider(5, 35, 15);
-		slider2.setMinWidth(150);
-		slider2.setMaxWidth(150);
-		slider2.setPadding(new Insets(6));
-		slider2.setTooltip(new Tooltip("Grid size"));
-		slider2.valueProperty().addListener((v, o, n) -> {
-			updateGrid();
-		});
+        Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, false);
+        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
+        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
+        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
+        System.out.println(cornerSE.elementToString());
 
-		checkBox = new CheckBox();
-		checkBox.setPadding(new Insets(6));
-		checkBox.setTooltip(new Tooltip("Show grid"));
-		checkBox.selectedProperty().addListener((v, o, n) -> {
-			slider2.setDisable(!n.booleanValue());
-			updateGrid();
-		});
-		checkBox.setSelected(true);
-		scrollPane = new ScrollPane(new Group(zoomPane));
-		scrollPane.viewportBoundsProperty().addListener((v, o, n) -> {
-			updateZoomPane();
-			Platform.runLater(() -> zoomPane.requestLayout());
-		});
+        group = new Group();
 
-		//sliders' default values
-		//slider1.setValue(DEFAULT_ZOOM);
-		//slider2.setValue(DEFAULT_GRIDSIZE);
+        closest = new Circle(3);
+        closest.setFill(Color.RED);
 
-		layout.setCenter(scrollPane);
-		layout.setBottom(new FlowPane(slider1, checkBox, slider2));
-		//stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
+        zoomPane = new Pane(group);
 
-		// Layout
-		VBox leftLayout = new VBox(10);
-		VBox rightLayout = new VBox(10);
-		BorderPane parentLayout = new BorderPane();
+        zoomPane.setOnMousePressed(me -> {
+        	boolean onCircle = false;
+        	Point2D mouseLoc = new Point2D(me.getX(), me.getY());
+        	for (Node n : group.getChildren())
+        	{
+        		if (n instanceof ComplexLine)
+        		{
+        			ComplexLine cl = (ComplexLine) n;
+        			for (Point2D clp : cl.getPoints())
+        			{
+        				if (mouseLoc.distance(clp) <= 5 )
+        				{
+        					onCircle = true;
+        				}
+        			}
+        		}
+        	}
+        	Point2D mouseP = new Point2D( me.getX(), me.getY());
 
-		// File Menu
-		Menu fileMenu = new Menu("File");
-		MenuItem newProject = new MenuItem( "New Project");
-		newProject.setOnAction(e -> {
-			DMenuWizard.displayProjectOptions();
-		});
-		MenuItem openProject = new MenuItem( "Open");
-		MenuItem saveProject = new MenuItem( "Save");
-		MenuItem saveProjectAs = new MenuItem( "Save As...");
+        	Point2D cP = new Point2D( closest.getCenterX(), closest.getCenterY());
 
-		fileMenu.getItems().addAll(newProject, openProject, saveProject, saveProjectAs);
+        	Line l = getClosest(mouseP);
+        	ComplexLine cl = getComplex(l);
 
-		// Add Menu
-		Menu addMenu = new Menu("Add");
-		MenuItem newObject = new MenuItem("New Object");
-		newObject.setOnAction(e -> {
-			DMenuWizard.displayObjectOptions();
-		});
-		MenuItem newField = new MenuItem("New Property");
-		newField.setOnAction( e -> {
-			if ( selectedElement != null)
-				DMenuWizard.displayFieldOptions( selectedElement);
-			else
-				DMenuWizard.displayErrorMessage("No class selected");
-		});
-		MenuItem newMethod = new MenuItem("New Method");
-		newMethod.setOnAction( e -> {
-			if ( selectedElement != null)
-				DMenuWizard.displayMethodOptions( selectedElement);
-			else
-				DMenuWizard.displayErrorMessage("No Class Selected");
-		});
-		MenuItem newConstr = new MenuItem("New Constructor");
-		newConstr.setOnAction( e -> {
-			if ( selectedElement != null)
-				DMenuWizard.displayConstructorMakerWindow( selectedElement);
-			else
-				DMenuWizard.displayErrorMessage("No Class Selected");
-		});
+        	if (l != null && !onCircle)
+        	{
+        	    if (me.getButton() == MouseButton.PRIMARY)
+        		    cl.addPoint(cP, cl.getLineIndex(l) + 1);
+        	}
 
-		addMenu.getItems().addAll( newObject, newField, newMethod, newConstr);
-
-		//Help menu
-		Menu helpMenu = new Menu("Help");
-
-		CheckMenuItem autoSave = new CheckMenuItem("Enable Autosave");
-		autoSave.setSelected(true);
-		helpMenu.getItems().add(autoSave);
-
-		//Difficulty RadioMenuItems
-		Menu extractMenu = new Menu("Extract...");
-		MenuItem extractAll = new MenuItem( "Extract All");
-		MenuItem extractMethods = new MenuItem( "Extract Methods");
-		MenuItem extractFields = new MenuItem( "Extract Fields");
+        	if (cl != null && onCircle)
+        	{
+                if (me.getButton() == MouseButton.SECONDARY)
+                {
+                    cl.removePoint( cP);
+                }
+            }
+        	select(null);
+        });
 
 
-		extractAll.setOnAction(e ->  DMenuWizard.extractAll(e, project) );
-		extractMethods.setOnAction(e ->  DMenuWizard.extractMethods(e));
-		extractFields.setOnAction(e ->  DMenuWizard.extractFields(e));
+        zoomPane.setOnMouseMoved(me -> {
+            showClosest(new Point2D(me.getX(), me.getY()));
+            me.consume();
+        });
+
+        Scale scale = new Scale();
+        group.getTransforms().add(scale);
+        slider1 = new Slider(.1, 5, 1);
+        slider1.setMinWidth(150);
+        slider1.setMaxWidth(150);
+        slider1.setPadding(new Insets(6));
+        slider1.setTooltip(new Tooltip("Zoom"));
+        slider1.valueProperty().addListener((v, o, n) -> {
+            scale.setX(n.doubleValue());
+            scale.setY(n.doubleValue());
+            updateGrid();
+            updateZoomPane();
+            updateOverlay();
+        });
+        slider2 = new Slider(5, 35, 15);
+        slider2.setMinWidth(150);
+        slider2.setMaxWidth(150);
+        slider2.setPadding(new Insets(6));
+        slider2.setTooltip(new Tooltip("Grid size"));
+        slider2.valueProperty().addListener((v, o, n) -> {
+            updateGrid();
+        });
+        checkBox = new CheckBox();
+        checkBox.setPadding(new Insets(6));
+        checkBox.setTooltip(new Tooltip("Show grid"));
+        checkBox.selectedProperty().addListener((v, o, n) -> {
+            slider2.setDisable(!n.booleanValue());
+            updateGrid();
+        });
+        checkBox.setSelected(true);
+        scrollPane = new ScrollPane(new Group(zoomPane));
+        scrollPane.viewportBoundsProperty().addListener((v, o, n) -> {
+            updateZoomPane();
+            Platform.runLater(() -> zoomPane.requestLayout());
+        });
+        layout.setCenter(scrollPane);
+        //layout.setBottom(new FlowPane(slider1, checkBox, slider2));
+        //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
+
+        // Layout
+        VBox leftLayout = new VBox(10);
+        VBox rightLayout = new VBox(10);
+        BorderPane parentLayout = new BorderPane();
+
+        // File Menu
+        Menu fileMenu = new Menu("File");
+        MenuItem newProject = new MenuItem( "New Project");
+        newProject.setOnAction(e -> {
+        	 DMenuWizard.displayProjectOptions();
+        });
+        MenuItem openProject = new MenuItem( "Open");
+        MenuItem saveProject = new MenuItem( "Save");
+        MenuItem saveProjectAs = new MenuItem( "Save As...");
+
+        fileMenu.getItems().addAll(newProject, openProject, saveProject, saveProjectAs);
+
+        // Add Menu
+        Menu addMenu = new Menu("Add");
+        MenuItem newObject = new MenuItem("New Class");
+        newObject.setOnAction(e -> {
+        	 DMenuWizard.displayClassOptions();
+        });
+        MenuItem newInterface = new MenuItem("New Interface");
+        newInterface.setOnAction(e -> {
+        	 DMenuWizard.displayInterfaceOptions();
+        });
+        MenuItem newField = new MenuItem("New Property");
+        newField.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		 DMenuWizard.displayFieldOptions( selectedElement);
+        	else
+        		 DMenuWizard.displayErrorMessage("No class selected");
+        });
+        MenuItem newMethod = new MenuItem("New Method");
+        newMethod.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		 DMenuWizard.displayMethodOptions( selectedElement);
+        	else
+        		 DMenuWizard.displayErrorMessage("No Class Selected");
+        });
+        MenuItem newConstr = new MenuItem("New Constructor");
+        newConstr.setOnAction( e -> {
+        	if ( selectedElement != null)
+        		 DMenuWizard.displayConstructorMakerWindow( selectedElement);
+        	else
+        		 DMenuWizard.displayErrorMessage("No Class Selected");
+        });
+
+        addMenu.getItems().addAll( newObject, newInterface, newField, newMethod, newConstr);
+
+        //Help menu
+        Menu helpMenu = new Menu("Help");
+
+        CheckMenuItem autoSave = new CheckMenuItem("Enable Autosave");
+        autoSave.setSelected(true);
+        helpMenu.getItems().add(autoSave);
+
+        //Difficulty RadioMenuItems
+        Menu extractMenu = new Menu("Extract...");
+        MenuItem extractAll = new MenuItem( "Extract All");
+        MenuItem extractMethods = new MenuItem( "Extract Methods");
+        MenuItem extractFields = new MenuItem( "Extract Fields");
 
 
-		extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
-
-		// most important menu
-		Menu ytpMenu = new Menu("YTP modes");
-
-		// Preferences
-		Menu preferencesMenu = new Menu("Preferences");
-		MenuItem lightMode = new MenuItem( "Light Mode");
-
-		MenuItem darkMode = new MenuItem( "Dark Mode");
-
-		MenuItem sepyaMode = new MenuItem( "Sepya Mode");
+        extractAll.setOnAction(e ->  DMenuWizard.extractAll(e, project) );
+        extractMethods.setOnAction(e ->  DMenuWizard.extractMethods(e));
+        extractFields.setOnAction(e ->  DMenuWizard.extractFields(e));
 
 
-		preferencesMenu.getItems().addAll(lightMode, darkMode, sepyaMode);
+        extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
 
-		lightMode.setOnAction( e -> {
-			setColorMode("Light");
-		});
-		darkMode.setOnAction( e -> {
-			setColorMode("Dark");
-		});
-		sepyaMode.setOnAction( e -> {
-			setColorMode("Sepya");
-		});
+        // most important menu
+        //Menu ytpMenu = new Menu("YTP modes");
 
-		// edit menu
-		Menu editMenu = new Menu("Edit");
+        // Preferences
+        Menu preferencesMenu = new Menu("Preferences");
+        MenuItem lightMode = new MenuItem( "Light Mode");
+        MenuItem darkMode = new MenuItem( "Dark Mode");
+        MenuItem sepyaMode = new MenuItem( "Sepya Mode");
+        preferencesMenu.getItems().addAll(lightMode, darkMode, sepyaMode);
+
+        lightMode.setOnAction( e -> {
+            setColorMode("Light");
+        });
+        darkMode.setOnAction( e -> {
+            setColorMode("Dark");
+        });
+        sepyaMode.setOnAction( e -> {
+            setColorMode("Sepya");
+        });
+
+        // edit menu
+        Menu editMenu = new Menu("Edit");
 		MenuItem editRelations = new MenuItem("Edit Relations");
 		MenuItem editClass = new MenuItem("Edit Class");
 		MenuItem removeClass = new MenuItem("Remove Class");
-
 
 		editRelations.setOnAction(e -> {
 			//displayObjectOptions();
@@ -368,52 +371,56 @@ public class DApp extends Application {
 
 		removeClass.setOnAction(e -> {
 			if (selectedElement != null)
-				DMenuWizard.displayRemoveOptions( selectedElement);
+				 DMenuWizard.displayRemoveOptions( selectedElement);
 			else
-				DMenuWizard.displayErrorMessage( "No Selected Class");
+				 DMenuWizard.displayErrorMessage( "No Selected Class");
 		});
 		editMenu.getItems().addAll( editRelations, editClass, removeClass);
 
-		//Main menu bar
-		MenuBar menuBar = new MenuBar();
-		menuBar.getMenus().addAll(fileMenu, addMenu, helpMenu, extractMenu, editMenu, preferencesMenu, ytpMenu);
+        //Main menu bar
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(fileMenu, addMenu, helpMenu, extractMenu, editMenu, preferencesMenu);
 
-		parentLayout.setCenter( layout);
-		parentLayout.setLeft( leftLayout );
-		parentLayout.setRight( rightLayout );
-		parentLayout.setTop(menuBar);
+        parentLayout.setCenter( layout);
+        parentLayout.setLeft( leftLayout );
+        parentLayout.setRight( rightLayout );
+        parentLayout.setTop(menuBar);
 
-		Scene scene = new Scene( parentLayout, 300, 250);
+        Scene scene = new Scene( parentLayout, 300, 250);
 
-		stage.setScene( scene);
+        stage.setScene( scene);
 
 
-		stage.show();
-		scrollPane.setPannable(true);
+        stage.show();
+        scrollPane.setPannable(true);
 
-		drawHierarchy( project);
+        addElements( group);
+        drawHierarchy( project);
 
-		scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
-		scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
-		scrollPane.setHvalue(offset + 300);
-		scrollPane.setVvalue(offset + 300);
-		group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW);
-		group.getChildren().add(closest);
-		closest.setRadius(1000);
+        scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
+        scrollPane.setHvalue(offset + 300);
+        scrollPane.setVvalue(offset + 300);
 
-		addElements( group);
-		scrollPane.setPannable(true);
-	}
+        group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, closest);
+
+        for (int i = 0; i < 3; i++)
+        {
+        	DMenuWizard.removeObject(elements.get(0));
+        }
+
+        scrollPane.setPannable(true);
+    }
 	void iniElements( DProject prj) {
 		elements = new ArrayList<Element>();
 		Random random = new Random();
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
 			if ( prj.getObjects().get(i) instanceof DClass)
-				elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
-						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(11)].substring(1).toUpperCase(), 1.0), true));
+				elements.add( new ClassElement( offset + 300 - Math.random()*500, offset + 300 - Math.random()*500,
+						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
 			else if  (prj.getObjects().get(i) instanceof DInterface)
-				elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000,
-						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(11)].substring(1).toUpperCase(), 1.0), true));
+				elements.add( new InterfaceElement( offset + 300 - Math.random()*500, offset + 300 - Math.random()*500,
+						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
 		}
 
 
@@ -425,7 +432,6 @@ public class DApp extends Application {
 	}
 
 	static void drawHierarchy( DProject prj) {
-		ArrayList<DObject> bunch = new ArrayList<DObject>();
 		Element from = null, to = null;
 
 		for ( DObject o : prj.getObjects()){
@@ -591,6 +597,7 @@ public class DApp extends Application {
 			else if (source == srS) setVSize(sY + sHeight + dy, false);
 			else if (source == srSW) { setHSize(sX + dx, true); setVSize(sY + sHeight + dy, false); }
 			else if (source == srW) setHSize(sX + dx, true);
+			closest.setRadius(0);
 			updateZoomPane();
 			updateLines();
 			scrollPane.setPannable(false);
@@ -606,6 +613,7 @@ public class DApp extends Application {
 					if (source == srNW || source == srW || source == srSW) setHSize(snap(selectedElement.getLayoutX()), true);
 					else if (source == srNE || source == srE || source == srSE) setHSize(snap(selectedElement.getLayoutX() + selectedElement.widthProperty().get()), false);
 				}
+				closest.setRadius(10);
 				updateZoomPane();
 				updateLines();
 				scrollPane.setPannable(true);
@@ -871,69 +879,6 @@ public class DApp extends Application {
 
 	}
 
-	public static DObject createObject( TextField name) {
-		Element r;
-		DClass object = new DClass( name.getText());
-		System.out.println( object);
-
-		Random rand = new Random();
-		if ( selectedElement != null)
-			r = new Element(  selectedElement.getLayoutX() + 30 + rand.nextInt(7) , selectedElement.getLayoutY()+ 30 + rand.nextInt(7), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
-		else
-			r = new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true);
-
-		r.setObject(object);
-		elements.add(r);
-		project.addObject(object);
-
-		group.getChildren().add(r);
-
-		return object;
-	}
-
-	public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
-		for ( DObject o : project.getObjects() ) {
-			if ( cb.getValue().equals(o.getName()))
-				setInheritance(o , child);
-		}
-	}
-
-	public static void setInheritance( DObject parent, DObject child) {
-		Element lastAdded = null, selected = null;
-
-		for ( Node n : group.getChildren()) {
-			if ( n instanceof Element && ((Element) n).hasObject()){
-				if ( (((Element) n).getObject().getName()).equals( child.getName()) )
-					lastAdded = (Element)n;
-			}
-		}
-		for ( Node n : group.getChildren()) {
-			if ( n instanceof Element && ((Element) n).hasObject()){
-				if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
-					selected = (Element)n;
-			}
-		}
-
-		drawCenteredLine( selected, lastAdded);
-		select(selected);
-		select(lastAdded);
-	}
-
-
-
-	public static void addProperty( String name, String type, Element element) {
-		DProperty prop = new DProperty( name, type);
-		element.addField(prop);
-		((DClass)element.getObject()).addProperty(prop);
-		System.out.println( prop);
-	}
-
-	public static void addMethod( DMethod m, Element element) {
-		element.addMethod(m);
-		((DClass)element.getObject()).addMethod(m);
-		System.out.print( m);
-	}
-
 	static void setLineColor( Paint color)
 	{
 		lineColor = color;
@@ -941,8 +886,6 @@ public class DApp extends Application {
 	static void setBackgroundColor(Paint color)
 	{
 		backgroundColor = color;
-		Paint bg1 = color;
-		BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
 	}
 
 	public static void displayConstructorMakerWindow( Element element) {
@@ -1037,13 +980,6 @@ public class DApp extends Application {
 				window.show();
 	}
 
-
-
-	private static void saveProject() {
-		// TODO Auto-generated method stub
-
-	}
-
 	public static void cleanProjectView() {
 		select(null);
 
@@ -1053,7 +989,6 @@ public class DApp extends Application {
 		// removing from project
 		project.getObjects().clear();
 
-		int size = group.getChildren().size();
 		//deleting line from group
 		for ( int i =0; i < group.getChildren().size();i++) {
 
@@ -1070,28 +1005,35 @@ public class DApp extends Application {
 		updateZoomPane();
 	}
 
-	public static void setColorMode( String mode)
-	{
-		System.out.println("This is setcolormode");
-		if(mode.equals("Sepya"))
-		{
-			System.out.println("AAAAAAA");
-			setLineColor(Color.DARKSALMON );
-			setBackgroundColor( Color.CORNSILK);
-		}
-		else if(mode.equals("Light"))
-		{
-			setLineColor(Color.GRAY );
-			setBackgroundColor( Color.GHOSTWHITE);
-		}
-		else if( mode.equals("Dark"))
-		{
-			setLineColor(Color.LIGHTGREY );
-			setBackgroundColor( Color.LIGHTSLATEGRAY);
-		}
-		double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
-		Paint bg2 = patternTransparent(size);
-		BackgroundFill backgroundFill2 = new BackgroundFill(bg2, null, null);
-		zoomPane.setBackground(new Background(backgroundFill1, backgroundFill2));
-	}
+	/**
+     * Changes the background color theme
+     * @param mode
+     */
+    public static void setColorMode( String mode)
+    {
+        System.out.println("This is setcolormode");
+        if(mode.equals("Sepya"))
+        {
+            System.out.println("AAAAAAA");
+            setLineColor(Color.DARKSALMON );
+            setBackgroundColor( Color.CORNSILK);
+        }
+        else if(mode.equals("Light"))
+        {
+            setLineColor(Color.GRAY );
+            setBackgroundColor( Color.GHOSTWHITE);
+        }
+        else if( mode.equals("Dark"))
+        {
+            setLineColor(Color.LIGHTGREY );
+            setBackgroundColor( Color.LIGHTSLATEGRAY);
+        }
+        double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
+        Paint bg2 = patternTransparent(size);
+        BackgroundFill backgroundFill2 = new BackgroundFill(bg2, null, null);
+        zoomPane.setBackground(new Background(backgroundFill1, backgroundFill2));
+    }
+
+
+
 }

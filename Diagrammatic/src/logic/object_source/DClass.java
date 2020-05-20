@@ -34,7 +34,7 @@ public class DClass extends DGeneralClass {
 		ArrayList<String> lines = new ArrayList<String>();
 		String first = "public class " + getName();
 		if (superClass != null)
-			first += " extends" + superClass.getName();
+			first += " extends " + superClass.getName();
 
 		if (interfaces.size() > 0)
 		{

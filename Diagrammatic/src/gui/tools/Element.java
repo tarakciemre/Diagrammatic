@@ -85,8 +85,10 @@ public class Element extends Group {
 		rectangle.setArcWidth(20.0d);
 
 		l = new Label(  "   " + nameOfClass + "\n");
-		l2 = new Label(  "   " + properties.toUpperCase()+ "\n");
-		l3 = new Label(  "   " + methods.toUpperCase() + "\n");
+		l2 = new Label(  "   " + properties + "   " + "\n");
+		l2.setUnderline(true);
+		l3 = new Label(  "   " + methods + "   " + "\n");
+		l3.setUnderline(true);
 		/*
         final int fontSize = 9;
         final String fontType = "Arial";
@@ -154,7 +156,7 @@ public class Element extends Group {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateSize() {
 		//for( Node n : contentsH.getChildren())
@@ -216,14 +218,14 @@ public class Element extends Group {
 	 * @param meth
 	 */
 	public void addMethod( DMethod meth) {
-		String out = new String( "   +"+meth.getName() + "(");
+		String out = new String( "   +"+ meth.getName() + "(");
 
-		if ( meth.getParameters() != null) {
+		if ( !meth.getParameters().isEmpty()) {
 			for ( DProperty param : meth.getParameters()) {
 				out += param.getType() + ", ";
 
 			}
-			out = out.substring(0,out.length()-2);
+			out = out.substring(0,out.length() - 2);
 		}
 		out += ")";
 
@@ -234,7 +236,7 @@ public class Element extends Group {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void iniObject() {
 		if (dObject != null) {
@@ -258,7 +260,7 @@ public class Element extends Group {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateObject() {
 		/*

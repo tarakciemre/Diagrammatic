@@ -57,7 +57,7 @@ public class ComplexLine extends Group
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateL()
 	{
@@ -80,7 +80,7 @@ public class ComplexLine extends Group
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void updateLP()
 	{
@@ -243,6 +243,16 @@ public class ComplexLine extends Group
 	public void removePoint( Point2D point)
 	{
 		points.remove( point);
+	}
+
+	public Element elementFrom()
+	{
+		return elementFrom;
+	}
+
+	public Element elementTo()
+	{
+		return elementTo;
 	}
 
 	/**

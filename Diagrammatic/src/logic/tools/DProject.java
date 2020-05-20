@@ -15,7 +15,7 @@ public class DProject {
 	String projectName;
 
 	/**
-	 * 
+	 *
 	 */
 	public DProject()
 	{
@@ -181,7 +181,7 @@ public class DProject {
 		for (DObject o : objects)
 		{
 			try {
-				FileWriter oFile = new FileWriter( projectName + "/" + o.getName() + ".txt");
+				FileWriter oFile = new FileWriter( projectName + "/" + o.getName() + ".java");
 				for(String line : o.extract())
 				{
 					oFile.write(line);
