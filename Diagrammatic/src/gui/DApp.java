@@ -1,17 +1,16 @@
 package gui;
 
-//import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import logic.object_source.*;
-
 import gui.tools.ArrowHead;
+import gui.tools.ClassElement;
 import gui.tools.ComplexLine;
 import gui.tools.DashedComplexLine;
 import gui.tools.Element;
+import gui.tools.InterfaceElement;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -94,7 +93,7 @@ public class DApp extends Application {
         setLineColor(Color.DIMGREY);
         setBackgroundColor(Color.DARKGRAY);
 
-        stage.setTitle("Diagrammatic 0.1.3");
+        stage.setTitle("Diagrammatic 0.1.4");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
@@ -112,12 +111,16 @@ public class DApp extends Application {
         project = new DProject();
         project.setName("GloriousAlbania");
 
-
         // init prj objects
         DObject albanian = new DClass("Albanian");
-        DObject albanianable = new DClass("Albanianable");
+        DObject albanianable = new DInterface("Albanianable");
         DObject kosovan = new DClass("Kosovan");
         ((DClass) kosovan).setSuperClass((DClass) albanian);
+
+
+        //testing prop
+        ((DClass) kosovan).addProperty( new DProperty( "isBased","boolean"));
+        ((DClass) kosovan).addProperty( new DProperty( "hatesSerbs", "boolean"));
 
         // adding prj objects to prj
         project.addObject(albanian);
@@ -236,7 +239,7 @@ public class DApp extends Application {
         Menu fileMenu = new Menu("File");
         MenuItem newProject = new MenuItem( "New Project");
         newProject.setOnAction(e -> {
-            displayProjectOptions();
+        	 DMenuWizard.displayProjectOptions();
         });
         MenuItem openProject = new MenuItem( "Open");
         MenuItem saveProject = new MenuItem( "Save");
@@ -248,28 +251,28 @@ public class DApp extends Application {
         Menu addMenu = new Menu("Add");
         MenuItem newObject = new MenuItem("New Object");
         newObject.setOnAction(e -> {
-            displayObjectOptions();
+        	 DMenuWizard.displayObjectOptions();
         });
         MenuItem newField = new MenuItem("New Property");
         newField.setOnAction( e -> {
         	if ( selectedElement != null)
-        		displayFieldOptions( selectedElement);
+        		 DMenuWizard.displayFieldOptions( selectedElement);
         	else
-        		displayErrorMessage("No class selected");
+        		 DMenuWizard.displayErrorMessage("No class selected");
         });
         MenuItem newMethod = new MenuItem("New Method");
         newMethod.setOnAction( e -> {
         	if ( selectedElement != null)
-        		displayMethodOptions( selectedElement);
+        		 DMenuWizard.displayMethodOptions( selectedElement);
         	else
-        		displayErrorMessage("No Class Selected");
+        		 DMenuWizard.displayErrorMessage("No Class Selected");
         });
         MenuItem newConstr = new MenuItem("New Constructor");
         newConstr.setOnAction( e -> {
         	if ( selectedElement != null)
-        		displayConstructorMakerWindow( selectedElement);
+        		 DMenuWizard.displayConstructorMakerWindow( selectedElement);
         	else
-        		displayErrorMessage("No Class Selected");
+        		 DMenuWizard.displayErrorMessage("No Class Selected");
         });
 
         addMenu.getItems().addAll( newObject, newField, newMethod, newConstr);
@@ -288,9 +291,9 @@ public class DApp extends Application {
         MenuItem extractFields = new MenuItem( "Extract Fields");
 
 
-        extractAll.setOnAction(e -> extractAll(e, project) );
-        extractMethods.setOnAction(e -> extractMethods(e));
-        extractFields.setOnAction(e -> extractFields(e));
+        extractAll.setOnAction(e ->  DMenuWizard.extractAll(e, project) );
+        extractMethods.setOnAction(e ->  DMenuWizard.extractMethods(e));
+        extractFields.setOnAction(e ->  DMenuWizard.extractFields(e));
 
 
         extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
@@ -321,9 +324,9 @@ public class DApp extends Application {
 
 		removeClass.setOnAction(e -> {
 			if (selectedElement != null)
-				displayRemoveOptions( selectedElement);
+				 DMenuWizard.displayRemoveOptions( selectedElement);
 			else
-				displayErrorMessage( "No Selected Class");
+				 DMenuWizard.displayErrorMessage( "No Selected Class");
 		});
 		editMenu.getItems().addAll( editRelations, editClass, removeClass);
 
@@ -357,14 +360,20 @@ public class DApp extends Application {
     void iniElements( DProject prj) {
         elements = new ArrayList<Element>();
         for ( int i = 0; i < prj.getObjects().size(); i++) {
-            elements.add( new Element( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        	if ( prj.getObjects().get(i) instanceof DClass)
+        		elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        	else if  (prj.getObjects().get(i) instanceof DInterface)
+        		elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
         }
 
 
         for ( int i = 0; i < prj.getObjects().size(); i++) {
             elements.get(i).setObject( prj.getObjects().get(i));
             elements.get(i).updateObject();
+            elements.get(i).iniObject();
         }
+
+
 
 
     }
@@ -804,67 +813,11 @@ public class DApp extends Application {
     	return closestLine;
     }
 
-    /*
-    public static void extractAll( ActionEvent e) {
-        System.out.println("extracting all...");
-    }
-
-    public static void extractMethods( ActionEvent e) {
-        System.out.println("extracting methods...");
-    }
-
-    public static void extractFields( ActionEvent e) {
-        System.out.println("extracting fields...");
-    }*/
-
     // for loading from file
     public void openProject( DObject d) {
 
     	// sometimes foreshadowing is relatively obvious
 
-    }
-
-    public static void displayObjectOptions() {
-        Button create;
-        TextField name;
-
-
-        Stage window = new Stage();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("New Object");
-        window.setMinWidth(400);
-        window.setMinHeight(400);
-
-        Label messageName = new Label( "Name of the class:");
-        name = new TextField();
-
-        Label messageInh = new Label( "This class extends:");
-        ChoiceBox<String> choiceBox = new ChoiceBox<>();
-
-        // Going to add the elements in project
-        choiceBox.getItems().add("Object");
-        for ( DObject obj : project.getObjects())
-        	choiceBox.getItems().add( obj.getName());
-
-
-
-        create = new Button("create object");
-
-        create.setOnAction( e -> {
-
-            getInheritanceChoice( choiceBox, createObject( name));
-            window.close();
-        });
-
-
-
-        VBox layout = new VBox();
-        layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, create);
-        layout.setAlignment( Pos.CENTER);
-
-        window.setScene( new Scene( layout));
-        window.showAndWait();
     }
 
     public static DObject createObject( TextField name) {
@@ -916,196 +869,6 @@ public class DApp extends Application {
     }
 
 
-    public static void displayFieldOptions( Element element) {
-        Button create;
-        TextField name, type;
-
-        Stage window = new Stage();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("New Property");
-        window.setMinWidth(400);
-        window.setMinHeight(400);
-
-        Label messageName = new Label( "Name of the property:");
-        name = new TextField();
-        Label messageType = new Label( "Type of the property:");
-        type = new TextField();
-        create = new Button("add property");
-
-        create.setOnAction( e -> {
-
-        	if ( name.getText().equals("") && type.getText().equals("") ){
-        		displayErrorMessage( "No name or type found");
-        		displayFieldOptions( element);
-        		window.close();
-        	}
-        	else if ( type.getText().equals("") ) {
-        		displayErrorMessage( "No type found");
-        		displayFieldOptions( element);
-        		window.close();
-        	}
-            else if ( name.getText().equals("") ) {
-            	displayErrorMessage( "No name found");
-            	displayFieldOptions( element);
-            	window.close();
-            }
-            else {
-        		addProperty( name.getText(), type.getText(), element);
-            }
-
-            window.close();
-        });
-
-
-
-        VBox layout = new VBox();
-        layout.getChildren().addAll( messageName, name, messageType, type, create);
-        layout.setAlignment( Pos.CENTER);
-
-        window.setScene( new Scene( layout));
-        window.showAndWait();
-    }
-
-    public static void displayMethodOptions( Element element) {
-        Button create;
-        TextField name, returnType;
-        CheckBox cb, cb2, cb3;
-        Stage window = new Stage();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("New Method");
-        window.setMinWidth(400);
-        window.setMinHeight(400);
-
-        Label messageName = new Label( "Name of the method:");
-        name = new TextField();
-        Label messageType = new Label( "Return type of the method:");
-        returnType = new TextField();
-        //Label messageParam = new Label( "Add parameters below");
-        cb = new CheckBox();
-        cb2 = new CheckBox();
-        cb3 = new CheckBox();
-        cb.setTooltip(  new Tooltip("void"));
-        cb2.setTooltip(new Tooltip("static"));
-        cb3.setTooltip( new Tooltip("no parameters"));
-        create = new Button("create method");
-
-        create.setOnAction( e -> {
-        	final boolean stat = cb2.isSelected();
-
-        	if ( name.getText().equals("") && returnType.getText().equals("") ){
-        		displayErrorMessage( "No name or return type found");
-        		displayMethodOptions( element);
-        		window.close();
-        	}
-        	else if ( returnType.getText().equals("") ) {
-        		displayErrorMessage( "No return type found");
-        		displayMethodOptions( element);
-        		window.close();
-        	}
-            else if ( name.getText().equals("") ) {
-            	displayErrorMessage( "No name found");
-            	displayMethodOptions( element);
-            	window.close();
-            }
-            else {
-            	final DMethod meth = new DMethod( name.getText(), returnType.getText(), stat);
-        		if ( !cb3.isSelected())
-        			displayParameterOptions( meth, element);
-        		else
-        			addMethod( meth, element);
-            }
-
-            window.close();
-        });
-
-        VBox layout = new VBox();
-        layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, cb3, create);
-        layout.setAlignment( Pos.CENTER);
-
-        window.setScene( new Scene( layout));
-        window.showAndWait();
-    }
-
-    public static void displayParameterOptions( DMethod meth, Element element) {
-    	Button addParam, addNew;
-
-    	ArrayList<TextField> params = new ArrayList<TextField>();
-
-        Stage window = new Stage();
-        VBox layout = new VBox();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("Method Parameters for " + meth.getName());
-        window.setMinWidth(400);
-        window.setMinHeight(400);
-
-
-        Label messageParam = new Label( "Add parameters below");
-        layout.getChildren().add(messageParam);
-
-
-
-        addNew = new Button("add another");
-        addNew.setOnAction( e -> {
-        	final TextField tf = new TextField("tpye, name");
-        	params.add(tf);
-        	layout.getChildren().add( tf);
-        	e.consume();
-        });
-
-        addParam = new Button("create method");
-
-        addParam.setOnAction( e -> {
-
-        	for ( int i = 0; i < params.size(); i++) {
-        		for ( int j = 0; j < params.get(i).getText().length(); j++){
-        			if ( params.get(i).getText().charAt(j) == ',') {
-                        meth.addParameter( params.get(i).getText().substring(j+1), params.get(i).getText().substring(0,j) );
-        			}
-        		}
-        	}
-        	addMethod(meth, element);
-
-            window.close();
-        });
-
-        layout.setAlignment( Pos.CENTER_LEFT);
-        addNew.setAlignment(Pos.CENTER_RIGHT);
-        addParam.setAlignment( Pos.BOTTOM_CENTER);
-
-        BorderPane parentLayout = new BorderPane();
-        parentLayout.setLeft( layout);
-        parentLayout.setRight( addNew);
-        parentLayout.setBottom( addParam);
-
-        window.setScene( new Scene( parentLayout));
-        window.showAndWait();
-
-    }
-
-    public static void displayErrorMessage(String message) {
-        Stage window = new Stage();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.initStyle(StageStyle.UNDECORATED);
-        window.setTitle("New Object");
-        window.setMinWidth(200);
-        window.setMinHeight(160);
-
-        Label messageName = new Label( message);
-
-        Button ok = new Button("OK");
-        ok.setOnAction( e ->  window.close());
-
-        VBox layout = new VBox();
-        layout.getChildren().addAll( messageName, ok);
-        layout.setAlignment( Pos.CENTER);
-
-        window.setScene( new Scene( layout));
-        window.showAndWait();
-    }
 
     public static void addProperty( String name, String type, Element element) {
     	DProperty prop = new DProperty( name, type);
@@ -1118,19 +881,6 @@ public class DApp extends Application {
     	element.addMethod(m);
     	((DClass)element.getObject()).addMethod(m);
     	System.out.print( m);
-    }
-
-    public static void extractAll( ActionEvent e, DProject prj) {
-        System.out.println("extracting all...");
-        prj.extract("");
-    }
-
-    public static void extractMethods( ActionEvent e) {
-        System.out.println("extracting methods...");
-    }
-
-    public static void extractFields( ActionEvent e) {
-        System.out.println("extracting fields...");
     }
 
     static void setLineColor( Paint color)
@@ -1235,121 +985,8 @@ public class DApp extends Application {
         window.setScene(scene);
         window.show();
     }
-    public static void displayRemoveOptions( Element element) {
-		Stage window = new Stage();
 
-		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("Are you sure");
-		window.setMinWidth(200);
-		window.setMinHeight(160);
 
-		Label messageName = new Label( "Deleting " + selectedElement.getObject().getName() + "...\n" + "Are you sure?");
-
-		Button ok = new Button("Yes");
-		Button notOk = new Button("cancel");
-		ok.setOnAction(e -> {
-			select(null);
-
-			//deleting overlay
-			for ( int i =0; i < group.getChildren().size();i++) {
-				if ( group.getChildren().get(i) instanceof Group && ((Group) group).getChildren().get(i) == overlay)
-					group.getChildren().remove(group.getChildren().get(i));
-			}
-			// forgeting element
-			elements.remove(element);
-			// deleting element
-			for ( int i =0; i < group.getChildren().size();i++) {
-				if ( group.getChildren().get(i) instanceof Element && ((Element) group.getChildren().get(i)).listener &&((Element)group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
-					group.getChildren().remove(group.getChildren().get(i));
-			}
-			// removing from project
-			project.getObjects().remove(element.getObject());
-			//deleting line from group
-			for ( int i =0; i < group.getChildren().size();i++) {
-
-				if ( group.getChildren().get(i) instanceof ComplexLine ) {
-
-					ComplexLine cl = (ComplexLine)group.getChildren().get(i);
-
-					for ( int j =0; j < group.getChildren().size();j++)
-						if ( group.getChildren().get(j) instanceof ArrowHead ) {
-							ArrowHead  a = (ArrowHead)group.getChildren().get(j);
-
-							if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
-								group.getChildren().remove( a);
-							}
-						}
-					if ( element.startLines.contains(cl) || element.endLines.contains(cl))
-						group.getChildren().remove(cl);
-
-				}
-				if ( group.getChildren().get(i) instanceof DashedComplexLine ) {
-
-					DashedComplexLine cdl = (DashedComplexLine)group.getChildren().get(i);
-
-					for ( int j =0; j < group.getChildren().size();j++)
-						if ( group.getChildren().get(j) instanceof ArrowHead ) {
-							ArrowHead  a = (ArrowHead)group.getChildren().get(j);
-
-							if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
-								group.getChildren().remove( a);
-							}
-						}
-					if ( element.startLines.contains(cdl) || element.endLines.contains(cdl))
-						group.getChildren().remove(cdl);
-
-				}
-			}
-
-			updateArrow();
-			updateLines();
-			updateOverlay();
-			updateZoomPane();
-			//drawHierarchy(project);
-			window.close();
-		});
-		notOk.setOnAction( e ->  window.close());
-
-		VBox layout = new VBox();
-		layout.getChildren().addAll( messageName, ok, notOk);
-		layout.setAlignment( Pos.CENTER);
-
-		window.setScene( new Scene( layout));
-		window.showAndWait();
-	}
-
-    public static void displayProjectOptions() {
-        Stage window = new Stage();
-
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("New Project");
-        window.setMinWidth(200);
-        window.setMinHeight(160);
-
-        Label messageName = new Label( "Want to save the current project?");
-
-        Button ok = new Button("Yes");
-        Button no = new Button( "");
-        Button notOk = new Button("cancel");
-
-        ok.setOnAction(e -> {
-            saveProject();
-            cleanProjectView();
-
-            window.close();
-        });
-
-        notOk.setOnAction( e -> {
-            window.close();
-        });
-
-        VBox layout = new VBox();
-        layout.getChildren().addAll( messageName, ok, notOk);
-        layout.setAlignment( Pos.CENTER);
-
-        window.setScene( new Scene( layout));
-        window.showAndWait();
-    }
 
     private static void saveProject() {
 		// TODO Auto-generated method stub
