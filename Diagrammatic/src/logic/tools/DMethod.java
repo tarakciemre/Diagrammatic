@@ -16,12 +16,20 @@ public class DMethod implements Accesible{
 	private String accesibility;
 
 	// Constructors
+	/**
+	 * 
+	 */
 	public DMethod() {
 		name = "";
 		returnType = "void";
 		parameters = new ArrayList<DProperty>();
 	}
 
+	/**
+	 * @param name
+	 * @param returnType
+	 * @param isStatic
+	 */
 	public DMethod(String name, String returnType, boolean isStatic) {
 		parameters = new ArrayList<DProperty>();
 		this.returnType = returnType.trim();
@@ -31,6 +39,9 @@ public class DMethod implements Accesible{
 	}
 
 	// Methods
+	/**
+	 *
+	 */
 	public String toString() {
 
 		String output;
@@ -62,53 +73,91 @@ public class DMethod implements Accesible{
 		 */
 	}
 
+	/**
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getReturnType() {
 		return returnType;
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean getStatic()
 	{
 		return isStatic;
 	}
 
+	/**
+	 * @param isStatic
+	 */
 	public void setStatic( boolean isStatic)
 	{
 		this.isStatic = isStatic;
 	}
 
+	/**
+	 * @param name
+	 */
 	public void setName( String name) {
 		this.name = name;
 	}
 
+	/**
+	 * @param returnType
+	 */
 	public void setReturnType( String returnType) {
 		this.returnType = returnType;
 	}
 
+	/**
+	 * @param order
+	 * @return
+	 */
 	public DProperty getParameter( int order) {
 		return parameters.get( order);
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<DProperty> getParameters() {
 		return parameters;
 	}
 
+	/**
+	 * @param name
+	 * @param type
+	 */
 	public void addParameter( String name, String type) {
 		DProperty dp = new DProperty( name, type);
 		parameters.add( dp);
 	}
 
+	/**
+	 * @param parameter
+	 */
 	public void addParameter( DProperty parameter) {
 		parameters.add( parameter);
 	}
 
+	/**
+	 * @param dp
+	 */
 	public void removeParameter( DProperty dp) {
 		parameters.remove( dp);
 	}
 
+	/**
+	 * @param name
+	 */
 	public void removeParameter( String name) {
 		for( int i = 0; i < parameters.size(); i++) {
 			if (parameters.get(i).getName().equals(name)) {
@@ -117,10 +166,16 @@ public class DMethod implements Accesible{
 		}
 	}
 
+	/**
+	 * @param order
+	 */
 	public void removeParameter( int order) {
 		parameters.remove( parameters.get(order));
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<String> extract()
 	{
 		ArrayList<String> lines = new ArrayList<String>();
@@ -153,11 +208,17 @@ public class DMethod implements Accesible{
 	}
 
 
+	/**
+	 *
+	 */
 	public String getAcccessability() {
 		return accesibility;
 	}
 
 
+	/**
+	 *
+	 */
 	public void setAccessability( String s) {
 		if ( s.equals(ProjectManager.PROTECTED) || s.equals(ProjectManager.PUBLIC) || s.equals(ProjectManager.DEFAULT) || s.equals(ProjectManager.PRIVATE) )
 			accesibility = s;

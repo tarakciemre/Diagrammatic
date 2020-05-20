@@ -8,6 +8,13 @@ import javafx.scene.shape.Path;
 public class Arrow extends Path{
     private static final double defaultArrowHeadSize = 5.0;
 
+    /**
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     * @param arrowHeadSize
+     */
     public Arrow(double startX, double startY, double endX, double endY, double arrowHeadSize){
         super();
         strokeProperty().bind(fillProperty());
@@ -33,6 +40,12 @@ public class Arrow extends Path{
         getElements().add(new LineTo(endX, endY));
     }
 
+    /**
+     * @param startX
+     * @param startY
+     * @param endX
+     * @param endY
+     */
     public Arrow(double startX, double startY, double endX, double endY){
         this(startX, startY, endX, endY, defaultArrowHeadSize);
     }

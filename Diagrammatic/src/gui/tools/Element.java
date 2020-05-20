@@ -42,6 +42,9 @@ public class Element extends Group {
 	Label l2;
 	Label l3;
 
+	/**
+	 * @param listener
+	 */
 	public Element( boolean listener) {
 		if (listener) {
 			this.listener = listener;
@@ -55,6 +58,14 @@ public class Element extends Group {
 			boundsInParentProperty().addListener((v, o, n) -> DApp.updateOverlay());
 		}
 	}
+	/**
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param fill
+	 * @param listener
+	 */
 	public Element(double x, double y, double width, double height, Paint fill, boolean listener) {
 		widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
@@ -124,15 +135,27 @@ public class Element extends Group {
 
 	}
 
+	/**
+	 * @return
+	 */
 	public DoubleProperty widthProperty() { return widthProperty; }
 
+	/**
+	 * @return
+	 */
 	public DoubleProperty heightProperty() { return heightProperty; }
 
+	/**
+	 *
+	 */
 	@Override
 	public String toString() {
 		return "[" + getLayoutX() + ", " + getLayoutY() + ", " + widthProperty.get() + ", " + heightProperty.get() + "]";
 	}
 
+	/**
+	 * 
+	 */
 	public void updateSize() {
 		//for( Node n : contentsH.getChildren())
 		//((Label) n).setPrefWidth(((Label) n).getText().length() * 7);
@@ -145,16 +168,25 @@ public class Element extends Group {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public double limitWidth() {
 		updateSize();
 		return contentsH.prefWidth(heightProperty.getValue());
 	}
 
+	/**
+	 * @return
+	 */
 	public double limitHeight() {
 		updateSize();
 		return contentsV.prefHeight(widthProperty.getValue());
 	}
 
+	/**
+	 * @param dc
+	 */
 	public void setObject( DObject dc) {
 		nameOfClass = dc.getName();
 		this.dObject = dc;
@@ -162,9 +194,15 @@ public class Element extends Group {
 		updateObject();
 	}
 
+	/**
+	 * @return
+	 */
 	public boolean hasObject() {
 		return dObject != null;
 	}
+	/**
+	 * @param prop
+	 */
 	public void addField( DProperty prop) {
 		String out = new String("   -"+prop.getName() + ": ");
 		out += prop.getType();
@@ -174,6 +212,9 @@ public class Element extends Group {
 		updateObject();
 	}
 
+	/**
+	 * @param meth
+	 */
 	public void addMethod( DMethod meth) {
 		String out = new String( "   +"+meth.getName() + "(");
 
@@ -192,6 +233,9 @@ public class Element extends Group {
 		updateObject();
 	}
 
+	/**
+	 * 
+	 */
 	public void iniObject() {
 		if (dObject != null) {
 			if ( dObject instanceof DClass) {
@@ -213,6 +257,9 @@ public class Element extends Group {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	public void updateObject() {
 		/*
     	 for ( int i = 0; i < elements.size(); i++){
@@ -281,24 +328,42 @@ public class Element extends Group {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<Label> getMethodLabels() {
 		return meths;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<Label> getPropertyLabels() {
 		return props;
 	}
+	/**
+	 * @return
+	 */
 	public ArrayList<ComplexLine> getStartLines() {
 		return startLines;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<ComplexLine> getEndLines() {
 		return endLines;
 	}
+	/**
+	 * @return
+	 */
 	public DObject getObject() {
 		return this.dObject;
 	}
 
+	/**
+	 * @return
+	 */
 	public String elementToString()
 	{
 		String line = "CLA: " + widthProperty().doubleValue() + " " + heightProperty().doubleValue() + " " + getLayoutX() + " " +getLayoutY() + " " + rectangle.getFill();

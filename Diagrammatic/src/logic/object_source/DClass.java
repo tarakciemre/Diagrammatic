@@ -9,17 +9,26 @@ public class DClass extends DGeneralClass {
 	private ArrayList<DConstructor> constructors;
 
 	// Constructors
+	/**
+	 * @param name
+	 */
 	public DClass( String name) {
 		super( name);
 		constructors = new ArrayList<DConstructor>();
 	}
 
 	// Methods
+	/**
+	 * @param dcon
+	 */
 	public void addConstructor( DConstructor dcon)
 	{
 		constructors.add( dcon);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public ArrayList<String> extract() {
 		ArrayList<String> lines = new ArrayList<String>();
@@ -77,6 +86,9 @@ public class DClass extends DGeneralClass {
 		return lines;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<String> classToString()
 	{
 		ArrayList<String> output;
@@ -121,6 +133,9 @@ public class DClass extends DGeneralClass {
 		return output;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<DConstructor> getConstructors() {
 		return constructors;
 	}

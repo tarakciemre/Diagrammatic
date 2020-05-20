@@ -20,6 +20,11 @@ public class ProjectManager
     public final static String DEFAULT = "default";
     public final static String PRIVATE = "private";
 
+    /**
+     * @param lines
+     * @param project
+     * @return
+     */
     public static DClass textToClass( ArrayList<String> lines, DProject project)
     {
         DClass dc = new DClass( "Unnamed"); //Means an error occurred while loading the class
@@ -130,6 +135,11 @@ public class ProjectManager
         return dc;
     }
 
+    /**
+     * @param lines
+     * @param project
+     * @return
+     */
     public static DAbstractClass textToAbsClass( ArrayList<String> lines, DProject project)
     {
         DAbstractClass da = new DAbstractClass( "Unnamed"); //Means an error occurred while loading the class
@@ -240,6 +250,11 @@ public class ProjectManager
         return da;
     }
 
+    /**
+     * @param lines
+     * @param project
+     * @return
+     */
     public static DInterface textToInterface( ArrayList<String> lines, DProject project)
     {
         DInterface di = new DInterface( "Unnamed"); //Means an error occurred while loading the class
@@ -315,6 +330,10 @@ public class ProjectManager
         return di;
     }
 
+    /**
+     * @param lines
+     * @return
+     */
     public static DProject textToProject( ArrayList<String> lines)
     {
         DProject dp = new DProject(" Unnamed");

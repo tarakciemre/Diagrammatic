@@ -9,5 +9,8 @@ import java.util.ArrayList;
 
 public interface Extractable
 {
-   public ArrayList<String> extract();
+   /**
+ * @return
+ */
+public ArrayList<String> extract();
 }

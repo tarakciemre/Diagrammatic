@@ -17,6 +17,9 @@ public class DConstructor implements Extractable, Accesible
 	private String  accesibility;
 	private ArrayList<DConstructorProperty> includedProperties;
 
+	/**
+	 * @param c
+	 */
 	public DConstructor(DGeneralClass c)
 	{
 		properties = new ArrayList<DConstructorProperty>();
@@ -28,6 +31,9 @@ public class DConstructor implements Extractable, Accesible
 		accesibility = ProjectManager.DEFAULT;
 	}
 
+	/**
+	 *
+	 */
 	public ArrayList<String> extract()
 	{
 		ArrayList<String> lines = new ArrayList<String>();
@@ -65,6 +71,10 @@ public class DConstructor implements Extractable, Accesible
 	}
 
 	//String pName yerine DConstructorProperty gelebilir mi?
+	/**
+	 * @param pName
+	 * @param included
+	 */
 	public void setIncluded( String pName, boolean included)
 	{
 		for( int i = 0; i < properties.size(); i++)
@@ -74,6 +84,9 @@ public class DConstructor implements Extractable, Accesible
 		}
 	}
 
+	/**
+	 *
+	 */
 	public String toString()
 	{
 		String output;
@@ -86,6 +99,9 @@ public class DConstructor implements Extractable, Accesible
 		return output;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<DConstructorProperty> getProperties()
 	{
 		ArrayList<DConstructorProperty> out = new ArrayList<DConstructorProperty>();
@@ -97,16 +113,25 @@ public class DConstructor implements Extractable, Accesible
 		return out;
 	}
 
+	/**
+	 * @param dcp
+	 */
 	public void addProperty( DConstructorProperty dcp)
 	{
 		properties.add( dcp);
 	}
 
+	/**
+	 *
+	 */
 	public String getAcccessability() {
 		return accesibility;
 	}
 
 
+	/**
+	 *
+	 */
 	public void setAccessability( String s) {
 		if ( s.equals(ProjectManager.PROTECTED) || s.equals(ProjectManager.PUBLIC) || s.equals(ProjectManager.DEFAULT) || s.equals(ProjectManager.PRIVATE) )
 			accesibility = s;

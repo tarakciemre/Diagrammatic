@@ -1,5 +1,0 @@
-package gui.interfaces;
-
-public class Moveable {
-
-}

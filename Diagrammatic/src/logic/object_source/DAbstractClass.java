@@ -8,13 +8,19 @@ public class DAbstractClass extends DGeneralClass {
 	private ArrayList<DConstructor> constructors;
 
    // Constructors
-   public DAbstractClass( String name) {
+   /**
+ * @param name
+ */
+public DAbstractClass( String name) {
       super( name);
    }
 
    // Methods
 
-   @Override
+   /**
+ *
+ */
+@Override
    public ArrayList<String> extract() {
       ArrayList<String> lines = new ArrayList<String>();
 
@@ -41,12 +47,18 @@ public class DAbstractClass extends DGeneralClass {
       return lines;
    }
 
-   public void addConstructor( DConstructor dcon)
+   /**
+ * @param dcon
+ */
+public void addConstructor( DConstructor dcon)
    {
       constructors.add( dcon);
    }
 
-   public ArrayList<String> classToString()
+   /**
+ * @return
+ */
+public ArrayList<String> classToString()
    {
       ArrayList<String> output;
 

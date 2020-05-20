@@ -10,7 +10,10 @@ public class FileManager
    // Properties
    
    // Constructors
-   public FileManager()
+   /**
+ * 
+ */
+public FileManager()
    {
       
    }
@@ -22,12 +25,19 @@ public class FileManager
     * @param ArrayList<String> input is the code to be extracted
     * @returns 1 if successful, 0 if a file with the same name already exists
     **/
-   public int extractJavaFile()
+   /**
+ * @return
+ */
+public int extractJavaFile()
    {
       return 1;
    }
    
-   public int extractToTxt(DObject input)
+   /**
+ * @param input
+ * @return
+ */
+public int extractToTxt(DObject input)
    {
       String path;
       
@@ -56,7 +66,11 @@ public class FileManager
     *  Projects\File.txt -- In which case, it creates the file in the Diagrammatic workspace
     * @returns 1 if successful, 0 if unsuccessful
     **/
-   public int createFile(String path)
+   /**
+ * @param path
+ * @return
+ */
+public int createFile(String path)
    {
       try {
          // Use relative path for Unix systems

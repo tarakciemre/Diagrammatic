@@ -8,11 +8,22 @@ import gui.*;
 
 public class DashedComplexLine extends ComplexLine {
 
+	/**
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param elementFrom
+	 * @param elementTo
+	 */
 	public DashedComplexLine( double x1, double y1, double x2, double y2, Element elementFrom, Element elementTo)
 	{
 		super( x1, y1, x2, y2, elementFrom, elementTo);
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void updateL()
 	{
@@ -36,6 +47,9 @@ public class DashedComplexLine extends ComplexLine {
 	}
 
 
+	/**
+	 *
+	 */
 	public void updateLP()
 	{
 		getChildren().removeAll(getChildren());
@@ -81,7 +95,7 @@ public class DashedComplexLine extends ComplexLine {
 						DApp.updateOverlay();
 						DApp.updateZoomPane();
 						DApp.updateArrow();
-				        DApp.scrollPane.setPannable(false);
+						DApp.scrollPane.setPannable(false);
 					}
 				}
 				else
@@ -102,7 +116,7 @@ public class DashedComplexLine extends ComplexLine {
 
 			c.setOnMouseReleased(me -> {
 				updateLP();
-		        DApp.scrollPane.setPannable(true);
+				DApp.scrollPane.setPannable(true);
 			});
 		}
 

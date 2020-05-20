@@ -18,6 +18,10 @@ public class ComplexLine extends Group
 	Element elementFrom;
 	Element elementTo;
 
+	/**
+	 * @param elementFrom
+	 * @param elementTo
+	 */
 	public ComplexLine( Element elementFrom, Element elementTo)
 	{
 		super();
@@ -31,6 +35,14 @@ public class ComplexLine extends Group
 	}
 
 	// Creates one line
+	/**
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param elementFrom
+	 * @param elementTo
+	 */
 	public ComplexLine( double x1, double y1, double x2, double y2, Element elementFrom, Element elementTo)
 	{
 		super();
@@ -44,6 +56,9 @@ public class ComplexLine extends Group
 		updateLP();
 	}
 
+	/**
+	 * 
+	 */
 	public void updateL()
 	{
 		for (int i = 0; i < getChildren().size(); i++)
@@ -64,6 +79,9 @@ public class ComplexLine extends Group
 		getChildren().addAll(lines);
 	}
 
+	/**
+	 * 
+	 */
 	public void updateLP()
 	{
 		getChildren().removeAll(getChildren());
@@ -108,7 +126,7 @@ public class ComplexLine extends Group
 						DApp.updateOverlay();
 						DApp.updateZoomPane();
 						DApp.updateArrow();
-				        DApp.scrollPane.setPannable(false);
+						DApp.scrollPane.setPannable(false);
 					}
 				}
 				else
@@ -129,7 +147,7 @@ public class ComplexLine extends Group
 
 			c.setOnMouseReleased(me -> {
 				updateLP();
-		        DApp.scrollPane.setPannable(true);
+				DApp.scrollPane.setPannable(true);
 			});
 		}
 
@@ -137,43 +155,70 @@ public class ComplexLine extends Group
 		getChildren().addAll(circles);
 	}
 
+	/**
+	 * @param point
+	 * @param index
+	 */
 	public void addPoint( Point2D point, int index)
 	{
 		points.add(index, point);
 		updateLP();
 	}
 
+	/**
+	 * @param point
+	 * @param index
+	 */
 	public void setPoint( Point2D point, int index)
 	{
 		points.set(index, point);
 		updateLP();
 	}
 
+	/**
+	 * @param point
+	 */
 	public void setStartPoint( Point2D point)
 	{
 		setPoint(point, 0);
 	}
 
+	/**
+	 * @param point
+	 */
 	public void setEndPoint( Point2D point)
 	{
 		setPoint(point, points.size() - 1);
 	}
 
+	/**
+	 * @return
+	 */
 	public int getLineCount()
 	{
 		return lines.size();
 	}
 
+	/**
+	 * @return
+	 */
 	public int getPointCount()
 	{
 		return points.size();
 	}
 
+	/**
+	 * @return
+	 */
 	public LinkedList<Line> getLines()
 	{
 		return lines;
 	}
 
+	/**
+	 * @param l
+	 * @return
+	 */
 	public int getLineIndex( Line l)
 	{
 		for (int i = 0; i < lines.size(); i++)
@@ -184,16 +229,25 @@ public class ComplexLine extends Group
 		return -1;
 	}
 
+	/**
+	 * @return
+	 */
 	public LinkedList<Point2D> getPoints()
 	{
 		return points;
 	}
 
+	/**
+	 * @param point
+	 */
 	public void removePoint( Point2D point)
 	{
 		points.remove( point);
 	}
 
+	/**
+	 * @return
+	 */
 	public String lineToString()
 	{
 		String line = "LIN: " + elementFrom + " " + elementTo;

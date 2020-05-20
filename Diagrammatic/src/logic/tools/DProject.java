@@ -14,18 +14,27 @@ public class DProject {
 	ArrayList<DObject> objects;
 	String projectName;
 
+	/**
+	 * 
+	 */
 	public DProject()
 	{
 		objects = new ArrayList<DObject>();
 		projectName = "New_Project";
 	}
 
+	/**
+	 * @param name
+	 */
 	public DProject( String name)
 	{
 		objects = new ArrayList<DObject>();
 		projectName = name;
 	}
 
+	/**
+	 * @param projectText
+	 */
 	public DProject( ArrayList<String> projectText)
 	{
 		DProject p = ProjectManager.textToProject(projectText);
@@ -33,16 +42,25 @@ public class DProject {
 		this.projectName = p.projectName;
 	}
 
+	/**
+	 * @param name
+	 */
 	public void setName(String name)
 	{
 		projectName = name;
 	}
 
+	/**
+	 * @return
+	 */
 	public String getName()
 	{
 		return projectName;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<String> projectToText()
 	{
 		// done interfaces array
@@ -130,20 +148,32 @@ public class DProject {
 		return projectText;
 	}
 
+	/**
+	 * @return
+	 */
 	public ArrayList<DObject> getObjects() {
 		return objects;
 	}
 
+	/**
+	 * @param d
+	 */
 	public void addObject( DObject d)
 	{
 		objects.add(d);
 	}
 
+	/**
+	 * @param d
+	 */
 	public void removeObject( DObject d)
 	{
 		objects.remove(d);
 	}
 
+	/**
+	 * @param path
+	 */
 	public void extract( String path)
 	{
 		File f = new File(projectName);
