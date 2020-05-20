@@ -1,0 +1,545 @@
+package gui;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import gui.tools.ArrowHead;
+import gui.tools.ComplexLine;
+import gui.tools.DashedComplexLine;
+import gui.tools.Element;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import logic.object_source.DClass;
+import logic.object_source.DObject;
+import logic.tools.DMethod;
+import logic.tools.DProject;
+import logic.tools.DProperty;
+
+public class DMenuWizard {
+    public void openProject( DObject d) {
+
+        // sometimes foreshadowing is relatively obvious
+
+    }
+
+    public static void displayObjectOptions() {
+        Button create;
+        TextField name;
+
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Object");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Name of the class:");
+        name = new TextField();
+
+        Label messageInh = new Label( "This class extends:");
+        ChoiceBox<String> choiceBox = new ChoiceBox<>();
+
+        // Going to add the elements in project
+        choiceBox.getItems().add("Object");
+        for ( DObject obj : DApp.project.getObjects())
+            choiceBox.getItems().add( obj.getName());
+
+
+
+        create = new Button("create object");
+
+        create.setOnAction( e -> {
+
+            getInheritanceChoice( choiceBox, createObject( name));
+            window.close();
+        });
+
+
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static DObject createObject( TextField name) {
+        Element r;
+        DClass object = new DClass( name.getText());
+        System.out.println( object);
+
+        Random rand = new Random();
+        if ( DApp.selectedElement != null)
+            r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7), 200, 200, Color.color(Math.random(), Math.random(), Math.random()), true);
+        else
+            r = new Element( DApp.offset + 0 - Math.random()*1000, DApp.offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true);
+
+        r.setObject(object);
+        DApp.elements.add(r);
+        DApp.project.addObject(object);
+
+        DApp.group.getChildren().add(r);
+
+        return object;
+    }
+
+    public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
+        for ( DObject o : DApp.project.getObjects() ) {
+            if ( cb.getValue().equals(o.getName()))
+                setInheritance(o , child);
+        }
+    }
+
+    public static void setInheritance( DObject parent, DObject child) {
+        Element lastAdded = null, selected = null;
+
+        for ( Node n : DApp.group.getChildren()) {
+            if ( n instanceof Element && ((Element) n).hasObject()){
+                if ( (((Element) n).getObject().getName()).equals( child.getName()) )
+                    lastAdded = (Element)n;
+            }
+        }
+        for ( Node n : DApp.group.getChildren()) {
+            if ( n instanceof Element && ((Element) n).hasObject()){
+                if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
+                    selected = (Element)n;
+            }
+        }
+
+        DApp.drawCenteredLine( selected, lastAdded);
+        DApp.select(selected);
+        DApp.select(lastAdded);
+    }
+
+
+    public static void displayFieldOptions( Element element) {
+        Button create;
+        TextField name, type;
+
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Property");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Type of the property:");
+        name = new TextField();
+        Label messageType = new Label( "Name of the property:");
+        type = new TextField();
+        create = new Button("add property");
+
+        create.setOnAction( e -> {
+
+            if ( name.getText().equals("") && type.getText().equals("") ){
+                displayErrorMessage( "No name or type found");
+                displayFieldOptions( element);
+                window.close();
+            }
+            else if ( type.getText().equals("") ) {
+                displayErrorMessage( "No type found");
+                displayFieldOptions( element);
+                window.close();
+            }
+            else if ( name.getText().equals("") ) {
+                displayErrorMessage( "No name found");
+                displayFieldOptions( element);
+                window.close();
+            }
+            else {
+                addProperty( name.getText(), type.getText(), element);
+            }
+
+            window.close();
+        });
+
+
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, name, messageType, type, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static void displayMethodOptions( Element element) {
+        Button create;
+        TextField name, returnType;
+        CheckBox cb, cb2, cb3;
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Method");
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+        Label messageName = new Label( "Name of the method:");
+        name = new TextField();
+        Label messageType = new Label( "Return type of the method:");
+        returnType = new TextField();
+        //Label messageParam = new Label( "Add parameters below");
+        cb = new CheckBox();
+        cb2 = new CheckBox();
+        cb3 = new CheckBox();
+        cb.setTooltip(  new Tooltip("void"));
+        cb2.setTooltip(new Tooltip("static"));
+        cb3.setTooltip( new Tooltip("no parameters"));
+        create = new Button("create method");
+
+        create.setOnAction( e -> {
+            final boolean stat = cb2.isSelected();
+
+            if ( name.getText().equals("") && returnType.getText().equals("") ){
+                displayErrorMessage( "No name or return type found");
+                displayMethodOptions( element);
+                window.close();
+            }
+            else if ( returnType.getText().equals("") ) {
+                displayErrorMessage( "No return type found");
+                displayMethodOptions( element);
+                window.close();
+            }
+            else if ( name.getText().equals("") ) {
+                displayErrorMessage( "No name found");
+                displayMethodOptions( element);
+                window.close();
+            }
+            else {
+                final DMethod meth = new DMethod( name.getText(), returnType.getText(), stat);
+                if ( !cb3.isSelected())
+                    displayParameterOptions( meth, element);
+                else
+                    addMethod( meth, element);
+            }
+
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, cb3, create);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static void displayParameterOptions( DMethod meth, Element element) {
+        Button addParam, addNew;
+
+        ArrayList<TextField> params = new ArrayList<TextField>();
+
+        Stage window = new Stage();
+        VBox layout = new VBox();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("Method Parameters for " + meth.getName());
+        window.setMinWidth(400);
+        window.setMinHeight(400);
+
+
+        Label messageParam = new Label( "Add parameters below");
+        layout.getChildren().add(messageParam);
+
+
+
+        addNew = new Button("add another");
+        addNew.setOnAction( e -> {
+            final TextField tf = new TextField("tpye, name");
+            params.add(tf);
+            layout.getChildren().add( tf);
+            e.consume();
+        });
+
+        addParam = new Button("create method");
+
+        addParam.setOnAction( e -> {
+
+            for ( int i = 0; i < params.size(); i++) {
+                for ( int j = 0; j < params.get(i).getText().length(); j++){
+                    if ( params.get(i).getText().charAt(j) == ',') {
+                        meth.addParameter( params.get(i).getText().substring(j+1), params.get(i).getText().substring(0,j) );
+                    }
+                }
+            }
+            addMethod(meth, element);
+
+            window.close();
+        });
+
+        layout.setAlignment( Pos.CENTER_LEFT);
+        addNew.setAlignment(Pos.CENTER_RIGHT);
+        addParam.setAlignment( Pos.BOTTOM_CENTER);
+
+        BorderPane parentLayout = new BorderPane();
+        parentLayout.setLeft( layout);
+        parentLayout.setRight( addNew);
+        parentLayout.setBottom( addParam);
+
+        window.setScene( new Scene( parentLayout));
+        window.showAndWait();
+
+    }
+
+    public static void displayErrorMessage(String message) {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.UNDECORATED);
+        window.setTitle("New Object");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( message);
+
+        Button ok = new Button("OK");
+        ok.setOnAction( e ->  window.close());
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static void addProperty( String name, String type, Element element) {
+        DProperty prop = new DProperty( name, type);
+        element.addField(prop);
+        ((DClass)element.getObject()).addProperty(prop);
+        System.out.println( prop)
+        DApp.setHSize(element.getLayoutX() + 0.01, true); 
+        DApp.setVSize(element.getLayoutY() + 0.01, true);
+    }
+
+    public static void addMethod( DMethod m, Element element) {
+        element.addMethod(m);
+        ((DClass)element.getObject()).addMethod(m);
+        System.out.print( m);
+    }
+
+    public static void extractAll( ActionEvent e, DProject prj) {
+        System.out.println("extracting all...");
+        prj.extract("");
+    }
+
+    public static void extractMethods( ActionEvent e) {
+        System.out.println("extracting methods...");
+    }
+
+    public static void extractFields( ActionEvent e) {
+        System.out.println("extracting fields...");
+    }
+
+    static void setLineColor( Paint color)
+    {
+        DApp.lineColor = color;
+    }
+    static void setBackgroundColor(Paint color)
+    {
+        DApp.backgroundColor = color;
+        Paint bg1 = color;
+        BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
+    }
+
+    public static void displayConstructorMakerWindow( Element element) {
+        Stage window = new Stage();
+        Scene scene;
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.DECORATED);
+        window.setTitle("Constructor Maker");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+        TableView table = new TableView();
+
+        table.setEditable(true);
+
+        TableColumn firstNameCol = new TableColumn("Accessibility");
+        TableColumn lastNameCol = new TableColumn("Parameters");
+
+        firstNameCol.setPrefWidth( 60);
+        lastNameCol.setPrefWidth( 60);
+
+        table.getColumns().addAll(firstNameCol, lastNameCol);
+
+        final VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        vbox.getChildren().addAll( table);
+
+        scene = new Scene(vbox);
+        //((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        window.setScene(scene);
+        window.show();
+    }
+    public static void displayRemoveOptions( Element element) {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("Are you sure");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( "Deleting " + DApp.selectedElement.getObject().getName() + "...\n" + "Are you sure?");
+
+        Button ok = new Button("Yes");
+        Button notOk = new Button("cancel");
+        ok.setOnAction(e -> {
+            DApp.select(null);
+
+            //deleting overlay
+            for ( int i =0; i < DApp.group.getChildren().size();i++) {
+                if ( DApp.group.getChildren().get(i) instanceof Group && ((Group) DApp.group).getChildren().get(i) == DApp.overlay)
+                    DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+            }
+            // forgeting element
+            DApp.elements.remove(element);
+            // deleting element
+            for ( int i =0; i < DApp.group.getChildren().size();i++) {
+                if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
+                    DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+            }
+            // removing from project
+            DApp.project.getObjects().remove(element.getObject());
+            //deleting line from group
+            for ( int i =0; i < DApp.group.getChildren().size();i++) {
+
+                if ( DApp.group.getChildren().get(i) instanceof ComplexLine ) {
+
+                    ComplexLine cl = (ComplexLine)DApp.group.getChildren().get(i);
+
+                    for ( int j =0; j < DApp.group.getChildren().size();j++)
+                        if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
+                            ArrowHead  a = (ArrowHead)DApp.group.getChildren().get(j);
+
+                            if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
+                                DApp.group.getChildren().remove( a);
+                            }
+                        }
+                    if ( element.startLines.contains(cl) || element.endLines.contains(cl))
+                        DApp.group.getChildren().remove(cl);
+
+                }
+                if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine ) {
+
+                    DashedComplexLine cdl = (DashedComplexLine)DApp.group.getChildren().get(i);
+
+                    for ( int j =0; j < DApp.group.getChildren().size();j++)
+                        if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
+                            ArrowHead  a = (ArrowHead)DApp.group.getChildren().get(j);
+
+                            if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
+                                DApp.group.getChildren().remove( a);
+                            }
+                        }
+                    if ( element.startLines.contains(cdl) || element.endLines.contains(cdl))
+                        DApp.group.getChildren().remove(cdl);
+
+                }
+            }
+
+            DApp.updateArrow();
+            DApp.updateLines();
+            DApp.updateOverlay();
+            DApp.updateZoomPane();
+            //drawHierarchy(project);
+            window.close();
+        });
+        notOk.setOnAction( e ->  window.close());
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok, notOk);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    public static void displayProjectOptions() {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Project");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( "Want to save the current project?");
+
+        Button ok = new Button("Yes");
+        Button no = new Button( "");
+        Button notOk = new Button("cancel");
+
+        ok.setOnAction(e -> {
+            saveProject();
+            cleanProjectView();
+
+            window.close();
+        });
+
+        notOk.setOnAction( e -> {
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok, notOk);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    private static void saveProject() {
+        // TODO Auto-generated method stub
+
+    }
+
+    public static void cleanProjectView() {
+        DApp.select(null);
+
+        // forgeting all elements
+        DApp.elements.clear();
+
+        // removing from project
+        DApp.project.getObjects().clear();
+
+        int size = DApp.group.getChildren().size();
+        //deleting line from group
+        for ( int i =0; i < DApp.group.getChildren().size();i++) {
+
+            if ( DApp.group.getChildren().get(i) instanceof Element && !((Element) DApp.group.getChildren().get(i)).listener) {
+
+            }else {
+                DApp.group.getChildren().remove( i);
+            }
+        }
+
+        DApp.updateArrow();
+        DApp.updateLines();
+        DApp.updateOverlay();
+        DApp.updateZoomPane();
+
+    }
+}

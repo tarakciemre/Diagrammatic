@@ -30,6 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import logic.object_source.DClass;
+import logic.object_source.DInterface;
 import logic.object_source.DObject;
 import logic.tools.DMethod;
 import logic.tools.DProject;
@@ -52,7 +53,6 @@ public class DMenuWizard {
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("New Object");
         window.setMinWidth(400);
-        window.setMinHeight(400);
 
         Label messageName = new Label( "Name of the class:");
         name = new TextField();
@@ -167,6 +167,10 @@ public class DMenuWizard {
                 displayErrorMessage( "No name found");
                 displayFieldOptions( element);
                 window.close();
+            }
+            else if ( element.getObject() instanceof DInterface)
+            {
+            	displayErrorMessage( "Cannot add a property to an Interface.");
             }
             else {
                 addProperty( name.getText(), type.getText(), element);
@@ -328,13 +332,30 @@ public class DMenuWizard {
     public static void addProperty( String name, String type, Element element) {
         DProperty prop = new DProperty( name, type);
         element.addField(prop);
-        ((DClass)element.getObject()).addProperty(prop);
+        if( element.getObject() instanceof DClass)
+        {
+        	((DClass)element.getObject()).addProperty(prop);
+        }
+        if( element.getObject() instanceof DInterface)
+        {
+        	displayErrorMessage( "Cannot add a property to an Interface.");
+//            displayFieldOptions( element);
+//            window.close();
+        }
         System.out.println( prop);
     }
 
     public static void addMethod( DMethod m, Element element) {
         element.addMethod(m);
-        ((DClass)element.getObject()).addMethod(m);
+        if( element.getObject() instanceof DClass)
+        {
+        	((DClass)element.getObject()).addMethod(m);
+        }
+        if( element.getObject() instanceof DInterface)
+        {
+        	((DInterface)element.getObject()).addMethod(m);
+        }
+        
         System.out.print( m);
     }
 

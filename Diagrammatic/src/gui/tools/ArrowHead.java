@@ -27,6 +27,10 @@ public class ArrowHead extends Group{
 	Polygon polygon;
 
 	// constructors
+	/**
+	 * @param element
+	 * @param line
+	 */
 	public ArrowHead( Element element, ComplexLine line) {
 		e = element;
 		l = line;
@@ -46,6 +50,17 @@ public class ArrowHead extends Group{
 
 	}
 	// LINE/RECTANGLE
+	/**
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param rx
+	 * @param ry
+	 * @param rw
+	 * @param rh
+	 * @return
+	 */
 	boolean lineRect(double x1, double y1, double x2, double y2, double rx, double ry, double rw, double rh) {
 
 		// check if the line has hit any of the rectangle's sides
@@ -74,6 +89,17 @@ public class ArrowHead extends Group{
 
 
 	// LINE/LINE
+	/**
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param x3
+	 * @param y3
+	 * @param x4
+	 * @param y4
+	 * @return
+	 */
 	boolean lineLine(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
 
 		// calculate the direction of the lines
@@ -88,7 +114,7 @@ public class ArrowHead extends Group{
 			double intersectionY = y1 + (uA * (y2-y1));
 
 			Double degree;
-			if (y2 > y1)
+			if (y2 >= y1)
 				degree = Math.toDegrees( Math.atan(-(x2-x1)/(y2-y1) ) );
 			else
 				degree = Math.toDegrees( Math.atan(-(x2-x1)/(y2-y1) ) - Math.PI );
@@ -108,6 +134,9 @@ public class ArrowHead extends Group{
 		return false;
 	}
 
+	/**
+	 * 
+	 */
 	public void updateArrow() {
 		x1 = l.getPoints().get(0).getX();
 		y1 = l.getPoints().get(0).getY();
@@ -124,10 +153,16 @@ public class ArrowHead extends Group{
 		lineRect( x1, y1, x2, y2, rx, ry, rw, rh);
 	}
 
+	/**
+	 * @return
+	 */
 	public Element getElement() {
 		return e;
 	}
 
+	/**
+	 * @return
+	 */
 	public ComplexLine getComplexLine() {
 		return l;
 	}

@@ -8,6 +8,6 @@ public class InterfaceElement extends Element {
 		super(x, y, width, height, fill, listener);
 
 		//rectangle.setStrokeDashOffset(15);
-		rectangle.getStrokeDashArray().addAll(25d);
+		//rectangle.getStrokeDashArray().addAll(25d);
 	}
 }

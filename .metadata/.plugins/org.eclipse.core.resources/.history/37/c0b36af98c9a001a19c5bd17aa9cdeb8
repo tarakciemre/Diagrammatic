@@ -1,0 +1,9 @@
+package gui.tools;
+
+/**
+ * @author Emre
+ *
+ */
+public class Slot {
+
+}

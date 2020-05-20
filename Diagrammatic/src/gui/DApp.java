@@ -52,11 +52,29 @@ public class DApp extends Application {
 	// App Properties
 
 	// Helpers
+	public static final String[] colors = { "0xfeff99",
+            "0xffed99",
+            "0xfdc98",
+            "0xffc79a",
+            "0xff999a",
+            "0xeb99c7",
+            "0xc69edd",
+            "0xb1a1e0",
+            "0xa0b3dd",
+            "0x9ad6d6",
+            "0x99eb99",
+            "0xd9f89a"};
     static double a = 6, a2 = a / 2, lX, lY, sX, sY, sWidth, sHeight;
-    double gridSize = -1, lastX, lastY;
+    static double gridSize = -1;
+	double lastX;
+	double lastY;
     static int offset = 5000;
 
     // Members
+    public static final int ELEMENT_HEIGHT = 150;
+    public static final int ELEMENT_WIDTH = 150;
+    public static final double DEFAULT_ZOOM = 1.1606;
+    public static final double DEFAULT_GRIDSIZE = 15.7377;
     public static final double INDICATOR_RADIUS = 7;
     public static Slider slider1, slider2;
     public static CheckBox checkBox;
@@ -74,11 +92,11 @@ public class DApp extends Application {
     // Colors
     public static Paint lineColor;
     public static Paint backgroundColor;
-    Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
-    BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
+    static Paint bg1 = Paint.valueOf("linear-gradient(from 0.0% 0.0% to 0.0% 100.0%, 0x90c1eaff 0.0%, 0x5084b0ff 100.0%)");
+    static BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
     // canvas & sp
-    Canvas canvas = new Canvas();
-    SnapshotParameters sp = new SnapshotParameters();
+    static Canvas canvas = new Canvas();
+    static SnapshotParameters sp = new SnapshotParameters();
 
     public static void main( String[] args)
     {
@@ -101,7 +119,9 @@ public class DApp extends Application {
         //set the size of the window
         stage.setWidth(1820);
         stage.setHeight(900);
+        
 
+        
         Image icon = new Image("file:icon.png");
         Image albaniaIcon = new Image("file:albaniaicon.jpg");
         //stage.getIcons().add(albaniaIcon);
@@ -112,20 +132,22 @@ public class DApp extends Application {
         project.setName("GloriousAlbania");
 
         // init prj objects
-        DObject albanian = new DClass("Albanian");
-        DObject albanianable = new DInterface("Albanianable");
-        DObject kosovan = new DClass("Kosovan");
-        ((DClass) kosovan).setSuperClass((DClass) albanian);
-
-
+        DObject animalClass = new DClass("Animal");
+        DObject moveableInterface = new DInterface("Moveable");
+        DObject catClass = new DClass("Cat");
+        ((DClass) catClass).setSuperClass((DClass) animalClass);
+        
         //testing prop
-        ((DClass) kosovan).addProperty( new DProperty( "isBased","boolean"));
-        ((DClass) kosovan).addProperty( new DProperty( "hatesSerbs", "boolean"));
+        ((DClass) catClass).addProperty( new DProperty( "age","int"));
+        ((DClass) catClass).addProperty( new DProperty( "name", "String"));
+        ((DClass) catClass).addProperty( new DProperty( "length", "double"));
+        ((DClass) catClass).addProperty( new DProperty( "color", "String"));
+        ((DClass) catClass).addProperty( new DProperty( "isHungry", "boolean"));
 
         // adding prj objects to prj
-        project.addObject(albanian);
-        project.addObject(kosovan);
-        project.addObject(albanianable);
+        project.addObject(animalClass);
+        project.addObject(catClass);
+        project.addObject(moveableInterface);
 
 
         // init elements
@@ -213,6 +235,8 @@ public class DApp extends Application {
         slider2.valueProperty().addListener((v, o, n) -> {
             updateGrid();
         });
+       
+        
         checkBox = new CheckBox();
         checkBox.setPadding(new Insets(6));
         checkBox.setTooltip(new Tooltip("Show grid"));
@@ -226,6 +250,11 @@ public class DApp extends Application {
             updateZoomPane();
             Platform.runLater(() -> zoomPane.requestLayout());
         });
+        
+        //sliders' default values
+        slider1.setValue(DEFAULT_ZOOM);
+        slider2.setValue(DEFAULT_GRIDSIZE);
+        
         layout.setCenter(scrollPane);
         layout.setBottom(new FlowPane(slider1, checkBox, slider2));
         //stage.setOnCloseRequest(e -> System.out.println(group.getChildren().toString()));
@@ -303,9 +332,24 @@ public class DApp extends Application {
 
         // Preferences
         Menu preferencesMenu = new Menu("Preferences");
-        MenuItem themes = new MenuItem( "Themes");
+        MenuItem lightMode = new MenuItem( "Light Mode");
 
-        preferencesMenu.getItems().addAll(themes);
+        MenuItem darkMode = new MenuItem( "Dark Mode");
+
+        MenuItem sepyaMode = new MenuItem( "Sepya Mode");
+
+
+        preferencesMenu.getItems().addAll(lightMode, darkMode, sepyaMode);
+        
+        lightMode.setOnAction( e -> {
+        	setColorMode("Light");
+        });
+        darkMode.setOnAction( e -> {
+        	setColorMode("Dark");
+        });
+        sepyaMode.setOnAction( e -> {
+        	setColorMode("Sepya");
+        });
 
         // edit menu
         Menu editMenu = new Menu("Edit");
@@ -359,11 +403,14 @@ public class DApp extends Application {
     }
     void iniElements( DProject prj) {
         elements = new ArrayList<Element>();
+        Random random = new Random();
         for ( int i = 0; i < prj.getObjects().size(); i++) {
         	if ( prj.getObjects().get(i) instanceof DClass)
-        		elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        		elements.add( new ClassElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 
+        				ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
         	else if  (prj.getObjects().get(i) instanceof DInterface)
-        		elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 300, 300, Color.color(Math.random(), Math.random(), Math.random()), true));
+        		elements.add( new InterfaceElement( offset + 0 - Math.random()*1000, offset + 0 - Math.random()*1000, 
+        				ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(12)].substring(1).toUpperCase(), 1.0), true));
         }
 
 
@@ -372,10 +419,6 @@ public class DApp extends Application {
             elements.get(i).updateObject();
             elements.get(i).iniObject();
         }
-
-
-
-
     }
 
     static void drawHierarchy( DProject prj) {
@@ -407,7 +450,7 @@ public class DApp extends Application {
             group.getChildren().add( elements.get(i));
     }
 
-    void updateGrid() {
+    static void updateGrid() {
         double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
         if (!checkBox.isSelected() || size < 4) size = 0;
         if (gridSize != size) {
@@ -420,6 +463,8 @@ public class DApp extends Application {
             }
             gridSize = size;
         }
+        System.out.println( "Slider1: " + slider1.getValue());
+        System.out.println( "Slider2: " + slider2.getValue());
     }
 
 
@@ -429,7 +474,7 @@ public class DApp extends Application {
     }
 
 
-    ImagePattern patternTransparent(double size) {
+    static ImagePattern patternTransparent(double size) {
         canvas.setHeight(size);
         canvas.setWidth(size);
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -1017,7 +1062,30 @@ public class DApp extends Application {
         updateLines();
         updateOverlay();
         updateZoomPane();
-
     }
-
+	
+	public static void setColorMode( String mode)
+	{
+		System.out.println("This is setcolormode");
+		if(mode.equals("Sepya"))
+		{
+			System.out.println("AAAAAAA");
+			setLineColor(Color.DARKSALMON );
+			setBackgroundColor( Color.CORNSILK);
+		}
+		else if(mode.equals("Light"))
+		{
+			setLineColor(Color.GRAY );
+			setBackgroundColor( Color.GHOSTWHITE);
+		}
+		else if( mode.equals("Dark"))
+		{
+			setLineColor(Color.LIGHTGREY );
+			setBackgroundColor( Color.LIGHTSLATEGRAY);
+		}
+		double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
+		Paint bg2 = patternTransparent(size);
+        BackgroundFill backgroundFill2 = new BackgroundFill(bg2, null, null);
+		zoomPane.setBackground(new Background(backgroundFill1, backgroundFill2));
+	}
 }
