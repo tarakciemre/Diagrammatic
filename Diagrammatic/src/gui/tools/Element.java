@@ -244,5 +244,11 @@ public class Element extends Group {
     	return this.dObject;
     }
 
+    public String elementToString()
+    {
+    	String line = "CLA: " + widthProperty().doubleValue() + " " + heightProperty().doubleValue() + " " + getLayoutX() + " " +getLayoutY() + " " + rectangle.getFill();
+    	return line;
+    }
+
 }
 

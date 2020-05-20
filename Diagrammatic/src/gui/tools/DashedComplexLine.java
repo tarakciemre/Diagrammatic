@@ -8,9 +8,9 @@ import gui.*;
 
 public class DashedComplexLine extends ComplexLine {
 
-	public DashedComplexLine( double x1, double y1, double x2, double y2)
+	public DashedComplexLine( double x1, double y1, double x2, double y2, Element elementFrom, Element elementTo)
 	{
-		super( x1, y1, x2, y2);
+		super( x1, y1, x2, y2, elementFrom, elementTo);
 	}
 
 	@Override

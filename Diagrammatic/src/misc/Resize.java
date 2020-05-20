@@ -559,7 +559,7 @@ public class Resize extends Application {
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
     	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
-        ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
+        ComplexLine line = new ComplexLine(fcX, fcY, scX, scY, first, second);
         group.getChildren().add(line);
         ArrowHead a = new ArrowHead( first, line);
     	group.getChildren().addAll(a);
@@ -573,7 +573,7 @@ public class Resize extends Application {
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
     	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
-        DashedComplexLine line = new DashedComplexLine(fcX, fcY, scX, scY);
+        DashedComplexLine line = new DashedComplexLine(fcX, fcY, scX, scY, first, second);
         group.getChildren().add(line);
         ArrowHead a = new ArrowHead( first, line);
     	group.getChildren().addAll(a);

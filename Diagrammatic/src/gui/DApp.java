@@ -138,6 +138,8 @@ public class DApp extends Application {
         Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
         Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
+        System.out.println(cornerSE.elementToString());
+
         group = new Group();
 
         closest = new Circle(3);
@@ -234,14 +236,18 @@ public class DApp extends Application {
         VBox leftLayout = new VBox(10);
         VBox rightLayout = new VBox(10);
         BorderPane parentLayout = new BorderPane();
-        
+
         // File Menu
         Menu fileMenu = new Menu("File");
+        MenuItem newProject = new MenuItem( "New Project");
+        newProject.setOnAction(e -> {
+            displayProjectOptions();
+        });
         MenuItem openProject = new MenuItem( "Open");
         MenuItem saveProject = new MenuItem( "Save");
         MenuItem saveProjectAs = new MenuItem( "Save As...");
-        
-        fileMenu.getItems().addAll(openProject, saveProject, saveProjectAs);
+
+        fileMenu.getItems().addAll(newProject, openProject, saveProject, saveProjectAs);
 
         // Add Menu
         Menu addMenu = new Menu("Add");
@@ -296,11 +302,11 @@ public class DApp extends Application {
 
         // most important menu
         Menu ytpMenu = new Menu("YTP modes");
-        
+
         // Preferences
         Menu preferencesMenu = new Menu("Preferences");
         MenuItem themes = new MenuItem( "Themes");
-        
+
         preferencesMenu.getItems().addAll(themes);
 
         // edit menu
@@ -308,6 +314,7 @@ public class DApp extends Application {
 		MenuItem editRelations = new MenuItem("Edit Relations");
 		MenuItem editClass = new MenuItem("Edit Class");
 		MenuItem removeClass = new MenuItem("Remove Class");
+
 
 		editRelations.setOnAction(e -> {
 			//displayObjectOptions();
@@ -616,7 +623,7 @@ public class DApp extends Application {
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
     	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
-        ComplexLine line = new ComplexLine(fcX, fcY, scX, scY);
+        ComplexLine line = new ComplexLine(fcX, fcY, scX, scY, first, second);
         group.getChildren().add(line);
         ArrowHead a = new ArrowHead( first, line);
     	group.getChildren().addAll(a);
@@ -630,7 +637,7 @@ public class DApp extends Application {
     	double fcY = first.getLayoutY() + first.heightProperty().get() / 2;
     	double scX = second.getLayoutX() + second.widthProperty().get() / 2;
     	double scY = second.getLayoutY() + second.heightProperty().get() / 2;
-        DashedComplexLine line = new DashedComplexLine(fcX, fcY, scX, scY);
+        DashedComplexLine line = new DashedComplexLine(fcX, fcY, scX, scY, first, second);
         group.getChildren().add(line);
         ArrowHead a = new ArrowHead( first, line);
     	group.getChildren().addAll(a);
@@ -1255,5 +1262,70 @@ public class DApp extends Application {
 		window.setScene( new Scene( layout));
 		window.showAndWait();
 	}
+
+    public static void displayProjectOptions() {
+        Stage window = new Stage();
+
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.setTitle("New Project");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
+
+        Label messageName = new Label( "Want to save the current project?");
+
+        Button ok = new Button("Yes");
+        Button no = new Button( "");
+        Button notOk = new Button("cancel");
+
+        ok.setOnAction(e -> {
+            saveProject();
+            cleanProjectView();
+
+            window.close();
+        });
+
+        notOk.setOnAction( e -> {
+            window.close();
+        });
+
+        VBox layout = new VBox();
+        layout.getChildren().addAll( messageName, ok, notOk);
+        layout.setAlignment( Pos.CENTER);
+
+        window.setScene( new Scene( layout));
+        window.showAndWait();
+    }
+
+    private static void saveProject() {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static void cleanProjectView() {
+        select(null);
+
+        // forgeting all elements
+        elements.clear();
+
+        // removing from project
+        project.getObjects().clear();
+
+        int size = group.getChildren().size();
+        //deleting line from group
+        for ( int i =0; i < group.getChildren().size();i++) {
+
+            if ( group.getChildren().get(i) instanceof Element && !((Element) group.getChildren().get(i)).listener) {
+
+            }else {
+                group.getChildren().remove( i);
+            }
+        }
+
+        updateArrow();
+        updateLines();
+        updateOverlay();
+        updateZoomPane();
+
+    }
 
 }

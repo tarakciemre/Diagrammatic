@@ -15,8 +15,10 @@ public class ComplexLine extends Group
 	LinkedList<Line> lines;
 	LinkedList<Point2D> points;
 	LinkedList<Circle> circles;
+	Element elementFrom;
+	Element elementTo;
 
-	public ComplexLine()
+	public ComplexLine( Element elementFrom, Element elementTo)
 	{
 		super();
 		lines = new LinkedList<Line>();
@@ -24,10 +26,12 @@ public class ComplexLine extends Group
 		circles = new LinkedList<Circle>();
 		getChildren().addAll(lines);
 		getChildren().addAll(circles);
+		this.elementFrom = elementFrom;
+		this.elementTo = elementTo;
 	}
 
 	// Creates one line
-	public ComplexLine( double x1, double y1, double x2, double y2)
+	public ComplexLine( double x1, double y1, double x2, double y2, Element elementFrom, Element elementTo)
 	{
 		super();
 		lines = new LinkedList<Line>();
@@ -35,6 +39,8 @@ public class ComplexLine extends Group
 		points = new LinkedList<Point2D>();
 		points.add(new Point2D(x1, y1));
 		points.add(new Point2D(x2, y2));
+		this.elementFrom = elementFrom;
+		this.elementTo = elementTo;
 		updateLP();
 	}
 
@@ -186,6 +192,24 @@ public class ComplexLine extends Group
 	public void removePoint( Point2D point)
 	{
 		points.remove( point);
+	}
+
+	public String lineToString()
+	{
+		String line = "LIN: " + elementFrom + " " + elementTo;
+		if (points.size() > 2)
+		{
+			for (int i = 1; i < points.size() - 1; i++)
+			{
+				Point2D point = points.get(i);
+				line = line + point.getX() + "-" + point.getY();
+				if (i != points.size() - 1)
+					line = line + ",";
+			}
+		}
+
+		return line;
+
 	}
 }
 
