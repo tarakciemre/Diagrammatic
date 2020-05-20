@@ -36,22 +36,13 @@ import logic.tools.DMethod;
 import logic.tools.DProject;
 import logic.tools.DProperty;
 
-
-
-
 public class DMenuWizard {
-	/**
-	 * @param d
-	 */
 	public void openProject( DObject d) {
 
 		// sometimes foreshadowing is relatively obvious
 
 	}
 
-	/**
-	 * 
-	 */
 	public static void displayObjectOptions() {
 		Button create;
 		TextField name;
@@ -94,10 +85,6 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * @param name
-	 * @return
-	 */
 	public static DObject createObject( TextField name) {
 		Element r;
 		DClass object = new DClass( name.getText());
@@ -118,10 +105,6 @@ public class DMenuWizard {
 		return object;
 	}
 
-	/**
-	 * @param cb
-	 * @param child
-	 */
 	public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
 		for ( DObject o : DApp.project.getObjects() ) {
 			if ( cb.getValue().equals(o.getName()))
@@ -129,10 +112,6 @@ public class DMenuWizard {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @param child
-	 */
 	public static void setInheritance( DObject parent, DObject child) {
 		Element lastAdded = null, selected = null;
 
@@ -155,9 +134,6 @@ public class DMenuWizard {
 	}
 
 
-	/**
-	 * @param element
-	 */
 	public static void displayFieldOptions( Element element) {
 		Button create;
 		TextField name, type;
@@ -213,9 +189,6 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * @param element
-	 */
 	public static void displayMethodOptions( Element element) {
 		Button create;
 		TextField name, returnType;
@@ -277,10 +250,6 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * @param meth
-	 * @param element
-	 */
 	public static void displayParameterOptions( DMethod meth, Element element) {
 		Button addParam, addNew;
 
@@ -338,9 +307,6 @@ public class DMenuWizard {
 
 	}
 
-	/**
-	 * @param message
-	 */
 	public static void displayErrorMessage(String message) {
 		Stage window = new Stage();
 
@@ -363,11 +329,6 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * @param name
-	 * @param type
-	 * @param element
-	 */
 	public static void addProperty( String name, String type, Element element) {
 		DProperty prop = new DProperty( name, type);
 		element.addField(prop);
@@ -384,10 +345,6 @@ public class DMenuWizard {
 		System.out.println( prop);
 	}
 
-	/**
-	 * @param m
-	 * @param element
-	 */
 	public static void addMethod( DMethod m, Element element) {
 		element.addMethod(m);
 		if( element.getObject() instanceof DClass)
@@ -402,39 +359,23 @@ public class DMenuWizard {
 		System.out.print( m);
 	}
 
-	/**
-	 * @param e
-	 * @param prj
-	 */
 	public static void extractAll( ActionEvent e, DProject prj) {
 		System.out.println("extracting all...");
 		prj.extract("");
 	}
 
-	/**
-	 * @param e
-	 */
 	public static void extractMethods( ActionEvent e) {
 		System.out.println("extracting methods...");
 	}
 
-	/**
-	 * @param e
-	 */
 	public static void extractFields( ActionEvent e) {
 		System.out.println("extracting fields...");
 	}
 
-	/**
-	 * @param color
-	 */
 	static void setLineColor( Paint color)
 	{
 		DApp.lineColor = color;
 	}
-	/**
-	 * @param color
-	 */
 	static void setBackgroundColor(Paint color)
 	{
 		DApp.backgroundColor = color;
@@ -442,9 +383,6 @@ public class DMenuWizard {
 		BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
 	}
 
-	/**
-	 * @param element
-	 */
 	public static void displayConstructorMakerWindow( Element element) {
 		Stage window = new Stage();
 		Scene scene;
@@ -476,9 +414,6 @@ public class DMenuWizard {
 		window.setScene(scene);
 		window.show();
 	}
-	/**
-	 * @param element
-	 */
 	public static void displayRemoveOptions( Element element) {
 		Stage window = new Stage();
 
@@ -562,9 +497,6 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * 
-	 */
 	public static void displayProjectOptions() {
 		Stage window = new Stage();
 
@@ -598,17 +530,11 @@ public class DMenuWizard {
 		window.showAndWait();
 	}
 
-	/**
-	 * 
-	 */
 	private static void saveProject() {
 		// TODO Auto-generated method stub
 
 	}
 
-	/**
-	 * 
-	 */
 	public static void cleanProjectView() {
 		DApp.select(null);
 
