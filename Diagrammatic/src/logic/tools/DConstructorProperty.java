@@ -19,7 +19,9 @@ public class DConstructorProperty implements Accesible
 	//Getters and setters
 	public DProperty getProperty()
 	{
-		return property;
+		if (included)
+			return property;
+		return new DProperty( "a", "a");
 	}
 
 	public boolean isIncluded()
@@ -41,7 +43,7 @@ public class DConstructorProperty implements Accesible
 		return getProperty().extract();
 	}
 
-
+	public String toString() { return property.getName(); }
 
 	public String getAcccessability() {
 		return accesibility;

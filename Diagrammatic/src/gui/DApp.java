@@ -3,6 +3,9 @@ package gui;
 //import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import logic.object_source.*;
 
 import gui.tools.ArrowHead;
@@ -28,12 +31,6 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
@@ -48,9 +45,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import logic.object_source.DClass;
 import logic.object_source.DObject;
-import logic.tools.DMethod;
-import logic.tools.DProject;
-import logic.tools.DProperty;
+import logic.tools.*;
 import gui.tools.pannablecanvas.*;
 
 public class DApp extends Application {
@@ -932,9 +927,9 @@ public class DApp extends Application {
         window.setMinWidth(400);
         window.setMinHeight(400);
 
-        Label messageName = new Label( "Type of the property:");
+        Label messageName = new Label( "Name of the property:");
         name = new TextField();
-        Label messageType = new Label( "Name of the property:");
+        Label messageType = new Label( "Type of the property:");
         type = new TextField();
         create = new Button("add property");
 
@@ -1157,22 +1152,82 @@ public class DApp extends Application {
         window.setTitle("Constructor Maker");
         window.setMinWidth(200);
         window.setMinHeight(160);
-        TableView table = new TableView();
+        ArrayList<DConstructorProperty> dConstructorProperties = new ArrayList<DConstructorProperty>();
+        ArrayList<Label> labels = new ArrayList<Label>();
+       /* TableView table = new TableView();
+        */
 
-        table.setEditable(true);
+        //table
+        /*table.setEditable(false);
 
-        TableColumn firstNameCol = new TableColumn("Accessibility");
-        TableColumn lastNameCol = new TableColumn("Parameters");
+        TableColumn<DConstructor, String> accessibility = new TableColumn("Accessibility");
+        TableColumn<DConstructor, ArrayList<DConstructorProperty>> parameters = new TableColumn("Parameters");
 
-        firstNameCol.setPrefWidth( 60);
-        lastNameCol.setPrefWidth( 60);
+        accessibility.setPrefWidth( 120);
+        parameters.setPrefWidth( 120);
 
-        table.getColumns().addAll(firstNameCol, lastNameCol);
+        accessibility.setCellValueFactory(new PropertyValueFactory<>( "accessibility"));
+        parameters.setCellValueFactory(new PropertyValueFactory<>( "properties"));*/
 
-        final VBox vbox = new VBox();
+
+
+        /*table.getColumns().addAll( accessibility, parameters);*/
+
+        //buttons
+        Button addButton = new Button("New Constructor");
+        addButton.setOnAction(e -> {
+            DConstructor dc = new DConstructor( (DClass) selectedElement.getObject());
+            for (DConstructorProperty p : dConstructorProperties){
+                if (p.isIncluded()) {
+                    dc.addProperty(p);
+                    labels.add(new Label(p.getProperty().getAcccessability() + " | " + p.getProperty().getType() + " | " + p.getProperty().getName()));
+                }
+            }
+            //table.getItems().add( dc);
+            ( (DClass) selectedElement.getObject()).addConstructor( dc);
+        });
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(e -> {
+        });
+
+        //hbox
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(10,10,10,10));
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll( addButton, deleteButton);
+
+        //radio buttons
+        VBox vbox2 = new VBox();
+
+        for (DProperty p : selectedElement.getObject().getProperties()) {
+            RadioButton rb = new RadioButton( p.getName());
+            DConstructorProperty consProp = new DConstructorProperty( p, false);
+
+            vbox2.getChildren().add( rb);
+            rb.setOnAction( event -> {
+                consProp.setIncluded( rb.isSelected());
+                if ( rb.isSelected())
+                    if (!dConstructorProperties.contains(consProp)) {
+                        dConstructorProperties.add(consProp);
+                    }
+                else
+                    dConstructorProperties.remove( consProp);
+            });
+        }
+
+        //vbox for labels
+        VBox vlabel = new VBox();
+        vlabel.setSpacing(5);
+        vlabel.setPadding(new Insets(10, 10, 10, 10));
+        for (Label l : labels) {
+            vlabel.getChildren().add( l);
+        }
+
+        //vbox
+        VBox vbox = new VBox();
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 10, 10, 10));
-        vbox.getChildren().addAll( table);
+        vbox.getChildren().addAll(vlabel, vbox2, hBox);
 
         scene = new Scene(vbox);
         //((Group) scene.getRoot()).getChildren().addAll(vbox);

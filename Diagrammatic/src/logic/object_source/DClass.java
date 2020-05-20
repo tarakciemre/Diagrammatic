@@ -120,4 +120,8 @@ public class DClass extends DGeneralClass {
 
 		return output;
 	}
+
+	public ArrayList<DConstructor> getConstructors() {
+		return constructors;
+	}
 }
