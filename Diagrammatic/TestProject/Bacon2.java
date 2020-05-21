@@ -1,4 +1,4 @@
-public class Cat extends Animal
+public class Bacon2 extends AbstractTest
 {
 
 	//Properties

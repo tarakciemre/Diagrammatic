@@ -1,7 +1,9 @@
 package logic.object_source;
 
 import java.util.ArrayList;
-import logic.tools.*;
+
+import logic.tools.DMethod;
+import logic.tools.DProperty;
 
 public class DGeneralClass extends DObject {
 
@@ -179,5 +181,21 @@ public class DGeneralClass extends DObject {
 	public String toString()
 	{
 		return "You shouldn't have created such an object";
+	}
+
+	public ArrayList<String> classToString() {
+		ArrayList<String> lines = new ArrayList<String>();
+		lines.add("You shouldn't have created such an object");
+		return lines;
+	}
+
+	//Best recursive method
+	@Override
+	public int degree()
+	{
+		if (superClass == null)
+			return 0;
+		else
+			return 1 + superClass.degree();
 	}
 }

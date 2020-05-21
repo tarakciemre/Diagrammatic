@@ -109,4 +109,14 @@ public class DObject implements Extractable, Accesible{
 			accesibility = s;
 
 	}
+
+	public ArrayList<String> classToString()
+	{
+		return new ArrayList<String>();
+	}
+
+	public int degree()
+	{
+		return 0;
+	}
 }

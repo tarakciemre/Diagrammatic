@@ -15,8 +15,6 @@ public class DConstructor implements Extractable, Accesible
 	private ArrayList<DConstructorProperty> properties;
 	private String className;
 	private String  accesibility;
-	private ArrayList<DConstructorProperty> includedProperties;
-
 	/**
 	 * @param c
 	 */
@@ -102,13 +100,23 @@ public class DConstructor implements Extractable, Accesible
 	/**
 	 * @return
 	 */
-	public ArrayList<DConstructorProperty> getProperties()
+	public ArrayList<DConstructorProperty> getIncludedProperties()
 	{
 		ArrayList<DConstructorProperty> out = new ArrayList<DConstructorProperty>();
 		for (DConstructorProperty p : properties)
 		{
 			if (p.isIncluded() )
 				out.add( p);
+		}
+		return out;
+	}
+
+	public ArrayList<DConstructorProperty> getProperties()
+	{
+		ArrayList<DConstructorProperty> out = new ArrayList<DConstructorProperty>();
+		for (DConstructorProperty p : properties)
+		{
+			out.add(p);
 		}
 		return out;
 	}

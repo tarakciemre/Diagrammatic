@@ -268,12 +268,28 @@ public class ComplexLine extends Group
 				Point2D point = points.get(i);
 				line = line + point.getX() + "-" + point.getY();
 				if (i != points.size() - 1)
-					line = line + ",";
+					line = line + " ";
 			}
 		}
 
 		return line;
 
 	}
+
+	public String toString()
+    {
+        String output;
+
+        output = "CLN: ";
+        output = output + elementFrom.getObject().getName() + " " + elementTo.getObject().getName();
+        if(points.size() >= 3)
+        {
+            for( int i = 1; i < points.size() - 1; i++)
+            {
+                output = output + " " + points.get(i).getX() + "," + points.get(i).getY();
+            }
+        }
+        return output;
+    }
 }
 

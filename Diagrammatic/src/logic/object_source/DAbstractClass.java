@@ -7,72 +7,73 @@ public class DAbstractClass extends DGeneralClass {
 
 	private ArrayList<DConstructor> constructors;
 
-   // Constructors
-   /**
- * @param name
- */
-public DAbstractClass( String name) {
-      super( name);
-   }
+	// Constructors
+	/**
+	 * @param name
+	 */
+	public DAbstractClass( String name) {
+		super( name);
+	}
 
-   // Methods
+	// Methods
 
-   /**
- *
- */
-@Override
-   public ArrayList<String> extract() {
-      ArrayList<String> lines = new ArrayList<String>();
+	/**
+	 *
+	 */
+	@Override
+	public ArrayList<String> extract() {
+		ArrayList<String> lines = new ArrayList<String>();
 
-      lines.add("public abstract class " + this.getName());
-      lines.add("{");
-      lines.add("");
-      lines.add( "\t// Properties");
-      lines.add("");
-      for ( int i = 0; i < this.getProperties().size(); i++)
-         lines.add( "\tprivate " + this.getProperties().get(i).extract());
-      lines.add("");
-      lines.add( "\t// Methods");
-      lines.add( "");
-      for( int i = 0; i < getMethods().size(); i++)
-      {
-         String line = "";
-         line += "\tpublic abstract" + getMethods().get(i).extract().get(0).substring( 6) + "{};";
+		lines.add("public abstract class " + this.getName());
+		lines.add("{");
+		lines.add("");
+		lines.add( "\t// Properties");
+		lines.add("");
+		for ( int i = 0; i < this.getProperties().size(); i++)
+			lines.add( "\tprivate " + this.getProperties().get(i).extract());
+		lines.add("");
+		lines.add( "\t// Methods");
+		lines.add( "");
+		for( int i = 0; i < getMethods().size(); i++)
+		{
+			String line = "";
+			line += "\tpublic abstract" + getMethods().get(i).extract().get(0).substring( 6) + "{};";
 
-         lines.add( line);
-      }
-      lines.add( "");
-      lines.add( "}");
+			lines.add( line);
+		}
+		lines.add( "");
+		lines.add( "}");
 
-      return lines;
-   }
+		return lines;
+	}
 
-   /**
- * @param dcon
- */
-public void addConstructor( DConstructor dcon)
-   {
-      constructors.add( dcon);
-   }
+	/**
+	 * @param dcon
+	 */
+	public void addConstructor( DConstructor dcon)
+	{
+		constructors.add( dcon);
+	}
 
-   /**
- * @return
- */
-public ArrayList<String> classToString()
-   {
-      ArrayList<String> output;
+	/**
+	 * @return
+	 */
+	@Override
+	public ArrayList<String> classToString()
+	{
+		ArrayList<String> output;
 
-      output = new ArrayList<String>();
-      output.add("ABS: " + getName());
-      output.add("");
+		output = new ArrayList<String>();
+		output.add("ABS: " + getName());
+		output.add("");
 		if (superClass != null)
 		{
-			output.add( "EXT: ");
+			output.add( "EXT " + getSuperClass().getName());
 			output.add( "");
 		}
 		if (!interfaces.isEmpty())
 		{
-			String interfaceLine = "IMP: ";
+			String interfaceLine = "IMP ";
 			for (DInterface di : interfaces)
 			{
 				interfaceLine += di.getName() + ",";
@@ -81,18 +82,27 @@ public ArrayList<String> classToString()
 			output.add(interfaceLine);
 			output.add( "");
 		}
-      for( DProperty prop: getProperties())
-      {
-         output.add("PRO " + prop);
-      }
-      output.add("");
-      for( DMethod meth: getMethods())
-      {
-         output.add("MET " + meth);
-      }
-      output.add("");
-      output.add("END");
 
-      return output;
-   }
+		if (!getProperties().isEmpty())
+		{
+			for( DProperty prop: getProperties())
+			{
+				output.add("PRO " + prop);
+			}
+			output.add("");
+		}
+
+		if (!getMethods().isEmpty())
+		{
+			for( DMethod meth: getMethods())
+			{
+				output.add("MET " + meth);
+			}
+			output.add("");
+		}
+
+		output.add("END");
+
+		return output;
+	}
 }

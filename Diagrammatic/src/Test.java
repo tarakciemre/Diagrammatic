@@ -10,8 +10,14 @@ public class Test {
 	static DProject project;
 	static DGeneralClass cg;
 	static DInterface i;
+	static DInterface i2;
+	static DInterface i3;
 	static DClass c;
+	static DClass c2;
+	static DClass c3;
 	static DAbstractClass ac;
+	static DAbstractClass ac2;
+	static DAbstractClass ac3;
 	static DMethod m;
 	static DProperty p;
 	static DConstructor con;
@@ -32,7 +38,7 @@ public class Test {
 	public static void main( String[] args) {
 		init();
 
-		// TO TEST SOMETH�NG, UNCOMMENT THE NECESSARY LINE BELOW:
+		// TO TEST SOMETHING, UNCOMMENT THE NECESSARY LINE BELOW:
 		//dMethodTest();
 		//dClassTest();
 		//dAbstractTest();
@@ -56,17 +62,37 @@ public class Test {
 	public static void init()
 	{
 		project = new DProject("TestProject");
-		cg = new DGeneralClass("GeneralClass");
 		i = new DInterface("Interactable");
 		c = new DClass("Bacon");
 		ac = new DAbstractClass("AbstractTest");
+		i2 = new DInterface("Interactable2");
+		c2 = new DClass("Bacon2");
+		ac2 = new DAbstractClass("AbstractTest2");
+		i3 = new DInterface("Interactable3");
+		c3 = new DClass("Bacon3");
+		ac3 = new DAbstractClass("AbstractTest3");
+		c.addInterface(i);
+		c.addInterface(i2);
 		m = new DMethod("isEven", "int", false);
 		p = new DProperty("dassein", "Dassein");
-		con = new DConstructor( c);
+
+		c.setSuperClass(c2);
+		c2.setSuperClass(ac);
+
+		ac2.setSuperClass(ac3);
+
+		i.addSuperInterface(i2);
+		i.addSuperInterface(i3);
 
 		project.addObject(i);
+		project.addObject(i2);
+		project.addObject(i3);
 		project.addObject(c);
+		project.addObject(c2);
+		project.addObject(c3);
 		project.addObject(ac);
+		project.addObject(ac2);
+		project.addObject(ac3);
 	}
 
 	/**
@@ -123,7 +149,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void dInterfaceTest()
 	{
@@ -134,7 +160,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void dProjectTest()
 	{
@@ -144,6 +170,11 @@ public class Test {
 
 		System.out.println(" {DProject}");
 		ArrayList<String> pt = project.projectToText();
+
+		for(int i = 0; i < pt.size(); i ++)
+		{
+			System.out.println(pt.get(i));
+		}
 
 		DProject project2 = ProjectManager.textToProject(pt);
 		ArrayList<String> pt2 = project2.projectToText();
@@ -157,7 +188,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void dExtractTest()
 	{
@@ -169,7 +200,7 @@ public class Test {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public static void translateTest()
 	{

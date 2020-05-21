@@ -89,6 +89,7 @@ public class DClass extends DGeneralClass {
 	/**
 	 * @return
 	 */
+	@Override
 	public ArrayList<String> classToString()
 	{
 		ArrayList<String> output;
@@ -98,7 +99,7 @@ public class DClass extends DGeneralClass {
 		output.add( "");
 		if (superClass != null)
 		{
-			output.add( "EXT: ");
+			output.add( "EXT " + getSuperClass().getName());
 			output.add( "");
 		}
 		if (!interfaces.isEmpty())
@@ -113,21 +114,32 @@ public class DClass extends DGeneralClass {
 			output.add( "");
 		}
 
-		for( DProperty prop: getProperties())
+		if (!getProperties().isEmpty())
 		{
-			output.add("PRO " + prop);
+			for( DProperty prop: getProperties())
+			{
+				output.add("PRO " + prop);
+			}
+			output.add("");
 		}
-		output.add("");
-		for( DMethod meth: getMethods())
+		if (!getMethods().isEmpty())
 		{
-			output.add("MET " + meth);
+			for( DMethod meth: getMethods())
+			{
+				output.add("MET " + meth);
+			}
+			output.add("");
 		}
-		output.add("");
-		for( DConstructor cons: constructors)
+
+		if (!constructors.isEmpty())
 		{
-			output.add("CON " + cons);
+			for( DConstructor cons: constructors)
+			{
+				output.add("CON " + cons);
+			}
+			output.add("");
 		}
-		output.add("");
+
 		output.add("END");
 
 		return output;

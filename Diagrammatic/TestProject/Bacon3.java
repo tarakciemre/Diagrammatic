@@ -1,9 +1,8 @@
-public class Animal
+public class Bacon3
 {
 
 	//Properties
 
-	private int age;
 
 	//Constructors
 

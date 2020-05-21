@@ -91,7 +91,7 @@ public class DInterface extends DObject {
 		String first = "public interface " + this.getName();
 		if (superInterfaces.size() > 0)
 		{
-			first += "extends ";
+			first += " extends ";
 			for (DInterface di : superInterfaces)
 			{
 				first += di.getName() + ", ";
@@ -122,6 +122,7 @@ public class DInterface extends DObject {
 	/**
 	 * @return
 	 */
+	@Override
 	public ArrayList<String> classToString()
 	{
 		ArrayList<String> output;
@@ -129,8 +130,17 @@ public class DInterface extends DObject {
 		output = new ArrayList<String>();
 		output.add("INT: " + getName());
 		output.add("");
-		output.add( "EXT");
-		output.add( "");
+		if (!superInterfaces.isEmpty())
+		{
+			String extLine = "EXT ";
+			for (DInterface superI : superInterfaces)
+			{
+				extLine = extLine + superI.getName() + ",";
+			}
+			extLine = extLine.substring(0, extLine.length() - 1);
+			output.add(extLine);
+			output.add("");
+		}
 		if (getMethods().size() > 0)
 		{
 			for( DMethod meth: getMethods())
@@ -145,6 +155,26 @@ public class DInterface extends DObject {
 		return output;
 	}
 
+	@Override
+	public int degree()
+	{
+		if (superInterfaces.isEmpty())
+			return 0;
+		else
+		{
+			int max = 0;
+			for (DInterface superI : superInterfaces)
+			{
+				if (superI.degree() > max)
+				{
+					max = superI.degree();
+				}
+
+			}
+			return max + 1;
+		}
+
+	}
 
 
 }

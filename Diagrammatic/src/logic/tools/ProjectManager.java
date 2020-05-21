@@ -86,6 +86,7 @@ public class ProjectManager
                         String[] propInfo = lineInfo.split(",");
                         DProperty dp = new DProperty( propInfo[0], propInfo[1]);
                         dc.addProperty( dp);
+                        System.out.println("added property");
                     }
                     else if(line.startsWith( "MET"))
                     {
