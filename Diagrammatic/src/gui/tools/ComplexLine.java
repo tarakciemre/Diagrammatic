@@ -284,10 +284,12 @@ public class ComplexLine extends Group
         output = output + elementFrom.getObject().getName() + " " + elementTo.getObject().getName();
         if(points.size() >= 3)
         {
+
             for( int i = 1; i < points.size() - 1; i++)
             {
                 output = output + " " + points.get(i).getX() + "," + points.get(i).getY();
             }
+
         }
         return output;
     }

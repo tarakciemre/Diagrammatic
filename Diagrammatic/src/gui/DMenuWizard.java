@@ -64,7 +64,7 @@ public class DMenuWizard {
 		Stage window = new Stage();
 
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("New Object");
+		window.setTitle("New Class");
 		window.setMinWidth(400);
 
 		Label messageName = new Label( "Name of the class:");
@@ -91,6 +91,7 @@ public class DMenuWizard {
 		{
 			if (obj instanceof DInterface)
 			{
+
 				choiceBox2.getItems().add( obj.getName());
 			}
 
@@ -100,7 +101,12 @@ public class DMenuWizard {
 		create = new Button("create object");
 
 		create.setOnAction( e -> {
-			getInheritanceChoice( choiceBox, createClass( name, choiceBox2));
+			try {
+				getInheritanceChoice( choiceBox, createClass( name, choiceBox2));
+
+			} catch (NullPointerException n) {
+				window.close();
+			}
 			window.close();
 		});
 
@@ -122,7 +128,7 @@ public class DMenuWizard {
 		Stage window = new Stage();
 
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("New Object");
+		window.setTitle("New Interface");
 		window.setMinWidth(400);
 
 		Label messageName = new Label( "Name of the interface:");
@@ -142,7 +148,11 @@ public class DMenuWizard {
 		create = new Button("create interface");
 
 		create.setOnAction( e -> {
-			createInterface(name, choiceBox);
+			try {
+				getInheritanceChoice( choiceBox, createInterface( name, choiceBox));
+			} catch (NullPointerException n) {
+				window.close();
+			}
 			window.close();
 		});
 
@@ -165,46 +175,54 @@ public class DMenuWizard {
 		Element r;
 		DClass object = new DClass( name.getText());
 
+		object.setName(name.getText());
+
 		Random rand = new Random();
-		if ( DApp.selectedElement != null)
-			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
-					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-		else
-			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
-					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+		if ( object.getName() != null) {
+			if ( DApp.selectedElement != null)
+				r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
+						150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+			else
+				r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
+						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
-		r.setObject(object);
-		DApp.elements.add(r);
-		DApp.project.addObject(object);
 
-		DApp.group.getChildren().add(r);
+			r.setObject(object);
+			DApp.elements.add(r);
+			DApp.project.addObject(object);
 
-		if (cb.getValue() != null)
-		{
-			String cbS = cb.getValue();
-			Element lastAdded = null, selected = null;
+			DApp.group.getChildren().add(r);
 
-			for ( Node n : DApp.group.getChildren()) {
-				if ( n instanceof Element && ((Element) n).hasObject()){
-					if ( (((Element) n).getObject().getName()).equals( object.getName()) )
-						lastAdded = (Element)n;
+			if (cb.getValue() != null)
+			{
+				String cbS = cb.getValue();
+				Element lastAdded = null, selected = null;
+
+				for ( Node n : DApp.group.getChildren()) {
+					if ( n instanceof Element && ((Element) n).hasObject()){
+						if ( (((Element) n).getObject().getName()).equals( object.getName()) )
+							lastAdded = (Element)n;
+					}
 				}
-			}
-			for ( Node n : DApp.group.getChildren()) {
-				if ( n instanceof Element && ((Element) n).hasObject()){
-					if ( (((Element) n).getObject().getName()).equals( cbS) )
-						selected = (Element)n;
+				for ( Node n : DApp.group.getChildren()) {
+					if ( n instanceof Element && ((Element) n).hasObject()){
+						if ( (((Element) n).getObject().getName()).equals( cbS) )
+							selected = (Element)n;
+					}
 				}
+
+				DApp.drawCenteredDashedLine( lastAdded, selected);
+
+				DApp.select(selected);
+				DApp.select(lastAdded);
 			}
 
-			DApp.drawCenteredDashedLine( lastAdded, selected);
-
-			DApp.select(selected);
-			DApp.select(lastAdded);
+			DApp.select(r);
 		}
-
-		DApp.select(r);
-
+		else {
+			displayErrorMessage( "Invalid Class Name Declaration");
+			return null;
+		}
 		DApp.updateZoomPane();
 
 		return object;
@@ -214,27 +232,34 @@ public class DMenuWizard {
 		Element r;
 		DInterface object = new DInterface( name.getText());
 		System.out.println( object);
-		if (cb != null)
-		{
-			String cbS = (String) cb.getValue();
+		object.setName(name.getText());
 
+
+		if ( object.getName() != null) {
+			if (cb != null)
+			{
+				String cbS = (String) cb.getValue();
+
+			}
+			Random rand = new Random();
+			if ( DApp.selectedElement != null)
+				r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
+						150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+			else
+				r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
+						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+
+			r.setObject(object);
+			DApp.elements.add(r);
+			DApp.project.addObject(object);
+
+			DApp.group.getChildren().add(r);
+
+			DApp.select(r);
 		}
-		Random rand = new Random();
-		if ( DApp.selectedElement != null)
-			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
-					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-		else
-			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
-					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-
-		r.setObject(object);
-		DApp.elements.add(r);
-		DApp.project.addObject(object);
-
-		DApp.group.getChildren().add(r);
-
-		DApp.select(r);
-
+		else {
+			displayErrorMessage( "Invalid Interface Name Declaration");
+		}
 		DApp.updateZoomPane();
 
 		return object;
@@ -434,7 +459,7 @@ public class DMenuWizard {
 		fields = new ArrayList<Label>();
 		for ( int i = 0; i < element.getObject().getProperties().size(); i++) {
 			fields.add( new Label( element.getObject().getProperties().get(i).getType() + ":"
-		                         + element.getObject().getProperties().get(i).getName()));
+					+ element.getObject().getProperties().get(i).getName()));
 		}
 
 		window.initModality(Modality.APPLICATION_MODAL);
