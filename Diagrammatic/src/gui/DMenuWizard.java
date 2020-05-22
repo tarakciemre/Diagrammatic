@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -424,11 +425,17 @@ public class DMenuWizard {
 	 */
 	public static void displayParameterOptions( DMethod meth, Element element) {
 		Button addParam, addNew;
-
+		ArrayList<Label> fields;
 		ArrayList<TextField> params = new ArrayList<TextField>();
 
 		Stage window = new Stage();
 		VBox layout = new VBox();
+
+		fields = new ArrayList<Label>();
+		for ( int i = 0; i < element.getObject().getProperties().size(); i++) {
+			fields.add( new Label( element.getObject().getProperties().get(i).getType() + ":"
+		                         + element.getObject().getProperties().get(i).getName()));
+		}
 
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("Method Parameters for " + meth.getName());
@@ -460,10 +467,43 @@ public class DMenuWizard {
 					}
 				}
 			}
-			addMethod(meth, element);
 
+			for ( int i = 0; i < layout.getChildren().size(); i++) {
+
+				if ( layout.getChildren().get(i) instanceof HBox) {
+					HBox currentRow = (HBox)layout.getChildren().get(i) ;
+
+					for ( int j = 0; j < currentRow.getChildren().size(); j++) {
+
+						if ( currentRow.getChildren().get(j) instanceof CheckBox) {
+
+							if ( ((CheckBox)currentRow.getChildren().get(j)).isSelected() ){
+
+								for ( int k = 0; k <((Label)currentRow.getChildren().get(j-1)).getText().length(); k++){
+
+									if ( ((Label)currentRow.getChildren().get(j-1)).getText().charAt(k) == ':') {
+
+										meth.addParameter( ((Label)currentRow.getChildren().get(j-1)).getText().substring(k+1),
+												((Label)currentRow.getChildren().get(j-1)).getText().substring(0,k));
+									}
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			addMethod(meth, element);
 			window.close();
 		});
+
+		for ( Label l : fields) {
+			HBox h = new HBox();
+			h.getChildren().add( l);
+			h.getChildren().add( new CheckBox());
+			layout.getChildren().add(h);
+		}
 
 		layout.setAlignment( Pos.CENTER_LEFT);
 		addNew.setAlignment(Pos.CENTER_RIGHT);

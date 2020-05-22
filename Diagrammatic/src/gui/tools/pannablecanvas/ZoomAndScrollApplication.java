@@ -1,5 +1,6 @@
 package gui.tools.pannablecanvas;
 
+import gui.tools.ClassElement;
 import javafx.application.Application;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -66,16 +67,21 @@ public class ZoomAndScrollApplication extends Application {
         circle1.addEventFilter( MouseEvent.MOUSE_PRESSED, nodeGestures.getOnMousePressedEventHandler());
         circle1.addEventFilter( MouseEvent.MOUSE_DRAGGED, nodeGestures.getOnMouseDraggedEventHandler());
 
-        Rectangle rect1 = new Rectangle(100,100);
+        /*
+        ClassElement rect1 = new ClassElement( 300 - Math.random()*500,
+                                               300 - Math.random()*500,
+				                               150, 150,
+				                               Color.BLACK, true);
         rect1.setTranslateX(450);
         rect1.setTranslateY(450);
         rect1.setStroke(Color.BLUE);
-        rect1.setFill(Color.BLUE.deriveColor(1, 1, 1, 0.5));
+         rect1.setFill(Color.BLUE.deriveColor(1, 1, 1, 0.5));
         rect1.addEventFilter( MouseEvent.MOUSE_PRESSED, nodeGestures.getOnMousePressedEventHandler());
         rect1.addEventFilter( MouseEvent.MOUSE_DRAGGED, nodeGestures.getOnMouseDraggedEventHandler());
+        */
 
-        canvas.getChildren().addAll(label1, label2, label3, circle1, rect1);
-
+        // canvas.getChildren().addAll(label1, label2, label3, circle1, rect1);
+        canvas.getChildren().addAll(label1, label2, label3, circle1);
         group.getChildren().add(canvas);
 
         // create scene which can be dragged and zoomed

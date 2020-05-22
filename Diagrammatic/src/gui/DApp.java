@@ -393,6 +393,8 @@ public class DApp extends Application {
 
         stage.show();
         scrollPane.setPannable(true);
+        //scrollPane.setTranslateX(100);
+        //scrollPane.setTranslateY(100);
 
         addElements( group);
         drawHierarchy( project);
