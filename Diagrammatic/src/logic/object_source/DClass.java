@@ -140,6 +140,9 @@ public class DClass extends DGeneralClass {
 			output.add("");
 		}
 
+		output.add(getElement().elementToString());
+		output.add("");
+
 		output.add("END");
 
 		return output;
@@ -151,4 +154,5 @@ public class DClass extends DGeneralClass {
 	public ArrayList<DConstructor> getConstructors() {
 		return constructors;
 	}
+
 }

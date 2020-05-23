@@ -101,6 +101,9 @@ public class DAbstractClass extends DGeneralClass {
 			output.add("");
 		}
 
+		output.add(getElement().elementToString());
+		output.add("");
+
 		output.add("END");
 
 		return output;

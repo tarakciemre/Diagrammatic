@@ -4,6 +4,8 @@ import logic.tools.*;
 import logic.interfaces.*;
 import java.util.ArrayList;
 
+import gui.tools.Element;
+
 public class DObject implements Extractable, Accesible{
 
 	// Properties
@@ -12,6 +14,7 @@ public class DObject implements Extractable, Accesible{
 	private ArrayList<DMethod> methodCollector;
 	private ArrayList<DProperty> propertyCollector;
 	private ArrayList<DConstructor> constructorCollector;
+	private Element guiElement;
 
 	// Methods
 	/**
@@ -25,7 +28,7 @@ public class DObject implements Extractable, Accesible{
 	/**
 	 *
 	 */
-	public  String toString()
+	public String toString()
 	{
 		return null;
 	}
@@ -118,5 +121,15 @@ public class DObject implements Extractable, Accesible{
 	public int degree()
 	{
 		return 0;
+	}
+
+	public Element getElement()
+	{
+		return guiElement;
+	}
+
+	public void setElement( Element e)
+	{
+		guiElement = e;
 	}
 }

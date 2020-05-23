@@ -160,6 +160,11 @@ public class DGeneralClass extends DObject {
 		interfaces.remove(di);
 	}
 
+	public ArrayList<DInterface> getInterfaces()
+	{
+		return interfaces;
+	}
+
 	/**
 	 * @param dg
 	 */
@@ -180,7 +185,7 @@ public class DGeneralClass extends DObject {
 	 */
 	public String toString()
 	{
-		return "You shouldn't have created such an object";
+		return name;
 	}
 
 	public ArrayList<String> classToString() {

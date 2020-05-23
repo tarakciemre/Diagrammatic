@@ -1,11 +1,17 @@
 package logic.tools;
 
 import java.util.ArrayList;
+
+import gui.DApp;
+import gui.tools.ComplexLine;
+import gui.tools.Element;
+import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
+import logic.object_source.DAbstractClass;
 import logic.object_source.DClass;
 import logic.object_source.DGeneralClass;
 import logic.object_source.DInterface;
 import logic.object_source.DObject;
-import logic.object_source.DAbstractClass;
 
 /*
  * DFileManager class for methods related to project/file translations.
@@ -125,6 +131,15 @@ public class ProjectManager
 
                         dc.addConstructor( dcon);
                     }
+                    else if( line.startsWith( "ELE"))
+                    {
+                    	String[] eleInfo = lineInfo.split( " ");
+                        Element e = new Element(Double.valueOf(eleInfo[0]), Double.valueOf(eleInfo[1]), Double.valueOf(eleInfo[2]), Double.valueOf(eleInfo[3]), Color.web(eleInfo[4], 1.0), true);
+                        ProjectManager.connectElement(e, dc);
+                        DApp.elements.add(e);
+
+            			DApp.group.getChildren().add(e);
+                    }
                     else if (line.startsWith( "END"))
                     {
                         return dc;
@@ -139,7 +154,6 @@ public class ProjectManager
     /**
      * @param lines
      * @param project
-     * @return
      */
     public static DAbstractClass textToAbsClass( ArrayList<String> lines, DProject project)
     {
@@ -240,6 +254,17 @@ public class ProjectManager
 
                         da.addConstructor( dcon);
                     }
+
+                    else if( line.startsWith( "ELE"))
+                    {
+                    	String[] eleInfo = lineInfo.split( " ");
+                        Element e = new Element(Double.valueOf(eleInfo[0]), Double.valueOf(eleInfo[1]), Double.valueOf(eleInfo[2]), Double.valueOf(eleInfo[3]), Color.web(eleInfo[4], 1.0), true);
+                        ProjectManager.connectElement(e, da);
+                        DApp.elements.add(e);
+
+            			DApp.group.getChildren().add(e);
+                    }
+
                     else if (line.startsWith( "END"))
                     {
                         return da;
@@ -320,6 +345,17 @@ public class ProjectManager
                         di.addMethod(dm);
                     }
 
+                    else if( line.startsWith( "ELE"))
+                    {
+                    	String[] eleInfo = lineInfo.split( " ");
+                        Element e = new Element(Double.valueOf(eleInfo[0]), Double.valueOf(eleInfo[1]), Double.valueOf(eleInfo[2]), Double.valueOf(eleInfo[3]), Color.web(eleInfo[4], 1.0), true);
+                        ProjectManager.connectElement(e, di);
+                        DApp.elements.add(e);
+
+            			DApp.group.getChildren().add(e);
+            			System.out.println(e);
+                    }
+
                     else if (line.startsWith( "END"))
                     {
                         return di;
@@ -395,6 +431,46 @@ public class ProjectManager
             		DAbstractClass da = textToAbsClass(absInfo, dp);
             		dp.addObject(da);
             	}
+
+            	else if (line.startsWith( "COMPLEXLINES"))
+            	{
+            		DApp.drawHierarchy(dp);
+            		i++;
+            	}
+
+            	else if (line.startsWith( "CLN"))
+            	{
+            		String[] clnInfo = line.substring( 4, line.length()).split(" ");
+            		Element first = null, second = null;
+            		ComplexLine cln = null;
+
+            		for (Element e : DApp.elements)
+            		{
+            			if (e.getObject().getName().equals(clnInfo[0]))
+            				first = e;
+            			else if (e.getObject().getName().equals(clnInfo[1]))
+            				second = e;
+            		}
+
+            		for (ComplexLine l : DApp.lines)
+            		{
+            			if (first.getStartLines().contains(l) && second.getEndLines().contains(l))
+            				cln = l;
+            		}
+
+            		if (clnInfo.length >= 2)
+            		{
+            			for( int j = 2; j < clnInfo.length; j++)
+                		{
+                			String[] pointInfo = clnInfo[j].split("-");
+                			Point2D point = new Point2D( Double.valueOf(pointInfo[0]), Double.valueOf(pointInfo[1]));
+                			cln.addPoint(point, cln.getPointCount() - 1);
+                			System.out.println(cln);
+                		}
+            		}
+
+            		i++;
+            	}
             	else
             	{
             		i++;
@@ -404,4 +480,11 @@ public class ProjectManager
 
         return dp;
     }
+
+    public static void connectElement( Element e, DObject o)
+    {
+    	e.setObject(o);
+    	o.setElement(e);
+    }
+
 }

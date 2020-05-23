@@ -260,7 +260,7 @@ public class ComplexLine extends Group
 	 */
 	public String lineToString()
 	{
-		String line = "LIN: " + elementFrom + " " + elementTo;
+		String line = "CLN " + elementFrom.getObject().getName() + " " + elementTo.getObject().getName() + " ";
 		if (points.size() > 2)
 		{
 			for (int i = 1; i < points.size() - 1; i++)
@@ -280,14 +280,14 @@ public class ComplexLine extends Group
     {
         String output;
 
-        output = "CLN: ";
+        output = "CLN ";
         output = output + elementFrom.getObject().getName() + " " + elementTo.getObject().getName();
         if(points.size() >= 3)
         {
 
             for( int i = 1; i < points.size() - 1; i++)
             {
-                output = output + " " + points.get(i).getX() + "," + points.get(i).getY();
+                output = output + " " + points.get(i).getX() + "-" + points.get(i).getY();
             }
 
         }

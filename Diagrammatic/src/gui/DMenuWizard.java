@@ -1,7 +1,13 @@
 package gui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
+
 import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
 import gui.tools.DashedComplexLine;
@@ -15,7 +21,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -36,6 +44,7 @@ import logic.object_source.DObject;
 import logic.tools.DMethod;
 import logic.tools.DProject;
 import logic.tools.DProperty;
+import logic.tools.ProjectManager;
 
 /**
  * DMenuWizard class which controls menu events and has methods about it.
@@ -106,6 +115,7 @@ public class DMenuWizard {
 
 			} catch (NullPointerException n) {
 				window.close();
+				n.printStackTrace();
 			}
 			window.close();
 		});
@@ -114,6 +124,57 @@ public class DMenuWizard {
 
 		VBox layout = new VBox();
 		layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, messageInh2, choiceBox2, create);
+		layout.setAlignment( Pos.CENTER);
+
+		window.setScene( new Scene( layout));
+		window.showAndWait();
+	}
+
+	public static void displayLoadOptions() {
+		Button load;
+
+		Stage window = new Stage();
+
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("Open Project");
+		window.setMinWidth(400);
+
+		Label messageProject = new Label( "Projects");
+		ChoiceBox<String> choiceBox = new ChoiceBox<>();
+
+		File folder = new File("Saved Projects");
+		File[] listOfFiles = folder.listFiles();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if (listOfFiles[i].isFile())
+			{
+				choiceBox.getItems().add( listOfFiles[i].getName().substring(0, listOfFiles[i].getName().length() - 5));
+			}
+		}
+
+		load = new Button("Load Project");
+
+		load.setOnAction( e -> {
+			try {
+				cleanProjectView();
+				loadProject(choiceBox.getValue());
+				DApp.updateArrow();
+				DApp.updateLines();
+				DApp.updateOverlay();
+				DApp.updateZoomPane();
+				displayErrorMessage("Project Loaded Successfully!");
+
+			} catch (NullPointerException n) {
+				displayErrorMessage("Project Wasn't Loaded Successfully!");
+				n.printStackTrace();
+			}
+			window.close();
+		});
+
+
+
+		VBox layout = new VBox();
+		layout.getChildren().addAll( messageProject, choiceBox, load);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -152,6 +213,7 @@ public class DMenuWizard {
 				getInheritanceChoice( choiceBox, createInterface( name, choiceBox));
 			} catch (NullPointerException n) {
 				window.close();
+				n.printStackTrace();
 			}
 			window.close();
 		});
@@ -187,7 +249,7 @@ public class DMenuWizard {
 						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
 
-			r.setObject(object);
+			ProjectManager.connectElement(r, object);
 			DApp.elements.add(r);
 			DApp.project.addObject(object);
 
@@ -207,11 +269,16 @@ public class DMenuWizard {
 				for ( Node n : DApp.group.getChildren()) {
 					if ( n instanceof Element && ((Element) n).hasObject()){
 						if ( (((Element) n).getObject().getName()).equals( cbS) )
+						{
 							selected = (Element)n;
+							DInterface di = (DInterface) selected.getObject();
+							object.addInterface(di);
+						}
 					}
 				}
 
 				DApp.drawCenteredDashedLine( lastAdded, selected);
+
 
 				DApp.select(selected);
 				DApp.select(lastAdded);
@@ -228,7 +295,124 @@ public class DMenuWizard {
 		return object;
 	}
 
-	public static DObject createInterface( TextField name, ChoiceBox cb) {
+	public static void editClassOptions()
+	{
+		if (DApp.selectedElement != null) {
+			if (DApp.selectedElement.getObject() instanceof DGeneralClass) {
+				Stage window = new Stage();
+				window.initModality(Modality.APPLICATION_MODAL);
+				window.initStyle(StageStyle.DECORATED);
+				window.setTitle("Edit Class");
+				window.setMinWidth(200);
+				window.setMinHeight(160);
+
+				Button removePropertyButton = new Button("Remove Property");
+				Button removeMethodButton = new Button("Remove Method");
+				Button editInheritanceButton = new Button("Edit Inheritance");
+				Button editInterfaces = new Button("Edit Implemented Interface");
+
+				ArrayList<Label> properties = new ArrayList<>();
+				ArrayList<Label> methods = new ArrayList<>();
+
+				VBox propertyVBox = new VBox();
+				propertyVBox.getChildren().add( new Label("Properties: "));
+				for (DProperty dp : DApp.selectedElement.getObject().getProperties()) {
+					propertyVBox.getChildren().add(new Label( dp.getName()));
+				}
+
+				VBox methodVBox = new VBox();
+				methodVBox.getChildren().add( new Label("Methods: "));
+				for (DMethod dm : DApp.selectedElement.getObject().getMethods()) {
+					methodVBox.getChildren().add(new Label(dm.getName()));
+				}
+
+				HBox propertiesHBox = new HBox();
+				propertiesHBox.getChildren().addAll(propertyVBox, removePropertyButton);
+
+				HBox methodsHBox = new HBox();
+				methodsHBox.getChildren().addAll(methodVBox, removeMethodButton);
+
+				Label editInheritanceLabel = new Label("Super Class: ");
+				ComboBox<String> comboBoxSuperClass = new ComboBox<>();
+				for (Element e : DApp.elements) {
+					if (!DApp.selectedElement.getObject().getName().equals(e.getObject().getName()))
+						comboBoxSuperClass.getItems().add(e.getObject().getName());
+				}
+				if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null)
+				{
+					comboBoxSuperClass.setPromptText(((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName());
+					removeLine( DApp.selectedElement, false);
+				}
+				comboBoxSuperClass.setOnAction(event -> {
+					if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null && !comboBoxSuperClass.getItems().get(0).toString().equals( ((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName()))
+					{
+						System.out.println("asd");
+						for (Element e : DApp.elements) {
+							System.out.println("aaaaaaaaaaaaaa");
+							if (comboBoxSuperClass.getValue().equals(e.getObject().getName())) {
+								((DGeneralClass) DApp.selectedElement.getObject()).setSuperClass((DGeneralClass) e.getObject());
+								if ( DApp.selectedElement.endLines.isEmpty()) {
+									System.out.println( "line 943");
+									DApp.drawCenteredLine(DApp.selectedElement, e);
+								}
+								System.out.println( "line 946");
+								DApp.select( e);
+								DApp.updateOverlay();
+								DApp.updateLines();
+								DApp.updateArrow();
+								DApp.updateZoomPane();
+								DApp.select( null);
+							}
+						}
+					}
+				});
+				HBox inheritanceHBox = new HBox();
+				inheritanceHBox.getChildren().addAll(editInheritanceLabel, comboBoxSuperClass);
+
+
+				VBox radioButtonVBox = new VBox();
+				Label editInterfacesLabel = new Label("Edit Interfaces");
+
+				radioButtonVBox.getChildren().add(editInterfacesLabel);
+				for (Element e : DApp.elements) {
+					if (e.getObject() instanceof DInterface) {
+						RadioButton rb = new RadioButton(e.getObject().getName());
+						rb.setOnAction(event -> {
+							if (rb.isSelected()) {
+								((DGeneralClass) DApp.selectedElement.getObject()).addInterface( (DInterface) e.getObject());
+								DApp.drawCenteredDashedLine( e, DApp.selectedElement);
+							}
+							else {
+								((DGeneralClass) DApp.selectedElement.getObject()).removeInterface((DInterface) e.getObject());
+								removeInterfaceLine( DApp.selectedElement, e);
+							}
+							DApp.updateOverlay();
+							DApp.updateLines();
+							DApp.updateZoomPane();
+
+						});
+						radioButtonVBox.getChildren().add(rb);
+					}
+				}
+
+				VBox vbox = new VBox();
+				vbox.setSpacing(5);
+				vbox.setPadding(new Insets(10, 10, 10, 10));
+				vbox.getChildren().addAll(propertiesHBox, methodsHBox, inheritanceHBox, radioButtonVBox);
+
+				Scene scene = new Scene( vbox);
+				window.setScene( scene);
+				window.show();
+			} else if (DApp.selectedElement.getObject() instanceof DInterface) {
+
+			}
+		}
+		else {
+			displayErrorMessage( "You have to choose an object!!");
+		}
+	}
+
+	public static DObject createInterface( TextField name, ChoiceBox<String> cb) {
 		Element r;
 		DInterface object = new DInterface( name.getText());
 		System.out.println( object);
@@ -238,7 +422,7 @@ public class DMenuWizard {
 		if ( object.getName() != null) {
 			if (cb != null)
 			{
-				String cbS = (String) cb.getValue();
+				String cbS = cb.getValue();
 
 			}
 			Random rand = new Random();
@@ -249,7 +433,7 @@ public class DMenuWizard {
 				r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
 						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
-			r.setObject(object);
+			ProjectManager.connectElement(r, object);
 			DApp.elements.add(r);
 			DApp.project.addObject(object);
 
@@ -722,43 +906,66 @@ public class DMenuWizard {
 	}
 
 	public static void removeObject(Element element)
+    {
+        DApp.select(null);
+
+        //deleting overlay
+        for ( int i =0; i < DApp.group.getChildren().size();i++) {
+            if ( DApp.group.getChildren().get(i) instanceof Group && ((Group) DApp.group).getChildren().get(i) == DApp.overlay)
+                DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+        }
+        // forgeting element
+        DApp.elements.remove(element);
+        // deleting element
+        for ( int i =0; i < DApp.group.getChildren().size();i++) {
+            if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
+                DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+        }
+        // removing from project
+        DApp.project.getObjects().remove(element.getObject());
+        //deleting line from group
+        removeLine( element, true);
+        DApp.updateArrow();
+        DApp.updateLines();
+        DApp.updateOverlay();
+        DApp.updateZoomPane();
+    }
+
+	public static void removeLine(Element element, boolean all)
 	{
-		DApp.select(null);
+		for ( int i = 0; i < DApp.group.getChildren().size(); i++) {
 
-		//deleting overlay
-		for ( int i =0; i < DApp.group.getChildren().size();i++) {
-			if ( DApp.group.getChildren().get(i) instanceof Group && ((Group) DApp.group).getChildren().get(i) == DApp.overlay)
-				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
-		}
-		// forgeting element
-		DApp.elements.remove(element);
-		// deleting element
-		for ( int i =0; i < DApp.group.getChildren().size();i++) {
-			if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
-				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
-		}
-		// removing from project
-		DApp.project.getObjects().remove(element.getObject());
-		//deleting line from group
-		for ( int i =0; i < DApp.group.getChildren().size();i++) {
-
-			if ( DApp.group.getChildren().get(i) instanceof ComplexLine ) {
+			if ( DApp.group.getChildren().get(i) instanceof ComplexLine) {
 
 				ComplexLine cl = (ComplexLine)DApp.group.getChildren().get(i);
 
-				for ( int j =0; j < DApp.group.getChildren().size();j++)
+				for ( int j =0; j < DApp.group.getChildren().size(); j++)
 					if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
-						ArrowHead  a = (ArrowHead)DApp.group.getChildren().get(j);
+						ArrowHead a = (ArrowHead)DApp.group.getChildren().get(j);
 
-						if (  element.getEndLines().contains( a.getComplexLine()) ||  element.getStartLines().contains( a.getComplexLine())){
+						if (  element.getEndLines().contains( a.getComplexLine()) )
+						{
+							DApp.group.getChildren().remove( a);
+						}
+						if ( element.getStartLines().contains( a.getComplexLine()) && all)
+						{
 							DApp.group.getChildren().remove( a);
 						}
 					}
-				if ( element.startLines.contains(cl) || element.endLines.contains(cl))
+				if ( element.startLines.contains(cl) )
+				{
 					DApp.group.getChildren().remove(cl);
-
+				}
+				if ( element.endLines.contains(cl) && all)
+				{
+					DApp.group.getChildren().remove(cl);
+				}
+				if ( DApp.lines.contains(cl))
+				{
+					DApp.lines.remove(cl);
+				}
 			}
-			if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine ) {
+			if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine && all ) {
 
 				DashedComplexLine cdl = (DashedComplexLine)DApp.group.getChildren().get(i);
 
@@ -772,44 +979,63 @@ public class DMenuWizard {
 					}
 				if ( element.startLines.contains(cdl) || element.endLines.contains(cdl))
 					DApp.group.getChildren().remove(cdl);
-
+				if ( DApp.lines.contains(cdl))
+				{
+					DApp.lines.remove(cdl);
+				}
 			}
 		}
-		DApp.updateArrow();
-		DApp.updateLines();
-		DApp.updateOverlay();
-		DApp.updateZoomPane();
+	}
+
+	public static void removeInterfaceLine(Element object, Element inf)
+	{
+		for ( int i =0; i < DApp.group.getChildren().size();i++) {
+			if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine) {
+
+				DashedComplexLine cdl = (DashedComplexLine)DApp.group.getChildren().get(i);
+
+				for ( int j =0; j < DApp.group.getChildren().size(); j++){
+					if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
+						ArrowHead  a = (ArrowHead)DApp.group.getChildren().get(j);
+
+						if (  inf.getEndLines().contains( a.getComplexLine()) ){
+							DApp.group.getChildren().remove( a);
+						}
+					}
+					if ( inf.endLines.contains(cdl))
+					DApp.group.getChildren().remove(cdl);
+
+				}
+			}
+		}
 	}
 
 	/**
 	 * This method displays the project options
 	 */
-	public static void displayProjectOptions() {
+	public static void displaySaveOptions() {
 		Stage window = new Stage();
+		TextField t = new TextField();
+		t.setText("New Project");
 
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.setTitle("New Project");
 		window.setMinWidth(200);
 		window.setMinHeight(160);
 
-		Label messageName = new Label( "Want to save the current project?");
+		Label messageName = new Label( "Enter Project Name");
 
-		Button ok = new Button("Yes");
-		Button notOk = new Button("cancel");
+		Button save = new Button("Save Project");
 
-		ok.setOnAction(e -> {
+		save.setOnAction(e -> {
+			DApp.project.setName(t.getText());
 			saveProject();
-			cleanProjectView();
 
-			window.close();
-		});
-
-		notOk.setOnAction( e -> {
 			window.close();
 		});
 
 		VBox layout = new VBox();
-		layout.getChildren().addAll( messageName, ok, notOk);
+		layout.getChildren().addAll( messageName, t, save);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -819,8 +1045,43 @@ public class DMenuWizard {
 	/**
 	 * This method allows user to save the project
 	 */
-	private static void saveProject() {
-		// TODO Auto-generated method stub
+	static void saveProject() {
+
+		File f = new File("Saved Projects");
+		f.mkdirs();
+		try {
+			FileWriter oFile = new FileWriter( "Saved Projects/" + DApp.project.getName() + ".diag");
+			for(String line : DApp.project.projectToText())
+			{
+				oFile.write(line);
+				oFile.write("\n");
+			}
+			oFile.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			displayErrorMessage("INVALID PROJECT NAME");
+			e.printStackTrace();
+		}
+	}
+
+	private static void loadProject(String projectName) {
+
+		ArrayList<String> projectLines = new ArrayList<String>();
+		try {
+			File myObj = new File("Saved Projects/" + projectName + ".diag");
+			Scanner myReader = new Scanner(myObj);
+			while (myReader.hasNextLine()) {
+				String line = myReader.nextLine();
+				projectLines.add(line);
+			}
+			myReader.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
+		DProject loadedProject = ProjectManager.textToProject(projectLines);
+		DApp.project = loadedProject;
 
 	}
 
@@ -836,15 +1097,16 @@ public class DMenuWizard {
 		// removing from project
 		DApp.project.getObjects().clear();
 
-		//deleting line from group
-		for ( int i =0; i < DApp.group.getChildren().size();i++) {
+		Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, false);
+        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
+        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
+        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
-			if ( DApp.group.getChildren().get(i) instanceof Element && !((Element) DApp.group.getChildren().get(i)).listener) {
+        System.out.println(cornerSE.elementToString());
 
-			}else {
-				DApp.group.getChildren().remove( i);
-			}
-		}
+        DApp.group.getChildren().removeAll(DApp.group.getChildren());
+
+        DApp.group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, DApp.closest);
 
 		DApp.updateArrow();
 		DApp.updateLines();
@@ -852,4 +1114,10 @@ public class DMenuWizard {
 		DApp.updateZoomPane();
 
 	}
+
+	public static void displayProjectOptions() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

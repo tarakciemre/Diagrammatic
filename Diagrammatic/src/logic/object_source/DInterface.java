@@ -71,7 +71,7 @@ public class DInterface extends DObject {
 	/**
 	 * @return
 	 */
-	public ArrayList<DInterface> getSuperInterface() {
+	public ArrayList<DInterface> getSuperInterfaces() {
 		return superInterfaces;
 	}
 	/**
@@ -149,6 +149,9 @@ public class DInterface extends DObject {
 			}
 			output.add("");
 		}
+
+		output.add(getElement().elementToString());
+		output.add("");
 
 		output.add("END");
 

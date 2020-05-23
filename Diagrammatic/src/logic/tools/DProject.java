@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import gui.DApp;
 import gui.tools.ComplexLine;
 import gui.tools.Element;
 import logic.object_source.DGeneralClass;
@@ -98,6 +99,17 @@ public class DProject {
 			projectText.addAll(o.classToString());
 			projectText.add("");
 		}
+
+		if (!DApp.lines.isEmpty())
+		{
+			projectText.add("COMPLEXLINES");
+			for (ComplexLine cln : DApp.lines)
+			{
+				projectText.add(cln.lineToString());
+			}
+		}
+
+
 
 		projectText.add("END");
 

@@ -94,7 +94,7 @@ public class DApp extends Application {
 	public static Slider slider1, slider2;
 	public static CheckBox checkBox;
 	public static ScrollPane scrollPane;
-	static Group group;
+	public static Group group;
 	static Group overlay = null;
 	static Pane zoomPane;
 	public static Rectangle srBnd, srNW, srN, srNE, srE, srSE, srS, srSW, srW;
@@ -103,6 +103,7 @@ public class DApp extends Application {
 	public static ArrayList<Element> elements;
 	public static Rectangle2D area; // sets the borders for moving objects
 	public static DProject project;
+	public static ArrayList<ComplexLine> lines;
 
 	// Colors
 	public static Paint lineColor;
@@ -120,6 +121,7 @@ public class DApp extends Application {
 
 	@Override
     public void start( Stage stage) {
+		lines = new ArrayList<ComplexLine>();
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
@@ -170,6 +172,7 @@ public class DApp extends Application {
         Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
         System.out.println(cornerSE.elementToString());
+
 
         group = new Group();
 
@@ -278,6 +281,15 @@ public class DApp extends Application {
         MenuItem saveProject = new MenuItem( "Save");
         MenuItem saveProjectAs = new MenuItem( "Save As...");
 
+        openProject.setOnAction(e -> {
+        	DMenuWizard.displayLoadOptions();
+        });
+
+        saveProject.setOnAction(e -> {
+        	DMenuWizard.displaySaveOptions();
+        });
+
+
         fileMenu.getItems().addAll(newProject, openProject, saveProject, saveProjectAs);
 
         // Add Menu
@@ -366,7 +378,7 @@ public class DApp extends Application {
 		});
 
 		editClass.setOnAction(e -> {
-			//displayObjectOptions();
+			DMenuWizard.editClassOptions();
 		});
 
 		removeClass.setOnAction(e -> {
@@ -397,7 +409,6 @@ public class DApp extends Application {
         //scrollPane.setTranslateY(100);
 
         addElements( group);
-        drawHierarchy( project);
 
         scrollPane.setHbarPolicy(ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollBarPolicy.NEVER);
@@ -433,27 +444,40 @@ public class DApp extends Application {
 		}
 	}
 
-	static void drawHierarchy( DProject prj) {
-		Element from = null, to = null;
+	public static void drawHierarchy( DProject prj) {
 
-		for ( DObject o : prj.getObjects()){
-			if ( o instanceof DGeneralClass && ((DGeneralClass) o).getSuperClass() != null){
-				if ( o instanceof DClass && ((DGeneralClass) o).getSuperClass() instanceof DClass) {
-					for ( int j = 0; j < elements.size(); j++) {
-						if ( elements.get(j).getObject().getName().equals( ((DGeneralClass) o).getSuperClass().getName()) )
-							from = elements.get(j);
-						else if ( elements.get(j).getObject().getName().equals( ((DGeneralClass) o).getName()) )
-							to = elements.get(j);
+		for (int j = 0; j < prj.getObjects().size(); j++)
+		{
+			DObject o = prj.getObjects().get(j);
+
+			if (o instanceof DGeneralClass)
+			{
+				DGeneralClass gc = (DGeneralClass) o;
+				if (gc.getSuperClass() != null)
+				{
+					drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
+				}
+				if (!gc.getInterfaces().isEmpty())
+				{
+					for (DInterface superInt : gc.getInterfaces())
+					{
+						drawCenteredDashedLine( superInt.getElement(), gc.getElement());
 					}
-
 				}
 			}
-			if ( from != null && to != null)
-				drawCenteredLine(from,to);
+			if (o instanceof DInterface)
+			{
+				DInterface i = (DInterface) o;
+				if (!i.getSuperInterfaces().isEmpty())
+				{
+					for (DInterface superInt : i.getSuperInterfaces())
+					{
+						drawCenteredLine(superInt.getElement(), i.getElement());
+					}
+				}
+			}
 		}
 
-		//drawCenteredLine( elements.get(0), elements.get(1));
-		drawCenteredDashedLine( elements.get(0), elements.get(2));
 	}
 
 	static void addElements( Group group) {
@@ -691,6 +715,7 @@ public class DApp extends Application {
 		group.getChildren().addAll(a);
 		first.startLines.add(line);
 		second.endLines.add(line);
+		lines.add(line);
 	}
 
 	static void drawCenteredDashedLine( Element first, Element second)
@@ -705,6 +730,7 @@ public class DApp extends Application {
 		group.getChildren().addAll(a);
 		first.startLines.add(line);
 		second.endLines.add(line);
+		lines.add(line);
 	}
 
 	static void updateLines()
@@ -872,13 +898,6 @@ public class DApp extends Application {
 			}
 		}
 		return closestLine;
-	}
-
-	// for loading from file
-	public void openProject( DObject d) {
-
-		// sometimes foreshadowing is relatively obvious
-
 	}
 
 	static void setLineColor( Paint color)

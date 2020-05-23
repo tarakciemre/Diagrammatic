@@ -368,8 +368,18 @@ public class Element extends Group {
 	 */
 	public String elementToString()
 	{
-		String line = "CLA: " + widthProperty().doubleValue() + " " + heightProperty().doubleValue() + " " + getLayoutX() + " " +getLayoutY() + " " + rectangle.getFill();
+		String line = "ELE" +
+				" " + getLayoutX() +
+				" " + getLayoutY() +
+				" " + widthProperty().doubleValue() +
+				" " + heightProperty().doubleValue() +
+				" " + rectangle.getFill();
 		return line;
+	}
+
+	public String getColor()
+	{
+		return rectangle.getFill().toString();
 	}
 
 }
