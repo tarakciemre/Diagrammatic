@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import logic.object_source.*;
 import logic.interfaces.*;
 
-public class DConstructor implements Extractable, Accesible
+public class DConstructor implements Extractable, Accessible
 {
 	private ArrayList<DConstructorProperty> properties;
 	private String className;

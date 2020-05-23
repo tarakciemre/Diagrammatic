@@ -1,6 +1,6 @@
 package logic.interfaces;
 
-public interface Accesible {
+public interface Accessible {
 
 	    /**
 	     * @return 

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 import gui.tools.Element;
 
-public class DObject implements Extractable, Accesible{
+public class DObject implements Extractable, Accessible{
 
 	// Properties
 	protected String name;
-	private String accesibility;
+	private String accessibility;
 	private ArrayList<DMethod> methodCollector;
 	private ArrayList<DProperty> propertyCollector;
 	private ArrayList<DConstructor> constructorCollector;
@@ -100,7 +100,7 @@ public class DObject implements Extractable, Accesible{
 	 */
 	@Override
 	public String getAcccessability() {
-		return accesibility;
+		return accessibility;
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class DObject implements Extractable, Accesible{
 	@Override
 	public void setAccessability( String s) {
 		if ( s.equals(ProjectManager.PROTECTED) || s.equals( ProjectManager.PUBLIC) || s.equals( ProjectManager.DEFAULT) || s.equals( ProjectManager.PRIVATE) )
-			accesibility = s;
+			accessibility = s;
 
 	}
 

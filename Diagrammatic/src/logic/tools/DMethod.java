@@ -1,11 +1,9 @@
-//package com.company;
 package logic.tools;
 
 import java.util.ArrayList;
+import logic.interfaces.Accessible;
 
-import logic.interfaces.Accesible;
-
-public class DMethod implements Accesible{
+public class DMethod implements Accessible{
 
 	// Properties
 	private String name;

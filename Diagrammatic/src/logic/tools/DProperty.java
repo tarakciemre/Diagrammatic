@@ -1,4 +1,3 @@
-//package com.company;
 package logic.tools;
 
 import logic.interfaces.*;
@@ -8,7 +7,7 @@ import logic.interfaces.*;
  * to extract each item
  * @version 26.04.2020
  */
-public class DProperty implements Accesible{
+public class DProperty implements Accessible{
 
 	// Properties
 	private String name;

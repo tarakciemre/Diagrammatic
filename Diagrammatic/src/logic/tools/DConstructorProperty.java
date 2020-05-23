@@ -1,9 +1,8 @@
-//package com.company;
 package logic.tools;
 
 import logic.interfaces.*;
 
-public class DConstructorProperty implements Accesible
+public class DConstructorProperty implements Accessible
 {
 	private DProperty property;
 	private boolean included;

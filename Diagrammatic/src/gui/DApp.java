@@ -400,8 +400,8 @@ public class DApp extends Application {
 
         Scene scene = new Scene( parentLayout, 300, 250);
 
+		//scene.setUserAgentStylesheet("Viper.css");
         stage.setScene( scene);
-
 
         stage.show();
         scrollPane.setPannable(true);
