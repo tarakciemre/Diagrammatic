@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -12,13 +14,18 @@ import gui.tools.ArrowHead;
 import gui.tools.ComplexLine;
 import gui.tools.DashedComplexLine;
 import gui.tools.Element;
+import gui.tools.InterfaceElement;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
@@ -26,6 +33,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BackgroundFill;
@@ -34,9 +42,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import logic.object_source.DAbstractClass;
 import logic.object_source.DClass;
 import logic.object_source.DGeneralClass;
 import logic.object_source.DInterface;
@@ -69,7 +81,6 @@ public class DMenuWizard {
 		Button create;
 		TextField name;
 
-
 		Stage window = new Stage();
 
 		window.initModality(Modality.APPLICATION_MODAL);
@@ -78,6 +89,8 @@ public class DMenuWizard {
 
 		Label messageName = new Label( "Name of the class:");
 		name = new TextField();
+
+		CheckBox abstractCheck = new CheckBox("Abstract Class");
 
 		Label messageInh = new Label( "This class extends:");
 		ChoiceBox<String> choiceBox = new ChoiceBox<>();
@@ -100,19 +113,41 @@ public class DMenuWizard {
 		{
 			if (obj instanceof DInterface)
 			{
-
 				choiceBox2.getItems().add( obj.getName());
 			}
 
 		}
 
 
-		create = new Button("create object");
+		create = new Button("Create a new class");
 
 		create.setOnAction( e -> {
 			try {
-				getInheritanceChoice( choiceBox, createClass( name, choiceBox2));
-
+				String className = name.getText();
+				if (ProjectManager.isSuitableName(className))
+				{
+					boolean taken = false;
+					for (DObject objects : DApp.project.getObjects())
+					{
+						if (objects.getName().equals(className))
+							taken = true;
+					}
+					if( !taken)
+					{
+						boolean isAbstract = abstractCheck.isSelected();
+						getInheritanceChoice( choiceBox, createClass( name, choiceBox2, isAbstract));
+					}
+					else
+					{
+						window.close();
+						displayErrorMessage("This name is already used by another class.");
+					}
+				}
+				else
+				{
+					window.close();
+					displayErrorMessage("Enter a suitable name.");
+				}
 			} catch (NullPointerException n) {
 				window.close();
 				n.printStackTrace();
@@ -123,7 +158,7 @@ public class DMenuWizard {
 
 
 		VBox layout = new VBox();
-		layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, messageInh2, choiceBox2, create);
+		layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, messageInh2, choiceBox2, abstractCheck, create);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -139,25 +174,14 @@ public class DMenuWizard {
 		window.setTitle("Open Project");
 		window.setMinWidth(400);
 
-		Label messageProject = new Label( "Projects");
-		ChoiceBox<String> choiceBox = new ChoiceBox<>();
-
-		File folder = new File("Saved Projects");
-		File[] listOfFiles = folder.listFiles();
-
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if (listOfFiles[i].isFile())
-			{
-				choiceBox.getItems().add( listOfFiles[i].getName().substring(0, listOfFiles[i].getName().length() - 5));
-			}
-		}
-
 		load = new Button("Load Project");
 
 		load.setOnAction( e -> {
 			try {
+		        FileChooser fileChooser = new FileChooser();
+		        File selectedFile = fileChooser.showOpenDialog(window);
 				cleanProjectView();
-				loadProject(choiceBox.getValue());
+				loadProject(selectedFile);
 				DApp.updateArrow();
 				DApp.updateLines();
 				DApp.updateOverlay();
@@ -174,7 +198,7 @@ public class DMenuWizard {
 
 
 		VBox layout = new VBox();
-		layout.getChildren().addAll( messageProject, choiceBox, load);
+		layout.getChildren().addAll(load);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -206,11 +230,34 @@ public class DMenuWizard {
 		}
 
 
-		create = new Button("create interface");
+		create = new Button("Create Interface");
 
 		create.setOnAction( e -> {
 			try {
-				getInheritanceChoice( choiceBox, createInterface( name, choiceBox));
+				String interfaceName = name.getText();
+				if (ProjectManager.isSuitableName(interfaceName))
+				{
+					boolean taken = false;
+					for (DObject objects : DApp.project.getObjects())
+					{
+						if (objects.getName().equals(interfaceName))
+							taken = true;
+					}
+					if( !taken)
+					{
+						getInheritanceChoice( choiceBox, createInterface( name, choiceBox));
+					}
+					else
+					{
+						window.close();
+						displayErrorMessage("This name is already used by another class.");
+					}
+				}
+				else
+				{
+					window.close();
+					displayErrorMessage("Enter a suitable name.");
+				}
 			} catch (NullPointerException n) {
 				window.close();
 				n.printStackTrace();
@@ -233,63 +280,63 @@ public class DMenuWizard {
 	 * @param name
 	 * @return DObject
 	 */
-	public static DObject createClass( TextField name, ChoiceBox<String> cb) {
+	public static DGeneralClass createClass( TextField name, ChoiceBox<String> cb, boolean isAbstract) {
 		Element r;
-		DClass object = new DClass( name.getText());
-
+		DGeneralClass object = null;
+		if (isAbstract)
+		{
+			object = new DAbstractClass( name.getText());
+		}
+		else
+		{
+			object = new DClass( name.getText());
+		}
 		object.setName(name.getText());
 
 		Random rand = new Random();
-		if ( object.getName() != null) {
-			if ( DApp.selectedElement != null)
-				r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
-						150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-			else
-				r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
-						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+		if ( DApp.selectedElement != null)
+			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
+					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+		else
+			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
+					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
 
-			ProjectManager.connectElement(r, object);
-			DApp.elements.add(r);
-			DApp.project.addObject(object);
+		ProjectManager.connectElement(r, object);
+		DApp.elements.add(r);
+		DApp.project.addObject(object);
 
-			DApp.group.getChildren().add(r);
+		DApp.group.getChildren().add(r);
 
-			if (cb.getValue() != null)
-			{
-				String cbS = cb.getValue();
-				Element lastAdded = null, selected = null;
+		if (cb.getValue() != null)
+		{
+			String cbS = cb.getValue();
+			Element lastAdded = null, selected = null;
 
-				for ( Node n : DApp.group.getChildren()) {
-					if ( n instanceof Element && ((Element) n).hasObject()){
-						if ( (((Element) n).getObject().getName()).equals( object.getName()) )
-							lastAdded = (Element)n;
+			for ( Node n : DApp.group.getChildren()) {
+				if ( n instanceof Element && ((Element) n).hasObject()){
+					if ( (((Element) n).getObject().getName()).equals( object.getName()) )
+						lastAdded = (Element)n;
+				}
+			}
+			for ( Node n : DApp.group.getChildren()) {
+				if ( n instanceof Element && ((Element) n).hasObject()){
+					if ( (((Element) n).getObject().getName()).equals( cbS) )
+					{
+						selected = (Element)n;
+						DInterface di = (DInterface) selected.getObject();
+						object.addInterface(di);
 					}
 				}
-				for ( Node n : DApp.group.getChildren()) {
-					if ( n instanceof Element && ((Element) n).hasObject()){
-						if ( (((Element) n).getObject().getName()).equals( cbS) )
-						{
-							selected = (Element)n;
-							DInterface di = (DInterface) selected.getObject();
-							object.addInterface(di);
-						}
-					}
-				}
-
-				DApp.drawCenteredDashedLine( lastAdded, selected);
-
-
-				DApp.select(selected);
-				DApp.select(lastAdded);
 			}
 
-			DApp.select(r);
+			DApp.drawCenteredDashedLine( lastAdded, selected);
+
+			DApp.select(selected);
+			DApp.select(lastAdded);
 		}
-		else {
-			displayErrorMessage( "Invalid Class Name Declaration");
-			return null;
-		}
+
+		DApp.select(r);
 		DApp.updateZoomPane();
 
 		return object;
@@ -413,37 +460,30 @@ public class DMenuWizard {
 	}
 
 	public static DObject createInterface( TextField name, ChoiceBox<String> cb) {
-		Element r;
+		InterfaceElement r;
 		DInterface object = new DInterface( name.getText());
 		System.out.println( object);
 		object.setName(name.getText());
 
-
-		if ( object.getName() != null) {
-			if (cb != null)
-			{
-				String cbS = cb.getValue();
-
-			}
-			Random rand = new Random();
-			if ( DApp.selectedElement != null)
-				r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
-						150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-			else
-				r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
-						Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
-
-			ProjectManager.connectElement(r, object);
-			DApp.elements.add(r);
-			DApp.project.addObject(object);
-
-			DApp.group.getChildren().add(r);
-
-			DApp.select(r);
+		if (cb != null)
+		{
+			String cbS = cb.getValue();
 		}
-		else {
-			displayErrorMessage( "Invalid Interface Name Declaration");
-		}
+		Random rand = new Random();
+		if ( DApp.selectedElement != null)
+			r = new InterfaceElement(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
+					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+		else
+			r = new InterfaceElement( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
+					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+
+		ProjectManager.connectElement(r, object);
+		DApp.elements.add(r);
+		DApp.project.addObject(object);
+
+		DApp.group.getChildren().add(r);
+
+		DApp.select(r);
 		DApp.updateZoomPane();
 
 		return object;
@@ -582,12 +622,8 @@ public class DMenuWizard {
 		Label messageType = new Label( "Return type of the method:");
 		returnType = new TextField();
 		//Label messageParam = new Label( "Add parameters below");
-		cb = new CheckBox();
-		cb2 = new CheckBox();
-		cb3 = new CheckBox();
-		cb.setTooltip(  new Tooltip("void"));
-		cb2.setTooltip(new Tooltip("static"));
-		cb3.setTooltip( new Tooltip("no parameters"));
+		cb2 = new CheckBox("static");
+		cb3 = new CheckBox("no parameters");
 		create = new Button("create method");
 
 		create.setOnAction( e -> {
@@ -620,7 +656,7 @@ public class DMenuWizard {
 		});
 
 		VBox layout = new VBox();
-		layout.getChildren().addAll( messageName, name, messageType, returnType, cb, cb2, cb3, create);
+		layout.getChildren().addAll( messageName, name, messageType, returnType, cb2, cb3, create);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -737,7 +773,7 @@ public class DMenuWizard {
 
 		window.initModality(Modality.APPLICATION_MODAL);
 		window.initStyle(StageStyle.UNDECORATED);
-		window.setTitle("New Object");
+		window.setTitle("Error");
 		window.setMinWidth(200);
 		window.setMinHeight(160);
 
@@ -810,17 +846,35 @@ public class DMenuWizard {
 	 * This method extracts the java code of only methods from uml scheme which made by user
 	 * @param e
 	 */
-	public static void extractMethods( ActionEvent e) {
-		System.out.println("extracting methods...");
+	public static void showCode( Element element) {
+		Stage window = new Stage();
+
+		DObject object = element.getObject();
+
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("Code of the class: " + object.getName());
+		window.setMinWidth(200);
+		window.setMinHeight(800);
+
+		TextArea textArea = new TextArea();
+
+		String code = "";
+		for (String line : object.extract())
+		{
+			code = code + line + "\n";
+		}
+
+		textArea.setText(code);
+		textArea.setPrefHeight(700);
+
+		VBox layout = new VBox();
+		layout.getChildren().addAll( textArea);
+		layout.setAlignment( Pos.CENTER);
+
+		window.setScene( new Scene( layout));
+		window.showAndWait();
 	}
 
-	/**
-	 * This method extracts the java code of only fields from uml scheme which made by user
-	 * @param e
-	 */
-	public static void extractFields( ActionEvent e) {
-		System.out.println("extracting fields...");
-	}
 
 	/**
 	 * This method sets the line color for DApp
@@ -1019,7 +1073,7 @@ public class DMenuWizard {
 		t.setText("New Project");
 
 		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("New Project");
+		window.setTitle("Save Project");
 		window.setMinWidth(200);
 		window.setMinHeight(160);
 
@@ -1028,29 +1082,112 @@ public class DMenuWizard {
 		Button save = new Button("Save Project");
 
 		save.setOnAction(e -> {
-			DApp.project.setName(t.getText());
-			saveProject();
+			if (DApp.project.getName() == null)
+				DApp.project.setName(t.getText());
+
+			if (DApp.project.getSaveFile() != null)
+			{
+				saveProject(DApp.project.getSaveFile());
+			}
+			else
+			{
+				FileChooser fileChooser = new FileChooser();
+
+				fileChooser.setInitialFileName(DApp.project.getName());
+				fileChooser.getExtensionFilters().add(
+					     new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
+					);
+				File selectedFile = fileChooser.showSaveDialog(window);
+				if (selectedFile != null)
+				{
+					saveProject(selectedFile);
+					DApp.project.setSaveFile(selectedFile);
+				}
+
+			}
 
 			window.close();
 		});
 
 		VBox layout = new VBox();
-		layout.getChildren().addAll( messageName, t, save);
+		if (DApp.project.getName() == null)
+			layout.getChildren().addAll( messageName, t);
+		layout.getChildren().add(save);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
 		window.showAndWait();
 	}
 
+	public static void displaySaveAsOptions() {
+		Stage window = new Stage();
+		TextField t = new TextField();
+		t.setText("New Project");
+
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("New Project");
+		window.setMinWidth(200);
+		window.setMinHeight(160);
+
+		Label messageName = new Label( "Enter Project Name");
+
+		Button save = new Button("Save Project As");
+
+		save.setOnAction(e -> {
+			FileChooser fileChooser = new FileChooser();
+
+			if (DApp.project.getName() == null)
+				DApp.project.setName(t.getText());
+
+			fileChooser.setInitialFileName(DApp.project.getName());
+			fileChooser.getExtensionFilters().add(
+				     new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
+				);
+			File selectedFile = fileChooser.showSaveDialog(window);
+			if (selectedFile != null)
+			{
+				saveProject(selectedFile);
+				DApp.project.setSaveFile(selectedFile);
+			}
+
+			window.close();
+		});
+
+		VBox layout = new VBox();
+		if (DApp.project.getName() == null)
+			layout.getChildren().addAll( messageName, t);
+		layout.getChildren().add(save);
+		layout.setAlignment( Pos.CENTER);
+
+		window.setScene( new Scene( layout));
+		window.showAndWait();
+	}
+
+	public static void displayProjectOptions() {
+
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle("Save your project");
+		alert.setHeaderText("Do you want to save your current project?");
+		alert.setContentText("You will lose unsaved progress");
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == ButtonType.OK){
+			displaySaveOptions();
+		} else {
+
+		}
+
+		DApp.project = new DProject();
+		cleanProjectView();
+
+	}
+
 	/**
 	 * This method allows user to save the project
 	 */
-	static void saveProject() {
-
-		File f = new File("Saved Projects");
-		f.mkdirs();
+	static void saveProject(File f) {
 		try {
-			FileWriter oFile = new FileWriter( "Saved Projects/" + DApp.project.getName() + ".diag");
+			FileWriter oFile = new FileWriter( f);
 			for(String line : DApp.project.projectToText())
 			{
 				oFile.write(line);
@@ -1062,14 +1199,15 @@ public class DMenuWizard {
 			displayErrorMessage("INVALID PROJECT NAME");
 			e.printStackTrace();
 		}
+
+		DApp.project.setSaveFile(f);
 	}
 
-	private static void loadProject(String projectName) {
+	private static void loadProject(File f) {
 
 		ArrayList<String> projectLines = new ArrayList<String>();
 		try {
-			File myObj = new File("Saved Projects/" + projectName + ".diag");
-			Scanner myReader = new Scanner(myObj);
+			Scanner myReader = new Scanner(f);
 			while (myReader.hasNextLine()) {
 				String line = myReader.nextLine();
 				projectLines.add(line);
@@ -1115,9 +1253,5 @@ public class DMenuWizard {
 
 	}
 
-	public static void displayProjectOptions() {
-		// TODO Auto-generated method stub
-
-	}
 
 }

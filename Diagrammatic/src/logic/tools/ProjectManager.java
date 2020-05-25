@@ -487,4 +487,18 @@ public class ProjectManager
     	o.setElement(e);
     }
 
+    public static boolean isSuitableName(String name)
+    {
+		boolean suitable = true;
+		for (int i = 0; i < name.length(); i++)
+		{
+			Character c = name.charAt(i);
+			if (!Character.isLetter(c) && !c.equals('_'))
+			{
+				suitable = false;
+			}
+		}
+		return suitable;
+    }
+
 }

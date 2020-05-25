@@ -85,9 +85,9 @@ public class Element extends Group {
 		rectangle.setArcWidth(20.0d);
 
 		l = new Label(  "   " + nameOfClass + "\n");
-		l2 = new Label(  "   " + properties + "   " + "\n");
+		l2 = new Label(  "   Properties   \n");
+		l3 = new Label(  "   Methods   \n");
 		l2.setUnderline(true);
-		l3 = new Label(  "   " + methods + "   " + "\n");
 		l3.setUnderline(true);
 		/*
         final int fontSize = 9;

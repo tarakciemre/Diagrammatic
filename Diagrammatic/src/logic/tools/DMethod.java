@@ -15,7 +15,7 @@ public class DMethod implements Accessible{
 
 	// Constructors
 	/**
-	 * 
+	 *
 	 */
 	public DMethod() {
 		name = "";

@@ -13,6 +13,7 @@ import logic.object_source.DObject;
 
 public class DProject {
 
+	File saveFile;
 	ArrayList<DObject> objects;
 	String projectName;
 	ArrayList<ComplexLine> complexLines;
@@ -24,7 +25,6 @@ public class DProject {
 	public DProject()
 	{
 		objects = new ArrayList<DObject>();
-		projectName = "New_Project";
 	}
 
 	/**
@@ -215,6 +215,16 @@ public class DProject {
             }
         }
         return list;
+    }
+
+    public File getSaveFile()
+    {
+    	return saveFile;
+    }
+
+    public void setSaveFile( File saveFile)
+    {
+    	this.saveFile = saveFile;
     }
 
 }

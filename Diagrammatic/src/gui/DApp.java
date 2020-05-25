@@ -144,7 +144,6 @@ public class DApp extends Application {
 
         // init project
         project = new DProject();
-        project.setName("Test Project");
 
         // init prj objects
         DObject albanian = new DClass("Albanian");
@@ -289,6 +288,10 @@ public class DApp extends Application {
         	DMenuWizard.displaySaveOptions();
         });
 
+        saveProjectAs.setOnAction(e -> {
+        	DMenuWizard.displaySaveAsOptions();
+        });
+
 
         fileMenu.getItems().addAll(newProject, openProject, saveProject, saveProjectAs);
 
@@ -336,16 +339,14 @@ public class DApp extends Application {
         //Difficulty RadioMenuItems
         Menu extractMenu = new Menu("Extract...");
         MenuItem extractAll = new MenuItem( "Extract All");
-        MenuItem extractMethods = new MenuItem( "Extract Methods");
-        MenuItem extractFields = new MenuItem( "Extract Fields");
+        MenuItem showCode = new MenuItem( "Show Code");
 
 
         extractAll.setOnAction(e ->  DMenuWizard.extractAll(e, project) );
-        extractMethods.setOnAction(e ->  DMenuWizard.extractMethods(e));
-        extractFields.setOnAction(e ->  DMenuWizard.extractFields(e));
+        showCode.setOnAction(e ->  DMenuWizard.showCode(selectedElement));
 
 
-        extractMenu.getItems().addAll(extractAll, extractMethods, extractFields);
+        extractMenu.getItems().addAll(extractAll, showCode);
 
         // most important menu
         //Menu ytpMenu = new Menu("YTP modes");
@@ -422,6 +423,7 @@ public class DApp extends Application {
         	DMenuWizard.removeObject(elements.get(0));
         }
 
+        setColorMode("Light");
         scrollPane.setPannable(true);
     }
 	void iniElements( DProject prj) {
@@ -1032,10 +1034,8 @@ public class DApp extends Application {
      */
     public static void setColorMode( String mode)
     {
-        System.out.println("This is setcolormode");
         if(mode.equals("Sepya"))
         {
-            System.out.println("AAAAAAA");
             setLineColor(Color.DARKSALMON );
             setBackgroundColor( Color.CORNSILK);
         }
