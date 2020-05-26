@@ -167,9 +167,6 @@ public class DApp extends Application {
         Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
         Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
-        System.out.println(cornerSE.elementToString());
-
-
         group = new Group();
 
         closest = new Circle(3);
@@ -497,8 +494,6 @@ public class DApp extends Application {
 			}
 			gridSize = size;
 		}
-		System.out.println( "Slider1: " + slider1.getValue());
-		System.out.println( "Slider2: " + slider2.getValue());
 	}
 
 
@@ -802,7 +797,6 @@ public class DApp extends Application {
 					if ( e.contains(closest2))
 					{
 						inShape = true;
-						System.out.println(closest2);
 					}
 				}
 				if (n instanceof ComplexLine)
