@@ -209,7 +209,7 @@ public class Element extends Group {
 		String out = new String("   -"+prop.getName() + ": ");
 		out += prop.getType();
 
-
+		getObject().getProperties().add(prop);
 		props.add( new Label(out));
 		updateObject();
 	}
@@ -231,6 +231,7 @@ public class Element extends Group {
 
 		out += ": "+ meth.getReturnType();
 
+		getObject().getMethods().add(meth);
 		meths.add( new Label(out));
 		updateObject();
 	}
@@ -263,40 +264,6 @@ public class Element extends Group {
 	 *
 	 */
 	public void updateObject() {
-		/*
-    	 for ( int i = 0; i < elements.size(); i++){
-         	for ( int j = 0; j < elements.get(i).getPropertyLabels().size(); i++ ){
-         		if ( .contains(elements.get(i).getPropertyLabels().get(j)))
-         	}
-
-         	for ( int j = 0; j < elements.get(i).getMethodLabels().size(); i++ ) {
-
-         	}
-
-         }*/
-
-
-		/*for (int i = 0; i < contentsV.getChildren().size(); i++) {
-    		if ( getChildren().get(i) instanceof HBox)
-    			getChildren().remove(i);
-    	}*/
-
-
-		/*if (dObject != null) {
-
-
-    		for ( int i = 0; i < dObject.getProperties().size(); i++)
-        		props.add( new Label( dObject.getProperties().get(i).toString()));
-
-        	for ( int i = 0; i < dObject.getMethods().size(); i++)
-        		meths.add( new Label( dObject.getProperties().get(i).toString()));
-
-
-    	}*/
-		/*for ( int i = 0; i < contentsV.getChildren().size(); i++)
-    		if ( contentsV.getChildren().get(i) instanceof VBox)
-    			contentsH.getChildren().add( new Label( dObject.getName() + "\n--------------\n"));
-		 */
 
 		// updating name
 		for ( int i = 0; i < contentsH.getChildren().size(); i++)
@@ -317,17 +284,43 @@ public class Element extends Group {
 			}
 
 		// updating properties
+		 // adding absent
 		for ( Label label : props) {
 			if (!proper.getChildren().contains(label))
 				proper.getChildren().add(label);
 		}
+		 // removing depricated
+		boolean contained  = false;
 
+		for ( Label label : props) {
+			for ( int i = 0; i < getObject().getProperties().size(); i++) {
+				if ( label.getText().equals( getObject().getProperties().get(i).getName()) )
+					contained = true;
+			}
+			if ( !contained)
+				proper.getChildren().remove(label);
+			contained = false;
+		}
 
 		// updating methods
+		 // adding absent
 		for ( Label label : meths) {
 			if (!metho.getChildren().contains(label))
 				metho.getChildren().addAll(label);
 		}
+		 // removing depricated
+		contained  = false;
+
+		for ( Label label : meths) {
+			for ( int i = 0; i < getObject().getMethods().size(); i++) {
+				if ( label.getText().equals( getObject().getMethods().get(i).getName()) )
+					contained = true;
+			}
+			if ( !contained)
+				metho.getChildren().remove(label);
+			contained = false;
+		}
+
 	}
 
 	/**

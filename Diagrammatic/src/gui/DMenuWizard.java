@@ -38,6 +38,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -178,8 +179,8 @@ public class DMenuWizard {
 
 		load.setOnAction( e -> {
 			try {
-		        FileChooser fileChooser = new FileChooser();
-		        File selectedFile = fileChooser.showOpenDialog(window);
+				FileChooser fileChooser = new FileChooser();
+				File selectedFile = fileChooser.showOpenDialog(window);
 				cleanProjectView();
 				loadProject(selectedFile);
 				DApp.updateArrow();
@@ -330,7 +331,7 @@ public class DMenuWizard {
 				}
 			}
 
-			DApp.drawCenteredDashedLine( lastAdded, selected);
+			DApp.drawCenteredDashedLine( selected,  lastAdded);
 
 			DApp.select(selected);
 			DApp.select(lastAdded);
@@ -342,121 +343,284 @@ public class DMenuWizard {
 		return object;
 	}
 
-	public static void editClassOptions()
-	{
+	public static void editObjectOptions() {
 		if (DApp.selectedElement != null) {
 			if (DApp.selectedElement.getObject() instanceof DGeneralClass) {
-				Stage window = new Stage();
-				window.initModality(Modality.APPLICATION_MODAL);
-				window.initStyle(StageStyle.DECORATED);
-				window.setTitle("Edit Class");
-				window.setMinWidth(200);
-				window.setMinHeight(160);
-
-				Button removePropertyButton = new Button("Remove Property");
-				Button removeMethodButton = new Button("Remove Method");
-				Button editInheritanceButton = new Button("Edit Inheritance");
-				Button editInterfaces = new Button("Edit Implemented Interface");
-
-				ArrayList<Label> properties = new ArrayList<>();
-				ArrayList<Label> methods = new ArrayList<>();
-
-				VBox propertyVBox = new VBox();
-				propertyVBox.getChildren().add( new Label("Properties: "));
-				for (DProperty dp : DApp.selectedElement.getObject().getProperties()) {
-					propertyVBox.getChildren().add(new Label( dp.getName()));
-				}
-
-				VBox methodVBox = new VBox();
-				methodVBox.getChildren().add( new Label("Methods: "));
-				for (DMethod dm : DApp.selectedElement.getObject().getMethods()) {
-					methodVBox.getChildren().add(new Label(dm.getName()));
-				}
-
-				HBox propertiesHBox = new HBox();
-				propertiesHBox.getChildren().addAll(propertyVBox, removePropertyButton);
-
-				HBox methodsHBox = new HBox();
-				methodsHBox.getChildren().addAll(methodVBox, removeMethodButton);
-
-				Label editInheritanceLabel = new Label("Super Class: ");
-				ComboBox<String> comboBoxSuperClass = new ComboBox<>();
-				for (Element e : DApp.elements) {
-					if (!DApp.selectedElement.getObject().getName().equals(e.getObject().getName()))
-						comboBoxSuperClass.getItems().add(e.getObject().getName());
-				}
-				if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null)
-				{
-					comboBoxSuperClass.setPromptText(((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName());
-					removeLine( DApp.selectedElement, false);
-				}
-				comboBoxSuperClass.setOnAction(event -> {
-					if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null && !comboBoxSuperClass.getItems().get(0).toString().equals( ((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName()))
-					{
-						System.out.println("asd");
-						for (Element e : DApp.elements) {
-							System.out.println("aaaaaaaaaaaaaa");
-							if (comboBoxSuperClass.getValue().equals(e.getObject().getName())) {
-								((DGeneralClass) DApp.selectedElement.getObject()).setSuperClass((DGeneralClass) e.getObject());
-								if ( DApp.selectedElement.endLines.isEmpty()) {
-									System.out.println( "line 943");
-									DApp.drawCenteredLine(DApp.selectedElement, e);
-								}
-								System.out.println( "line 946");
-								DApp.select( e);
-								DApp.updateOverlay();
-								DApp.updateLines();
-								DApp.updateArrow();
-								DApp.updateZoomPane();
-								DApp.select( null);
-							}
-						}
-					}
-				});
-				HBox inheritanceHBox = new HBox();
-				inheritanceHBox.getChildren().addAll(editInheritanceLabel, comboBoxSuperClass);
-
-
-				VBox radioButtonVBox = new VBox();
-				Label editInterfacesLabel = new Label("Edit Interfaces");
-
-				radioButtonVBox.getChildren().add(editInterfacesLabel);
-				for (Element e : DApp.elements) {
-					if (e.getObject() instanceof DInterface) {
-						RadioButton rb = new RadioButton(e.getObject().getName());
-						rb.setOnAction(event -> {
-							if (rb.isSelected()) {
-								((DGeneralClass) DApp.selectedElement.getObject()).addInterface( (DInterface) e.getObject());
-								DApp.drawCenteredDashedLine( e, DApp.selectedElement);
-							}
-							else {
-								((DGeneralClass) DApp.selectedElement.getObject()).removeInterface((DInterface) e.getObject());
-								removeInterfaceLine( DApp.selectedElement, e);
-							}
-							DApp.updateOverlay();
-							DApp.updateLines();
-							DApp.updateZoomPane();
-
-						});
-						radioButtonVBox.getChildren().add(rb);
-					}
-				}
-
-				VBox vbox = new VBox();
-				vbox.setSpacing(5);
-				vbox.setPadding(new Insets(10, 10, 10, 10));
-				vbox.getChildren().addAll(propertiesHBox, methodsHBox, inheritanceHBox, radioButtonVBox);
-
-				Scene scene = new Scene( vbox);
-				window.setScene( scene);
-				window.show();
-			} else if (DApp.selectedElement.getObject() instanceof DInterface) {
-
+				editClassOptions();
+			}
+			else if (DApp.selectedElement.getObject() instanceof DInterface) {
+				editInterfaceOptions();
 			}
 		}
 		else {
-			displayErrorMessage( "You have to choose an object!!");
+			displayErrorMessage("No Selected class");
 		}
+	}
+
+	public static void editClassOptions()
+	{
+
+		Stage window = new Stage();
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.initStyle(StageStyle.DECORATED);
+		window.setTitle("Edit Class");
+		window.setMinWidth(200);
+		window.setMinHeight(160);
+
+		Button removePropertyButton = new Button("Remove Selected Properties");
+		Button removeMethodButton = new Button("Remove Selected Methods");
+		Button editInheritanceButton = new Button("Edit Inheritance");
+		Button editInterfaces = new Button("Edit Implemented Interface");
+
+		ArrayList<Label> properties = new ArrayList<>();
+		ArrayList<Label> methods = new ArrayList<>();
+
+		Button editName = new Button( "Edit Name");
+		editName.setOnAction( e -> {
+			editNameOptions();
+			window.close();
+		});
+
+		VBox propertyVBox = new VBox();
+		propertyVBox.getChildren().add( new Label("Properties: "));
+		for (DProperty dp : DApp.selectedElement.getObject().getProperties()) {
+			propertyVBox.getChildren().add(new CheckBox( dp.getName()));
+		}
+
+		VBox methodVBox = new VBox();
+		methodVBox.getChildren().add( new Label("Methods: "));
+		for (DMethod dm : DApp.selectedElement.getObject().getMethods()) {
+			methodVBox.getChildren().add(new CheckBox(dm.getName()));
+		}
+
+		HBox propertiesHBox = new HBox();
+		propertiesHBox.getChildren().addAll(propertyVBox, removePropertyButton);
+
+		HBox methodsHBox = new HBox();
+		methodsHBox.getChildren().addAll(methodVBox, removeMethodButton);
+
+		Label editInheritanceLabel = new Label("Super Class: ");
+		ComboBox<String> comboBoxSuperClass = new ComboBox<>();
+		for (Element e : DApp.elements) {
+			if (!DApp.selectedElement.getObject().getName().equals(e.getObject().getName()))
+				comboBoxSuperClass.getItems().add(e.getObject().getName());
+		}
+		if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null)
+		{
+			comboBoxSuperClass.setPromptText(((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName());
+			removeLine( DApp.selectedElement, false);
+		}
+		comboBoxSuperClass.setOnAction(event -> {
+			if (((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass() != null && !comboBoxSuperClass.getItems().get(0).toString().equals( ((DGeneralClass) DApp.selectedElement.getObject()).getSuperClass().getName()))
+			{
+
+				for (Element e : DApp.elements) {
+
+					if (comboBoxSuperClass.getValue().equals(e.getObject().getName())) {
+						((DGeneralClass) DApp.selectedElement.getObject()).setSuperClass((DGeneralClass) e.getObject());
+						if ( DApp.selectedElement.endLines.isEmpty()) {
+							DApp.drawCenteredLine( e, DApp.selectedElement);
+						}
+
+						DApp.select( e);
+						DApp.updateOverlay();
+						DApp.updateLines();
+						DApp.updateArrow();
+						DApp.updateZoomPane();
+						DApp.select( null);
+					}
+				}
+			}
+		});
+		HBox inheritanceHBox = new HBox();
+		inheritanceHBox.getChildren().addAll(editInheritanceLabel, comboBoxSuperClass);
+
+
+		VBox radioButtonVBox = new VBox();
+		Label editInterfacesLabel = new Label("Edit Interfaces");
+
+		radioButtonVBox.getChildren().add(editInterfacesLabel);
+		for (Element e : DApp.elements) {
+			if (e.getObject() instanceof DInterface) {
+				RadioButton rb = new RadioButton(e.getObject().getName());
+				rb.setOnAction(event -> {
+					if (rb.isSelected()) {
+						((DGeneralClass) DApp.selectedElement.getObject()).addInterface( (DInterface) e.getObject());
+						DApp.drawCenteredDashedLine( e, DApp.selectedElement);
+					}
+					else {
+						((DGeneralClass) DApp.selectedElement.getObject()).removeInterface((DInterface) e.getObject());
+						removeInterfaceLine( DApp.selectedElement, e);
+					}
+					DApp.updateOverlay();
+					DApp.updateLines();
+					DApp.updateArrow();
+					DApp.updateZoomPane();
+
+				});
+
+				rb.setSelected( ( (DGeneralClass) DApp.selectedElement.getObject()).getInterfaces().contains(e.getObject()));
+				radioButtonVBox.getChildren().add(rb);
+			}
+		}
+
+		removePropertyButton.setOnAction( e -> {
+			for ( Node n : propertyVBox.getChildren()) {
+				if ( n instanceof CheckBox) {
+					CheckBox cb = (CheckBox)n;
+
+					if ( cb.isSelected()) {
+						for ( int i = 0; i < DApp.selectedElement.getObject().getProperties().size(); i++) {
+							if ( DApp.selectedElement.getObject().getProperties().get(i).getName().equals(cb.getText()))
+								DApp.selectedElement.getObject().getProperties().remove(i);
+						}
+					}
+
+				}
+			}
+			DApp.selectedElement.updateObject();
+			window.close();
+		});
+
+
+		VBox vbox = new VBox();
+		vbox.setSpacing(5);
+		vbox.setPadding(new Insets(10, 10, 10, 10));
+		vbox.getChildren().addAll( editName, propertiesHBox, methodsHBox, inheritanceHBox, radioButtonVBox);
+
+		Scene scene = new Scene( vbox);
+		window.setScene( scene);
+		window.show();
+	}
+
+
+	public static void editInterfaceOptions() {
+
+		Stage window = new Stage();
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.initStyle(StageStyle.DECORATED);
+		window.setTitle("Edit Interface");
+		window.setMinWidth(200);
+		window.setMinHeight(160);
+
+
+		Button removeMethodButton = new Button("Remove Method");
+
+		ArrayList<Label> methods = new ArrayList<>();
+
+		VBox methodVBox = new VBox();
+		methodVBox.getChildren().add( new Label("Methods: "));
+		for (DMethod dm : DApp.selectedElement.getObject().getMethods()) {
+			methodVBox.getChildren().add(new Label(dm.getName()));
+		}
+
+		HBox methodsHBox = new HBox();
+		methodsHBox.getChildren().addAll(methodVBox, removeMethodButton);
+
+		Label editInheritanceLabel = new Label("Super Interfaces: ");
+		ArrayList<CheckBox> otherInterfaces = new ArrayList<CheckBox>();
+
+		for ( Element e : DApp.elements) {
+			if ( e instanceof InterfaceElement
+					&&	!DApp.selectedElement.getObject().getName().equals(e.getObject().getName())) {
+				CheckBox cb = new CheckBox(e.getObject().getName());
+				if ( e.getObject() instanceof DInterface) {
+					cb.setSelected( ( (DInterface)DApp.selectedElement.getObject()).containsSuperInterface((DInterface)e.getObject()) );
+				}
+				otherInterfaces.add( cb);
+			}
+		}
+
+		VBox interfacesVBox = new VBox();
+		interfacesVBox.getChildren().add(editInheritanceLabel);
+		for ( CheckBox c : otherInterfaces)
+			interfacesVBox.getChildren().add(c);
+
+
+		for ( Node n : interfacesVBox.getChildren()) {
+			if ( n instanceof CheckBox) {
+
+				for (Element element : DApp.elements) {
+					CheckBox c = (CheckBox)n;
+
+					c.setOnAction(event -> {
+
+						if (c.isSelected()) {
+							((DInterface) DApp.selectedElement.getObject()).addSuperInterface( (DInterface) element.getObject());
+							DApp.drawCenteredLine( DApp.selectedElement, element);
+						}
+						else {
+							((DInterface) DApp.selectedElement.getObject()).removeSuperInterface((DInterface) element.getObject());
+							removeSuperInterfaceLine( DApp.selectedElement, element);
+
+						}
+						//DApp.select( element);
+						DApp.updateOverlay();
+						DApp.updateLines();
+						DApp.updateArrow();
+						DApp.updateZoomPane();
+						//DApp.select( null);
+
+						/*
+						if (c.getText().equals(element.getObject().getName())) {
+
+							if ( DApp.selectedElement.endLines.isEmpty()) {
+
+								DApp.drawCenteredLine(DApp.selectedElement, element);
+							}*/
+
+
+						});
+
+
+				}
+
+			}
+		}
+		HBox inheritanceHBox = new HBox();
+		inheritanceHBox.getChildren().addAll(interfacesVBox);
+
+
+		VBox radioButtonVBox = new VBox();
+		Label editInterfacesLabel = new Label("Edit Interfaces");
+
+		VBox vbox = new VBox();
+		vbox.setSpacing(5);
+		vbox.setPadding(new Insets(10, 10, 10, 10));
+		vbox.getChildren().addAll( methodsHBox, inheritanceHBox, radioButtonVBox);
+
+		Scene scene = new Scene( vbox);
+		window.setScene( scene);
+		window.show();
+
+	}
+
+	public static void editNameOptions() {
+
+		Stage window = new Stage();
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.initStyle(StageStyle.DECORATED);
+		window.setTitle("Edit Interface");
+		window.setMinWidth(100);
+		window.setMinHeight(80);
+
+		TextField nameSlot = new TextField();
+		Button changeName = new Button("Change Name");
+		changeName.setOnAction( e -> {
+			if ( ProjectManager.isSuitableName(nameSlot.getText()))
+				DApp.selectedElement.getObject().setName(nameSlot.getText());
+			else
+				displayErrorMessage("invalid class name");
+			DApp.selectedElement.updateObject();
+			window.close();
+		});
+
+		FlowPane layout = new FlowPane();
+		layout.getChildren().addAll( nameSlot, changeName);
+
+		window.setScene(new Scene( layout));
+
+		window.showAndWait();
 	}
 
 	public static DObject createInterface( TextField name, ChoiceBox<String> cb) {
@@ -535,7 +699,7 @@ public class DMenuWizard {
 
 		if (child instanceof DInterface && parent instanceof DInterface)
 		{
-
+			((DInterface)child).addSuperInterface( (DInterface) parent);
 		}
 
 		DApp.drawCenteredLine( selected, lastAdded);
@@ -960,30 +1124,30 @@ public class DMenuWizard {
 	}
 
 	public static void removeObject(Element element)
-    {
-        DApp.select(null);
+	{
+		DApp.select(null);
 
-        //deleting overlay
-        for ( int i =0; i < DApp.group.getChildren().size();i++) {
-            if ( DApp.group.getChildren().get(i) instanceof Group && ((Group) DApp.group).getChildren().get(i) == DApp.overlay)
-                DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
-        }
-        // forgeting element
-        DApp.elements.remove(element);
-        // deleting element
-        for ( int i =0; i < DApp.group.getChildren().size();i++) {
-            if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
-                DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
-        }
-        // removing from project
-        DApp.project.getObjects().remove(element.getObject());
-        //deleting line from group
-        removeLine( element, true);
-        DApp.updateArrow();
-        DApp.updateLines();
-        DApp.updateOverlay();
-        DApp.updateZoomPane();
-    }
+		//deleting overlay
+		for ( int i =0; i < DApp.group.getChildren().size();i++) {
+			if ( DApp.group.getChildren().get(i) instanceof Group && ((Group) DApp.group).getChildren().get(i) == DApp.overlay)
+				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+		}
+		// forgeting element
+		DApp.elements.remove(element);
+		// deleting element
+		for ( int i =0; i < DApp.group.getChildren().size();i++) {
+			if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
+				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
+		}
+		// removing from project
+		DApp.project.getObjects().remove(element.getObject());
+		//deleting line from group
+		removeLine( element, true);
+		DApp.updateArrow();
+		DApp.updateLines();
+		DApp.updateOverlay();
+		DApp.updateZoomPane();
+	}
 
 	public static void removeLine(Element element, boolean all)
 	{
@@ -997,11 +1161,11 @@ public class DMenuWizard {
 					if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
 						ArrowHead a = (ArrowHead)DApp.group.getChildren().get(j);
 
-						if (  element.getEndLines().contains( a.getComplexLine()) )
+						if (  all && element.getEndLines().contains( a.getComplexLine()) )
 						{
 							DApp.group.getChildren().remove( a);
 						}
-						if ( element.getStartLines().contains( a.getComplexLine()) && all)
+						if ( all && element.getStartLines().contains( a.getComplexLine()) )
 						{
 							DApp.group.getChildren().remove( a);
 						}
@@ -1019,7 +1183,7 @@ public class DMenuWizard {
 					DApp.lines.remove(cl);
 				}
 			}
-			if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine && all ) {
+			else if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine && all ) {
 
 				DashedComplexLine cdl = (DashedComplexLine)DApp.group.getChildren().get(i);
 
@@ -1041,6 +1205,7 @@ public class DMenuWizard {
 		}
 	}
 
+	// used for editClassOptions removal of implemented interface
 	public static void removeInterfaceLine(Element object, Element inf)
 	{
 		for ( int i =0; i < DApp.group.getChildren().size();i++) {
@@ -1057,7 +1222,30 @@ public class DMenuWizard {
 						}
 					}
 					if ( inf.endLines.contains(cdl))
-					DApp.group.getChildren().remove(cdl);
+						DApp.group.getChildren().remove(cdl);
+
+				}
+			}
+		}
+	}
+
+	// used for editInterfaceOptions removal of super interface lines
+	// Hopefully, we wont need this in the future!
+	public static void removeSuperInterfaceLine(Element child, Element parent) {
+		for ( int i =0; i < DApp.group.getChildren().size();i++) {
+			if ( DApp.group.getChildren().get(i) instanceof ComplexLine) {
+				ComplexLine cl = (ComplexLine)DApp.group.getChildren().get(i);
+
+				for ( int j =0; j < DApp.group.getChildren().size(); j++){
+					if ( DApp.group.getChildren().get(j) instanceof ArrowHead ) {
+						ArrowHead  a = (ArrowHead)DApp.group.getChildren().get(j);
+
+						if (  parent.getEndLines().contains( a.getComplexLine()) ){
+							DApp.group.getChildren().remove( a);
+						}
+					}
+					if ( parent.endLines.contains(cl))
+						DApp.group.getChildren().remove(cl);
 
 				}
 			}
@@ -1095,8 +1283,8 @@ public class DMenuWizard {
 
 				fileChooser.setInitialFileName(DApp.project.getName());
 				fileChooser.getExtensionFilters().add(
-					     new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
-					);
+						new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
+						);
 				File selectedFile = fileChooser.showSaveDialog(window);
 				if (selectedFile != null)
 				{
@@ -1141,8 +1329,8 @@ public class DMenuWizard {
 
 			fileChooser.setInitialFileName(DApp.project.getName());
 			fileChooser.getExtensionFilters().add(
-				     new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
-				);
+					new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
+					);
 			File selectedFile = fileChooser.showSaveDialog(window);
 			if (selectedFile != null)
 			{
@@ -1236,15 +1424,15 @@ public class DMenuWizard {
 		DApp.project.getObjects().clear();
 
 		Element cornerNW = new Element( -100, -100, 1, 1, Color.GOLD, false);
-        Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
-        Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
-        Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
+		Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
+		Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
+		Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
 
-        System.out.println(cornerSE.elementToString());
+		System.out.println(cornerSE.elementToString());
 
-        DApp.group.getChildren().removeAll(DApp.group.getChildren());
+		DApp.group.getChildren().removeAll(DApp.group.getChildren());
 
-        DApp.group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, DApp.closest);
+		DApp.group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, DApp.closest);
 
 		DApp.updateArrow();
 		DApp.updateLines();

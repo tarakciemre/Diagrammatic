@@ -82,6 +82,14 @@ public class DInterface extends DObject {
 		superInterfaces.remove(di);
 	}
 
+
+	public boolean containsSuperInterface( DInterface di) {
+		for ( DInterface sd : superInterfaces) {
+			if ( sd.getName().equals( di.getName()))
+				return true;
+		}
+		return false;
+	}
 	/**
 	 *
 	 */

@@ -125,10 +125,7 @@ public class DApp extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
-        setLineColor(Color.DIMGREY);
-        setBackgroundColor(Color.DARKGRAY);
-
-        stage.setTitle("Diagrammatic 0.1.4");
+        stage.setTitle("Diagrammatic 0.2");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
@@ -379,7 +376,7 @@ public class DApp extends Application {
 		});
 
 		editClass.setOnAction(e -> {
-			DMenuWizard.editClassOptions();
+			DMenuWizard.editObjectOptions();
 		});
 
 		removeClass.setOnAction(e -> {
@@ -463,7 +460,7 @@ public class DApp extends Application {
 				{
 					for (DInterface superInt : gc.getInterfaces())
 					{
-						drawCenteredDashedLine( superInt.getElement(), gc.getElement());
+						drawCenteredDashedLine(  gc.getElement(), superInt.getElement());
 					}
 				}
 			}
