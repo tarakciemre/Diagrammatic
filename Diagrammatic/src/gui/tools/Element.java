@@ -208,8 +208,6 @@ public class Element extends Group {
 	public void addField( DProperty prop) {
 		String out = new String("   -"+prop.getName() + ": ");
 		out += prop.getType();
-
-		getObject().getProperties().add(prop);
 		props.add( new Label(out));
 		updateObject();
 	}
@@ -241,20 +239,27 @@ public class Element extends Group {
 	 */
 	public void iniObject() {
 		if (dObject != null) {
-			if ( dObject instanceof DClass) {
+			if ( dObject instanceof DGeneralClass) {
+				System.out.println(dObject.getProperties().size());
 				for ( int i = 0; i < dObject.getProperties().size(); i++) {
 					if ( !props.contains( dObject.getProperties().get(i)))
+					{
 						addField(dObject.getProperties().get(i));
+					}
 				}
 				for ( int i = 0; i < dObject.getMethods().size(); i++) {
-					if (	 !meths.contains( dObject.getMethods().get(i)))
+					if ( !meths.contains( dObject.getMethods().get(i)))
+					{
 						addMethod( dObject.getMethods().get(i));
+					}
 				}
 			}
 			else if ( dObject instanceof DInterface) {
 				for ( int i = 0; i < dObject.getMethods().size(); i++) {
-					if (	 !meths.contains( dObject.getMethods().get(i)))
+					if ( !meths.contains( dObject.getMethods().get(i)))
+					{
 						addMethod( dObject.getMethods().get(i));
+					}
 				}
 			}
 		}

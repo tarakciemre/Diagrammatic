@@ -145,8 +145,8 @@ public class DMenuWizard {
 					displayErrorMessage("Enter a suitable name.");
 				}
 			} catch (NullPointerException n) {
-				window.close();
 				n.printStackTrace();
+				window.close();
 			}
 			window.close();
 		});
@@ -185,8 +185,8 @@ public class DMenuWizard {
 				displayErrorMessage("Project Loaded Successfully!");
 
 			} catch (NullPointerException n) {
-				displayErrorMessage("Project Wasn't Loaded Successfully!");
 				n.printStackTrace();
+				displayErrorMessage("Project Wasn't Loaded Successfully!");
 			}
 			window.close();
 		});
@@ -255,8 +255,8 @@ public class DMenuWizard {
 					displayErrorMessage("Enter a suitable name.");
 				}
 			} catch (NullPointerException n) {
-				window.close();
 				n.printStackTrace();
+				window.close();
 			}
 			window.close();
 		});
@@ -1379,8 +1379,8 @@ public class DMenuWizard {
 			oFile.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			displayErrorMessage("INVALID PROJECT NAME");
 			e.printStackTrace();
+			displayErrorMessage("INVALID PROJECT NAME");
 		}
 
 		DApp.project.setSaveFile(f);
@@ -1397,8 +1397,8 @@ public class DMenuWizard {
 			}
 			myReader.close();
 		} catch (FileNotFoundException e) {
-			System.out.println("An error occurred.");
 			e.printStackTrace();
+			System.out.println("An error occurred.");
 		}
 
 		DProject loadedProject = ProjectManager.textToProject(projectLines);

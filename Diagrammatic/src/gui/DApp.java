@@ -144,11 +144,20 @@ public class DApp extends Application {
 
         // init prj objects
         DObject albanian = new DClass("Albanian");
+        DObject albanianable = new DInterface("Albanianable");
+        DObject kosovan = new DClass("Kosovan");
+        ((DClass) kosovan).setSuperClass((DClass) albanian);
+
+
+        //testing prop
+        ((DClass) kosovan).addProperty( new DProperty( "isBased","boolean"));
+        ((DClass) kosovan).addProperty( new DProperty( "hatesSerbs", "boolean"));
 
         // adding prj objects to prj
         project.addObject(albanian);
+        project.addObject(kosovan);
+        project.addObject(albanianable);
 
-        System.out.println("asd");
 
         // init elements
         iniElements(project);
@@ -392,6 +401,7 @@ public class DApp extends Application {
 		//scene.setUserAgentStylesheet("Viper.css");
         stage.setScene( scene);
 
+        stage.show();
         scrollPane.setPannable(true);
         //scrollPane.setTranslateX(100);
         //scrollPane.setTranslateY(100);
@@ -405,22 +415,18 @@ public class DApp extends Application {
 
         group.getChildren().addAll( cornerNE, cornerNW, cornerSE, cornerSW, closest);
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < 3; i++)
         {
         	DMenuWizard.removeObject(elements.get(0));
         }
 
         setColorMode("Light");
         scrollPane.setPannable(true);
-        System.out.println(stage.isShowing());
-        stage.show();
-        System.out.println(stage.isShowing());
     }
 	void iniElements( DProject prj) {
 		elements = new ArrayList<Element>();
 		Random random = new Random();
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
-			System.out.println("loop1 - " + i);
 			if ( prj.getObjects().get(i) instanceof DClass)
 				elements.add( new ClassElement( offset + 300 - Math.random()*500, offset + 300 - Math.random()*500,
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
@@ -429,17 +435,12 @@ public class DApp extends Application {
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
 		}
 
-		System.out.println(prj.getObjects().size());
+
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
-			System.out.println("loop2 - 1 - " + i);
 			elements.get(i).setObject( prj.getObjects().get(i));
-			System.out.println("loop2 - 2 - " + i);
 			elements.get(i).updateObject();
-			System.out.println("loop2 - 3 - " + i);
 			elements.get(i).iniObject();
-			System.out.println("loop2 - 4 - " + i);
 		}
-		System.out.println("finish");
 	}
 
 	public static void drawHierarchy( DProject prj) {
@@ -459,7 +460,7 @@ public class DApp extends Application {
 				{
 					for (DInterface superInt : gc.getInterfaces())
 					{
-						drawCenteredDashedLine(  gc.getElement(), superInt.getElement());
+						drawCenteredDashedLine( gc.getElement(), superInt.getElement());
 					}
 				}
 			}
