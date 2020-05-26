@@ -49,6 +49,8 @@ import logic.object_source.DClass;
 import logic.object_source.DGeneralClass;
 import logic.object_source.DInterface;
 import logic.object_source.DObject;
+import logic.tools.DConstructor;
+import logic.tools.DConstructorProperty;
 import logic.tools.DMethod;
 import logic.tools.DProject;
 import logic.tools.DProperty;
@@ -467,7 +469,9 @@ public class DMenuWizard {
 					if ( cb.isSelected()) {
 						for ( int i = 0; i < DApp.selectedElement.getObject().getProperties().size(); i++) {
 							if ( DApp.selectedElement.getObject().getProperties().get(i).getName().equals(cb.getText()))
+							{
 								DApp.selectedElement.getObject().getProperties().remove(i);
+							}
 						}
 					}
 
@@ -957,11 +961,13 @@ public class DMenuWizard {
 	 */
 	public static void addProperty( String name, String type, Element element) {
 		DProperty prop = new DProperty( name, type);
-		element.addField(prop);
-		if( element.getObject() instanceof DClass)
+
+		if( element.getObject() instanceof DGeneralClass)
 		{
-			((DClass)element.getObject()).addProperty(prop);
+			((DGeneralClass)element.getObject()).addProperty(prop);
+			element.addField(prop);
 		}
+
 		if( element.getObject() instanceof DInterface)
 		{
 			displayErrorMessage( "Cannot add a property to an Interface.");
@@ -1059,34 +1065,50 @@ public class DMenuWizard {
 	 * @param element
 	 */
 	public static void displayConstructorMakerWindow( Element element) {
-		Stage window = new Stage();
-		Scene scene;
-		window.initModality(Modality.APPLICATION_MODAL);
-		window.initStyle(StageStyle.DECORATED);
-		window.setTitle("Constructor Maker");
-		window.setMinWidth(200);
-		window.setMinHeight(160);
-		TableView table = new TableView();
+        Stage window = new Stage();
+        Scene scene;
+        window.initModality(Modality.APPLICATION_MODAL);
+        window.initStyle(StageStyle.DECORATED);
+        window.setTitle("Constructor Maker");
+        window.setMinWidth(200);
+        window.setMinHeight(160);
 
-		table.setEditable(true);
+        ArrayList<HBox> consBoxes = new ArrayList<HBox>();
+        if ( element.getObject() instanceof DClass) {
+            String properties = new String( "(");
+            HBox currentRow;
+            for ( DConstructor dcon : element.getObject().getConstructorCollector()) {
 
-		TableColumn firstNameCol = new TableColumn("Accessibility");
-		TableColumn lastNameCol = new TableColumn("Parameters");
+                currentRow = new HBox();
 
-		firstNameCol.setPrefWidth( 60);
-		lastNameCol.setPrefWidth( 60);
+                for ( DConstructorProperty p : dcon.getIncludedProperties()) {
+                    properties = properties + p.getProperty().getType() + ", ";
+                }
 
-		final VBox vbox = new VBox();
-		vbox.setSpacing(5);
-		vbox.setPadding(new Insets(10, 10, 10, 10));
-		vbox.getChildren().addAll( table);
+                properties = properties.substring(0,properties.length()-1) + ")";
+                currentRow.getChildren().add( new Label(dcon.getAcccessability() + properties ));
+                consBoxes.add(currentRow );
+            }
 
-		scene = new Scene(vbox);
-		//((Group) scene.getRoot()).getChildren().addAll(vbox);
+        }
+        else {
+            displayErrorMessage("Cannot add constructors to abstract classes or interfaces!");
+            window.close();
+        }
 
-		window.setScene(scene);
-		window.show();
-	}
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+        for ( int i = 0; i < consBoxes.size(); i++)
+            vbox.getChildren().add( consBoxes.get(i));
+
+        scene = new Scene(vbox);
+        //((Group) scene.getRoot()).getChildren().addAll(vbox);
+
+        window.setScene(scene);
+        window.show();
+    }
 	/**
 	 * This method displays remove options
 	 * @param element
