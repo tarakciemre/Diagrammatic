@@ -104,7 +104,7 @@ public class DClass extends DGeneralClass {
 		}
 		if (!interfaces.isEmpty())
 		{
-			String interfaceLine = "IMP: ";
+			String interfaceLine = "IMP ";
 			for (DInterface di : interfaces)
 			{
 				interfaceLine += di.getName() + ",";

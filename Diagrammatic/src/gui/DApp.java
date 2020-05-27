@@ -104,6 +104,7 @@ public class DApp extends Application {
 	public static Rectangle2D area; // sets the borders for moving objects
 	public static DProject project;
 	public static ArrayList<ComplexLine> lines;
+	public static double size;
 
 	// Colors
 	public static Paint lineColor;
@@ -419,6 +420,8 @@ public class DApp extends Application {
 
         setColorMode("Light");
         scrollPane.setPannable(true);
+
+        System.out.println("size: " + slider1.getValue() * slider2.getValue());
     }
 	void iniElements( DProject prj) {
 		elements = new ArrayList<Element>();
@@ -453,6 +456,7 @@ public class DApp extends Application {
 				{
 					drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
 				}
+
 				if (!gc.getInterfaces().isEmpty())
 				{
 					for (DInterface superInt : gc.getInterfaces())
@@ -482,7 +486,7 @@ public class DApp extends Application {
 	}
 
 	static void updateGrid() {
-		double size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
+		size = slider1.getValue() * slider2.getValue(); // changes the look of the grid
 		if (!checkBox.isSelected() || size < 4) size = 0;
 		if (gridSize != size) {
 			if (size <= 0) {
@@ -663,6 +667,7 @@ public class DApp extends Application {
 			if (width < as + selectedElement.limitWidth()) width = as + selectedElement.limitWidth();
 		}
 		selectedElement.widthProperty().set(width);
+		selectedElement.updateSeperators();
 	}
 
 	static void setVSize(double v, boolean b) {
@@ -684,6 +689,7 @@ public class DApp extends Application {
 				height = as + selectedElement.limitHeight();
 		}
 		selectedElement.heightProperty().set(height);
+		selectedElement.updateSeperators();
 	}
 
 	static void relocate(double x, double y) {
@@ -710,6 +716,8 @@ public class DApp extends Application {
 		first.startLines.add(line);
 		second.endLines.add(line);
 		lines.add(line);
+		first.toFront();
+		second.toFront();
 	}
 
 	static void drawCenteredDashedLine( Element first, Element second)
@@ -725,6 +733,8 @@ public class DApp extends Application {
 		first.startLines.add(line);
 		second.endLines.add(line);
 		lines.add(line);
+		first.toFront();
+		second.toFront();
 	}
 
 	static void updateLines()

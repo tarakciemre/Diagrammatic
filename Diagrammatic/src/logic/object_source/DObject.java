@@ -49,6 +49,52 @@ public class DObject implements Extractable, Accessible{
 		return propertyCollector;
 	}
 
+
+	/**
+	 * @param m
+	 */
+	public void addMethod( DMethod m) {
+		getMethods().add(m);
+	}
+
+	/**
+	 * @param ms
+	 */
+	public void addMethods( ArrayList<DMethod> ms) {
+		for ( DMethod m : ms)
+			getMethods().add(m);
+	}
+
+	/**
+	 * @param name
+	 */
+	public void removeAllMethodsNamed( String name) {
+		for (DMethod m : getMethods()) {
+			if ( m.getName().equals(name))
+				getMethods().remove(m);
+		}
+	}
+
+	/**
+	 * @param name
+	 * @param returnType
+	 * @param parameters
+	 */
+	public void removeMethod( String name, String returnType, ArrayList<DProperty> parameters) {
+		for ( DMethod m : getMethods()) {
+			if ( m.getName().equals(name) && m.getReturnType().equals(returnType) && m.getParameters().equals(parameters))
+				getMethods().remove(m);
+		}
+	}
+
+	/**
+	 * @param m
+	 */
+	public void removeMethod( DMethod m) {
+		getMethods().remove(m);
+	}
+
+
 	/**
 	 * @param methodCollector
 	 */

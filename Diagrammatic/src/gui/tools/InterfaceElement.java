@@ -15,5 +15,6 @@ public class InterfaceElement extends Element {
 	public InterfaceElement(double x, double y, double width, double height, Paint fill, boolean listener) {
 		super(x, y, width, height, fill, listener);
 		contentsH2.getChildren().removeAll( contentsH2.getChildren());
+		getChildren().remove(belowProperties);
 	}
 }

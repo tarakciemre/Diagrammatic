@@ -471,6 +471,7 @@ public class DMenuWizard {
 							if ( DApp.selectedElement.getObject().getProperties().get(i).getName().equals(cb.getText()))
 							{
 								DApp.selectedElement.getObject().getProperties().remove(i);
+								DApp.selectedElement.heightProperty.set(DApp.selectedElement.heightProperty.get() - DApp.size);
 							}
 						}
 					}
@@ -833,16 +834,25 @@ public class DMenuWizard {
 	 */
 	public static void displayParameterOptions( DMethod meth, Element element) {
 		Button addParam, addNew;
-		ArrayList<Label> fields;
+		ArrayList<Label> fields = null;
 		ArrayList<TextField> params = new ArrayList<TextField>();
 
 		Stage window = new Stage();
 		VBox layout = new VBox();
 
-		fields = new ArrayList<Label>();
-		for ( int i = 0; i < element.getObject().getProperties().size(); i++) {
-			fields.add( new Label( element.getObject().getProperties().get(i).getType() + ":"
-					+ element.getObject().getProperties().get(i).getName()));
+		if (element.getObject() instanceof DGeneralClass)
+		{
+			fields = new ArrayList<Label>();
+			for ( int i = 0; i < element.getObject().getProperties().size(); i++) {
+				fields.add( new Label( element.getObject().getProperties().get(i).getType() + ":"
+						+ element.getObject().getProperties().get(i).getName()));
+			}
+			for ( Label l : fields) {
+				HBox h = new HBox();
+				h.getChildren().add( l);
+				h.getChildren().add( new CheckBox());
+				layout.getChildren().add(h);
+			}
 		}
 
 		window.initModality(Modality.APPLICATION_MODAL);
@@ -906,12 +916,16 @@ public class DMenuWizard {
 			window.close();
 		});
 
-		for ( Label l : fields) {
-			HBox h = new HBox();
-			h.getChildren().add( l);
-			h.getChildren().add( new CheckBox());
-			layout.getChildren().add(h);
+		if (element.getObject() instanceof DGeneralClass)
+		{
+			for ( Label l : fields) {
+				HBox h = new HBox();
+				h.getChildren().add( l);
+				h.getChildren().add( new CheckBox());
+				layout.getChildren().add(h);
+			}
 		}
+
 
 		layout.setAlignment( Pos.CENTER_LEFT);
 		addNew.setAlignment(Pos.CENTER_RIGHT);
@@ -983,15 +997,8 @@ public class DMenuWizard {
 	 * @param element
 	 */
 	public static void addMethod( DMethod m, Element element) {
+		element.getObject().addMethod(m);
 		element.addMethod(m);
-		if( element.getObject() instanceof DClass)
-		{
-			((DClass)element.getObject()).addMethod(m);
-		}
-		if( element.getObject() instanceof DInterface)
-		{
-			((DInterface)element.getObject()).addMethod(m);
-		}
 
 		System.out.print( m);
 	}

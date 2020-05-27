@@ -39,28 +39,6 @@ public class DInterface extends DObject {
 	}
 
 	/**
-	 * @param methods
-	 */
-	public void addMethods( DMethod... methods) {
-		for ( int i = 0; i < methods.length; i++)
-			addMethod( methods[i]);
-	}
-
-	/**
-	 * @param m
-	 */
-	public void addMethod( DMethod m) {
-		getMethods().add(m);
-	}
-
-	/**
-	 * @param m
-	 */
-	public void removeMethod( DMethod m) {
-		getMethods().remove(m);
-	}
-
-	/**
 	 * @param di
 	 */
 	public void addSuperInterface( DInterface di)

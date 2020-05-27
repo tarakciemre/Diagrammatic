@@ -69,7 +69,7 @@ public class ProjectManager
                     else if(line.startsWith( "IMP"))
                     {
                     	String[] interfaces = lineInfo.split(",");
-
+                    	System.out.println(interfaces[0]);
                     	for (DObject o : project.getObjects())
                     	{
                     		if (o instanceof DInterface)
@@ -490,10 +490,12 @@ public class ProjectManager
     public static boolean isSuitableName(String name)
     {
 		boolean suitable = true;
+		if (name.length() == 0)
+			suitable = false;
 		for (int i = 0; i < name.length(); i++)
 		{
 			Character c = name.charAt(i);
-			if (!Character.isLetter(c) && !c.equals('_'))
+			if (!(Character.isLetter(c) && i != 0) && !Character.isDigit(c) &&!c.equals('_'))
 			{
 				suitable = false;
 			}

@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import gui.*;
 
@@ -19,16 +20,18 @@ import logic.tools.*;
 
 public class Element extends Group {
 
+	final int SPACE = 5;
+
 	DObject dObject;
 	Rectangle rectangle = new Rectangle();
 	String nameOfClass = new String("NameOfClass");
-	String methods = new String("Methods");
-	String properties = new String("Properties");
 	DoubleProperty widthProperty = new SimpleDoubleProperty();
-	DoubleProperty heightProperty = new SimpleDoubleProperty();
+	public DoubleProperty heightProperty = new SimpleDoubleProperty();
 	public ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
 	public ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
 	public boolean listener;
+	Line belowName;
+	Line belowProperties;
 
 	ArrayList<Label> props = new ArrayList<Label>();
 	ArrayList<Label> meths = new ArrayList<Label>();
@@ -39,8 +42,6 @@ public class Element extends Group {
 	VBox metho;
 	VBox contentsV;
 	Label l;
-	Label l2;
-	Label l3;
 
 	/**
 	 * @param listener
@@ -85,10 +86,6 @@ public class Element extends Group {
 		rectangle.setArcWidth(20.0d);
 
 		l = new Label(  "   " + nameOfClass + "\n");
-		l2 = new Label(  "   Properties   \n");
-		l3 = new Label(  "   Methods   \n");
-		l2.setUnderline(true);
-		l3.setUnderline(true);
 		/*
         final int fontSize = 9;
         final String fontType = "Arial";
@@ -117,9 +114,12 @@ public class Element extends Group {
 		contentsV = new VBox();
 
 		contentsH.getChildren().addAll(l);
-		contentsH2.getChildren().addAll(l2);
-		contentsH3.getChildren().addAll(l3);
-		contentsV.getChildren().addAll( contentsH, contentsH2, proper, contentsH3, metho);
+
+		belowName = new Line();
+		belowProperties = new Line();
+		updateSeperators();
+
+		contentsV.getChildren().addAll( contentsH, belowName, contentsH2, proper, belowProperties, contentsH3, metho);
 
 		//setPickOnBounds(true);
 		getChildren().addAll(rectangle, contentsV);
@@ -134,6 +134,8 @@ public class Element extends Group {
 			setOnMouseReleased(me -> DApp.srBnd.fireEvent(me));
 			boundsInParentProperty().addListener((v, o, n) -> DApp.updateOverlay());
 		}
+
+
 
 	}
 
@@ -210,6 +212,7 @@ public class Element extends Group {
 		out += prop.getType();
 		props.add( new Label(out));
 		updateObject();
+		heightProperty.set(heightProperty.get() + DApp.size);
 	}
 
 	/**
@@ -231,6 +234,7 @@ public class Element extends Group {
 
 		meths.add( new Label(out));
 		updateObject();
+		heightProperty.set(heightProperty.get() + DApp.size);
 	}
 
 	/**
@@ -261,41 +265,6 @@ public class Element extends Group {
 	 *
 	 */
 	public void updateObject() {
-		/*
-    	 for ( int i = 0; i < elements.size(); i++){
-         	for ( int j = 0; j < elements.get(i).getPropertyLabels().size(); i++ ){
-         		if ( .contains(elements.get(i).getPropertyLabels().get(j)))
-         	}
-
-         	for ( int j = 0; j < elements.get(i).getMethodLabels().size(); i++ ) {
-
-         	}
-
-         }*/
-
-
-		/*for (int i = 0; i < contentsV.getChildren().size(); i++) {
-    		if ( getChildren().get(i) instanceof HBox)
-    			getChildren().remove(i);
-    	}*/
-
-
-		/*if (dObject != null) {
-
-
-    		for ( int i = 0; i < dObject.getProperties().size(); i++)
-        		props.add( new Label( dObject.getProperties().get(i).toString()));
-
-        	for ( int i = 0; i < dObject.getMethods().size(); i++)
-        		meths.add( new Label( dObject.getProperties().get(i).toString()));
-
-
-    	}*/
-		/*for ( int i = 0; i < contentsV.getChildren().size(); i++)
-    		if ( contentsV.getChildren().get(i) instanceof VBox)
-    			contentsH.getChildren().add( new Label( dObject.getName() + "\n--------------\n"));
-		 */
-
 		// updating name
 		for ( int i = 0; i < contentsH.getChildren().size(); i++)
 			if ( contentsH.getChildren().get(i) instanceof Label)
@@ -313,6 +282,7 @@ public class Element extends Group {
 					contentsH.getChildren().set( i, new Label( "   " + dObject.getName() + "\n\n"));
 				}
 			}
+
 
 		// updating properties
 		for ( int i = 0; i < props.size(); i++)
@@ -333,9 +303,10 @@ public class Element extends Group {
 
 		for ( Label label : props) {
 			if (!proper.getChildren().contains(label))
+			{
 				proper.getChildren().add(label);
+			}
 		}
-
 
 		// updating methods
 		for ( int i = 0; i < meths.size(); i++)
@@ -409,6 +380,48 @@ public class Element extends Group {
 	public String getColor()
 	{
 		return rectangle.getFill().toString();
+	}
+
+	public void updateSeperators()
+	{
+		belowName.setStartX(contentsH.getLayoutX());
+		belowName.setStartY(contentsH.getLayoutY());
+		belowName.setEndX(contentsH.getLayoutX() + widthProperty().get());
+		belowName.setEndY(contentsH.getLayoutY());
+
+		System.out.println(contentsH.getLayoutX());
+		System.out.println(contentsH.getLayoutY());
+		System.out.println(contentsH2.getLayoutX());
+		System.out.println(contentsH2.getLayoutY());
+
+		if (getObject() != null)
+		{
+			if (getObject () instanceof DGeneralClass)
+			{
+				if (getObject().getProperties().size() == 0)
+				{
+					belowProperties.setStartX(contentsH2.getLayoutX());
+					belowProperties.setStartY(contentsH2.getLayoutY());
+					belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
+					belowProperties.setEndY(contentsH2.getLayoutY());
+				}
+				else
+				{
+					belowProperties.setStartX(contentsH2.getLayoutX());
+					belowProperties.setStartY(contentsH2.getLayoutY() + SPACE);
+					belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
+					belowProperties.setEndY(contentsH2.getLayoutY() + SPACE);
+				}
+			}
+
+		}
+		else
+		{
+			belowProperties.setStartX(contentsH2.getLayoutX());
+			belowProperties.setStartY(contentsH2.getLayoutY() + SPACE);
+			belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
+			belowProperties.setEndY(contentsH2.getLayoutY() + SPACE);
+		}
 	}
 
 }
