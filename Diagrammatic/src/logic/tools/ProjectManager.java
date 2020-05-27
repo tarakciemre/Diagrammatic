@@ -495,7 +495,7 @@ public class ProjectManager
 		for (int i = 0; i < name.length(); i++)
 		{
 			Character c = name.charAt(i);
-			if (!(Character.isLetter(c) && i != 0) && !Character.isDigit(c) &&!c.equals('_'))
+			if (!Character.isLetter(c) && !(Character.isDigit(c) && i != 0) &&!c.equals('_'))
 			{
 				suitable = false;
 			}
