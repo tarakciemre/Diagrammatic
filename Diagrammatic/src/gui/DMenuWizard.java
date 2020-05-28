@@ -504,8 +504,8 @@ public class DMenuWizard {
 		window.setMinHeight(160);
 
 
-		Button removeMethodButton = new Button("Remove Method");
-
+		Button removeMethodButton = new Button( "Remove Method");
+		Button updateHierarchy = new Button( "Update Hierarchy");
 		ArrayList<Label> methods = new ArrayList<>();
 
 		VBox methodVBox = new VBox();
@@ -543,34 +543,7 @@ public class DMenuWizard {
 				for (Element element : DApp.elements) {
 					CheckBox c = (CheckBox)n;
 
-					c.setOnAction(event -> {
 
-						if (c.isSelected()) {
-							((DInterface) DApp.selectedElement.getObject()).addSuperInterface( (DInterface) element.getObject());
-							DApp.drawCenteredLine( DApp.selectedElement, element);
-						}
-						else {
-							((DInterface) DApp.selectedElement.getObject()).removeSuperInterface((DInterface) element.getObject());
-							removeSuperInterfaceLine( DApp.selectedElement, element);
-
-						}
-						//DApp.select( element);
-						DApp.updateOverlay();
-						DApp.updateLines();
-						DApp.updateArrow();
-						DApp.updateZoomPane();
-						//DApp.select( null);
-
-						/*
-						if (c.getText().equals(element.getObject().getName())) {
-
-							if ( DApp.selectedElement.endLines.isEmpty()) {
-
-								DApp.drawCenteredLine(DApp.selectedElement, element);
-							}*/
-
-
-						});
 
 
 				}
@@ -1163,6 +1136,34 @@ public class DMenuWizard {
 			if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
 				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
 		}
+
+		// removing from the classes that extended the removed class
+		if ( element.getObject() instanceof DGeneralClass) {
+			for ( DObject child : DApp.project.getObjects()) {
+				if ( child instanceof DGeneralClass) {
+					if ( ((DGeneralClass)child).getSuperClass() != null)  {
+						if ( ((DGeneralClass)child).getSuperClass().getName().equals(((DGeneralClass)element.getObject()).getName())) {
+							((DGeneralClass) child).setSuperClass(null);
+						}
+					}
+				}
+			}
+		}
+		else if ( element.getObject() instanceof DInterface) {
+			for ( DObject child : DApp.project.getObjects()) {
+				if ( child instanceof DInterface) {
+					if ( ((DInterface)child).getSuperInterfaces().size() > 0)  {
+						for ( int i = 0; i < ((DInterface)child).getSuperInterfaces().size(); i++) {
+							DInterface superInterface = ((DInterface)child).getSuperInterfaces().get(i);
+							if (  superInterface.getName().equals(((DInterface)element.getObject()).getName())) {
+								((DInterface)child).getSuperInterfaces().remove(superInterface);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		// removing from project
 		DApp.project.getObjects().remove(element.getObject());
 		//deleting line from group

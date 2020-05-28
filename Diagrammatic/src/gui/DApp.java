@@ -126,7 +126,7 @@ public class DApp extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
-        stage.setTitle("Diagrammatic 0.2");
+        stage.setTitle("Diagrammatic 0.2.1");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
