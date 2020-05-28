@@ -46,7 +46,8 @@ public class DConstructor implements Extractable, Accessible
 				firstLine += p.getType() + " " + p.getName() + ", ";
 			}
 		}
-		firstLine = firstLine.substring(0, firstLine.length() - 2);
+		if ( !properties.isEmpty())
+			firstLine = firstLine.substring(0, firstLine.length() - 2);
 		firstLine += ")";
 
 		lines.add( firstLine);
@@ -93,7 +94,8 @@ public class DConstructor implements Extractable, Accessible
 		{
 			output = output + prop.isIncluded() + " ";
 		}
-		output = output.substring(0, output.length() - 1);
+		if ( !properties.isEmpty())
+			output = output.substring(0, output.length() - 1);
 		return output;
 	}
 

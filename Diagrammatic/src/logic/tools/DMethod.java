@@ -50,25 +50,6 @@ public class DMethod implements Accessible{
 		}
 		output = output.substring(0, output.length() - 1);
 		return output;
-
-		//IDK WHat this is
-		/*String str;
-      String rtn;
-
-      if ( returnType.equals("void"))
-         rtn = "no return function";
-      else
-         rtn = "returns type " + returnType;
-
-      str = name + " " + rtn + " " + " taking parameters : ";
-
-      for ( int i = 0; i < parameters.size() - 1; i++)
-         str += parameters.get(i) + ", ";
-      if ( parameters.size() > 0)
-         str += parameters.get(parameters.size() - 1);
-
-      return str;
-		 */
 	}
 
 	/**
@@ -221,6 +202,20 @@ public class DMethod implements Accessible{
 		if ( s.equals(ProjectManager.PROTECTED) || s.equals(ProjectManager.PUBLIC) || s.equals(ProjectManager.DEFAULT) || s.equals(ProjectManager.PRIVATE) )
 			accesibility = s;
 
+	}
+
+	public boolean equals( DMethod other) {
+		if ( other.getName().equals(this.getName())) {
+			if ( other.getParameters().size() == this.getParameters().size()) {
+				for ( DProperty op : other.getParameters()) {
+					if ( ! this.getParameters().contains(op)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 

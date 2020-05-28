@@ -1,0 +1,18 @@
+PRO: null
+
+
+CLA: cl1
+
+CON 
+
+ELE 4665.0 4815.0 150.0 150.0 0xffed99ff
+
+END
+
+CLA: cl2
+
+ELE 4380.0 4860.0 150.0 150.0 0x9ad6d6ff
+
+END
+
+END

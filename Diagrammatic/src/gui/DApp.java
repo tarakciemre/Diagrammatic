@@ -62,6 +62,10 @@ import logic.tools.DConstructorProperty;
 import logic.tools.DProject;
 import logic.tools.DProperty;
 
+
+/*
+ * Credits to https://yumberc.github.io/Resize/Resize.html for basics of Element and resizing methods
+ */
 public class DApp extends Application {
 
 	// App Properties
@@ -85,7 +89,7 @@ public class DApp extends Application {
 	static int offset = 5000;
 
 	// Members
-	public static final int ELEMENT_HEIGHT = 150;
+	public static final int ELEMENT_HEIGHT = 75;
 	public static final int ELEMENT_WIDTH = 150;
 	public static final double DEFAULT_ZOOM = 1.1606;
 	public static final double DEFAULT_GRIDSIZE = 15.7377;
@@ -124,7 +128,7 @@ public class DApp extends Application {
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
-        stage.setTitle("Diagrammatic 0.2.1");
+        stage.setTitle("Diagrammatic 0.3.1");
         stage.setScene(new Scene(layout, 500, 300));
         //set the location of the window
         stage.setX(50);
@@ -347,9 +351,6 @@ public class DApp extends Application {
 
         extractMenu.getItems().addAll(extractAll, showCode);
 
-        // most important menu
-        //Menu ytpMenu = new Menu("YTP modes");
-
         // Preferences
         Menu preferencesMenu = new Menu("Preferences");
         MenuItem lightMode = new MenuItem( "Light Mode");
@@ -422,7 +423,8 @@ public class DApp extends Application {
         	DMenuWizard.removeObject(elements.get(0));
         }
 
-        setColorMode("Light");
+        // bravo alpha going dark
+        setColorMode("Dark");
         scrollPane.setPannable(true);
 
         System.out.println("size: " + slider1.getValue() * slider2.getValue());
@@ -431,19 +433,22 @@ public class DApp extends Application {
 		elements = new ArrayList<Element>();
 		Random random = new Random();
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
-			if ( prj.getObjects().get(i) instanceof DClass)
+			if ( prj.getObjects().get(i) instanceof DGeneralClass)
 				elements.add( new ClassElement( offset + 300 - Math.random()*500, offset + 300 - Math.random()*500,
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
 			else if  (prj.getObjects().get(i) instanceof DInterface)
 				elements.add( new InterfaceElement( offset + 300 - Math.random()*500, offset + 300 - Math.random()*500,
 						ELEMENT_WIDTH, ELEMENT_HEIGHT, Color.web(colors[0].substring(0, 1) + colors[random.nextInt(10)].substring(1).toUpperCase(), 1.0), true));
+
 		}
 
 
 		for ( int i = 0; i < prj.getObjects().size(); i++) {
 			elements.get(i).setObject( prj.getObjects().get(i));
-			elements.get(i).updateObject();
+
 			elements.get(i).iniObject();
+
+			elements.get(i).updateObject();
 		}
 	}
 

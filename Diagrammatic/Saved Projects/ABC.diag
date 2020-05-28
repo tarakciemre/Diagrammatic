@@ -1,0 +1,36 @@
+PRO: ABC
+
+
+CLA: A
+
+PRO yer,sdf
+PRO sdfsf,sdfsdf
+
+ELE 4830.0 4695.0 150.0 180.0 0xc69eddff
+
+END
+
+CLA: B
+
+PRO sdaf,asdf
+
+ELE 4665.0 4875.0 150.0 165.0 0xff999aff
+
+END
+
+CLA: C
+
+EXT A
+
+PRO sdf,sdf
+
+MET asdf sd false sdf,sdf
+MET sad dsf false
+
+ELE 4905.0 4965.0 150.0 195.0 0xeb99c7ff
+
+END
+
+COMPLEXLINES
+CLN A C
+END

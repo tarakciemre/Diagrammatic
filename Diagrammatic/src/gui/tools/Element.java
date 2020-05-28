@@ -82,21 +82,12 @@ public class Element extends Group {
 		widthProperty.set(width);
 		heightProperty.set(height);
 
+
 		rectangle.setFill(fill);
 		rectangle.setStrokeWidth(4.0);
 		rectangle.setStroke( Color.BLACK);
 		rectangle.setArcHeight(20.0d);
 		rectangle.setArcWidth(20.0d);
-
-		/*
-        final int fontSize = 9;
-        final String fontType = "Arial";
-        final Font font = new Font(fontType, fontSize);
-
-        l.setFont(font);
-        l2.setFont(font);
-        l3.setFont(font);
-		 */
 
 		if (dObject != null) {
 			for ( int i = 0; i < dObject.getProperties().size(); i++)
@@ -130,6 +121,8 @@ public class Element extends Group {
 			belowProperties = new Line();
 
 			contentsV.getChildren().addAll( contentsH, belowName, contentsH2, empty, proper, belowProperties, contentsH3, metho);
+			contentsV.setPrefHeight(height);
+			contentsV.setPrefWidth(width);
 			updateSeperators();
 			setOnMousePressed(me -> {
 				DApp.select(this);
@@ -137,6 +130,7 @@ public class Element extends Group {
 				me.consume();
 				System.out.println("S: " + toString());
 			});
+
 			setOnMouseDragged(me -> DApp.srBnd.fireEvent(me));
 			setOnMouseReleased(me -> DApp.srBnd.fireEvent(me));
 			boundsInParentProperty().addListener((v, o, n) -> DApp.updateOverlay());
@@ -217,7 +211,6 @@ public class Element extends Group {
 	public void addField( DProperty prop) {
 		String out = new String("   -"+prop.getName() + ": ");
 		out += prop.getType();
-		props.add( new Label(out));
 		updateObject();
 		heightProperty.set(heightProperty.get() + DApp.size);
 	}
@@ -255,13 +248,13 @@ public class Element extends Group {
 						addField(dObject.getProperties().get(i));
 				}
 				for ( int i = 0; i < dObject.getMethods().size(); i++) {
-					if (	 !meths.contains( dObject.getMethods().get(i)))
+					if ( !meths.contains( dObject.getMethods().get(i)))
 						addMethod( dObject.getMethods().get(i));
 				}
 			}
 			else if ( dObject instanceof DInterface) {
 				for ( int i = 0; i < dObject.getMethods().size(); i++) {
-					if (	 !meths.contains( dObject.getMethods().get(i)))
+					if ( !meths.contains( dObject.getMethods().get(i)))
 						addMethod( dObject.getMethods().get(i));
 				}
 			}

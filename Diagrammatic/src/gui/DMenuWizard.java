@@ -312,10 +312,12 @@ public class DMenuWizard {
 		Random rand = new Random();
 		if ( DApp.selectedElement != null)
 			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
-					150, 150, Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+								DApp.ELEMENT_WIDTH, DApp.ELEMENT_WIDTH,
+								Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 		else
-			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
-					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
+			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS,
+								DApp.ELEMENT_WIDTH, DApp.ELEMENT_WIDTH,
+								Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
 		// update project and application
 		ProjectManager.connectElement(r, object);
@@ -464,8 +466,15 @@ public class DMenuWizard {
 				RadioButton rb = new RadioButton(e.getObject().getName());
 				rb.setOnAction(event -> {
 					if (rb.isSelected()) {
-						((DGeneralClass) DApp.selectedElement.getObject()).addInterface( (DInterface) e.getObject());
-						DApp.drawCenteredDashedLine( e, DApp.selectedElement);
+						boolean contained = false;
+						for ( int i = 0; i < ((DGeneralClass) DApp.selectedElement.getObject()).getInterfaces().size(); i++)
+							if (((DGeneralClass) DApp.selectedElement.getObject()).getInterfaces().get(i).getName().equals(((DInterface) e.getObject()).getName())) {
+								contained = true;
+							}
+						if ( !contained) {
+							((DGeneralClass) DApp.selectedElement.getObject()).addInterface( (DInterface) e.getObject());
+							DApp.drawCenteredDashedLine( e, DApp.selectedElement);
+						}
 					}
 					else {
 						((DGeneralClass) DApp.selectedElement.getObject()).removeInterface((DInterface) e.getObject());
@@ -853,8 +862,6 @@ public class DMenuWizard {
 		Label messageParam = new Label( "Add parameters below");
 		layout.getChildren().add(messageParam);
 
-
-
 		addNew = new Button("add another");
 		addNew.setOnAction( e -> {
 			final TextField tf = new TextField("tpye, name");
@@ -972,7 +979,7 @@ public class DMenuWizard {
 				element.addField(prop);
 			}
 			else {
-				boolean same = true;
+				boolean same = false;
 				boolean taken = false;
 				for ( int i = 0; i < ((DGeneralClass)element.getObject()).getProperties().size(); i++)
 				{
@@ -984,15 +991,17 @@ public class DMenuWizard {
 				for ( int i = 0; i < ((DGeneralClass)element.getObject()).getProperties().size(); i++)
 				{
 					DProperty p = ((DGeneralClass)element.getObject()).getProperties().get(i);
-					if ( !taken && (!p.getName().equals(prop.getName()) || !p.getType().equals(prop.getType()))) {
-						((DGeneralClass)element.getObject()).addProperty(prop);
-						element.addField(prop);
-						same = false;
+					if ( prop.equals(p)) {
+						same = true;
 					}
 				}
-				if (same || taken) {
+
+				System.out.println( same+""+taken);
+				if (same || taken)
 					displayErrorMessage( "this vairable already exists!");
-					//displayFieldOptions(element);
+				else {
+					((DGeneralClass)element.getObject()).addProperty(prop);
+					element.addField(prop);
 				}
 			}
 		}
@@ -1011,8 +1020,57 @@ public class DMenuWizard {
 	 * @param element
 	 */
 	public static void addMethod( DMethod m, Element element) {
-		element.getObject().addMethod(m);
-		element.addMethod(m);
+
+		if ( element.getObject() instanceof DGeneralClass) {
+			if ( ((DGeneralClass)element.getObject()).getProperties().isEmpty()) {
+				element.getObject().addMethod(m);
+				element.addMethod(m);
+			}
+			else {
+				boolean same = false;
+
+				for ( int i = 0; i < ((DGeneralClass)element.getObject()).getMethods().size(); i++)
+				{
+					DMethod meth = element.getObject().getMethods().get(i);
+					if ( m.equals(meth)) {
+						same = true;
+					}
+				}
+
+				System.out.println( same+"");
+				if (same )
+					displayErrorMessage( "this method already exists!");
+				else {
+					element.getObject().addMethod(m);
+					element.addMethod(m);
+				}
+			}
+		}
+		else if ( element.getObject() instanceof DInterface) {
+			if ( ((DInterface)element.getObject()).getProperties().isEmpty()) {
+				element.getObject().addMethod(m);
+				element.addMethod(m);
+			}
+			else {
+				boolean same = false;
+
+				for ( int i = 0; i < ((DInterface)element.getObject()).getMethods().size(); i++)
+				{
+					DMethod meth = element.getObject().getMethods().get(i);
+					if ( m.equals(meth)) {
+						same = true;
+					}
+				}
+
+				System.out.println( same+"");
+				if (same )
+					displayErrorMessage( "this method already exists!");
+				else {
+					element.getObject().addMethod(m);
+					element.addMethod(m);
+				}
+			}
+		}
 
 		System.out.print( m);
 	}
@@ -1107,7 +1165,10 @@ public class DMenuWizard {
 						properties = properties + p.getProperty().getType() + " " + p.getProperty().getName() + ", ";
 					}
 
-					properties = properties.substring(0, properties.length() - 2) + ")";
+					if ( dcon.getIncludedProperties().isEmpty())
+						properties = properties + ")";
+					else
+						properties = properties.substring(0, properties.length() - 2) + ")";
 					currentRow.getChildren().add(new Label(dcon.getAcccessability() + properties));
 					properties = " " + element.getObject().getName() + "(";
 					consBoxes.add(currentRow);
@@ -1135,7 +1196,7 @@ public class DMenuWizard {
 					for (int i = 0; i < element.getObject().getProperties().size(); i++) {
 						if (element.getObject().getProperties().get(i).toString().equals( cb.getText()) ) {
 							dConstructor.include( element.getObject().getProperties().get(i));
- 						}
+						}
 					}
 				}
 			}
@@ -1538,6 +1599,8 @@ public class DMenuWizard {
 				DApp.updateLines();
 				DApp.updateOverlay();
 				DApp.updateZoomPane();
+				for ( int i = 0; i < DApp.elements.size(); i++)
+					DApp.elements.get(i).updateObject();
 				displayErrorMessage("Project Loaded Successfully!");
 
 			} catch (NullPointerException n) {

@@ -61,14 +61,16 @@ public class DClass extends DGeneralClass {
 		lines.add( "\t//Constructors");
 		lines.add( "");
 
-		// !EDIT! multiple constructors will be possible
-		// !EDIT! MUST BE EDITED TO MAKE COMPATIBLE WITH ARRAYLISTS
-		/*for( int i = 0; i < constructors.get(0).extract().size(); i++)
+
+		for( int i = 0; i < constructors.size(); i++)
 		{
-			lines.add( "\t" + constructors.get(0).extract().get(i));
+			for ( int j = 0; j < constructors.get(i).extract().size(); j++) {
+				lines.add( "\t" + constructors.get(i).extract().get(j));
+			}
+			lines.add( "");
 		}
 		lines.add( "");
-		 */
+
 		lines.add( "\t//Methods");
 		lines.add( "");
 		for( int i = 0; i < getMethods().size(); i++)

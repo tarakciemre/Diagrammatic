@@ -1,0 +1,18 @@
+PRO: constest
+
+
+CLA: fds
+
+PRO first,prop
+PRO second,prop
+
+CON true true
+CON true false
+CON false true
+CON false false
+
+ELE 4695.0 4785.0 150.0 180.0 0x99eb99ff
+
+END
+
+END
