@@ -103,7 +103,6 @@ public class DApp extends Application {
 	public static ArrayList<Element> elements;
 	public static Rectangle2D area; // sets the borders for moving objects
 	public static DProject project;
-	public static ArrayList<ComplexLine> lines;
 	public static double size;
 
 	// Colors
@@ -122,7 +121,6 @@ public class DApp extends Application {
 
 	@Override
     public void start( Stage stage) {
-		lines = new ArrayList<ComplexLine>();
     	area = new Rectangle2D(0, 0, 10000, 10000); // sets the borders for moving objects
         BorderPane layout = new BorderPane();
 
@@ -269,7 +267,8 @@ public class DApp extends Application {
         Menu fileMenu = new Menu("File");
         MenuItem newProject = new MenuItem( "New Project");
         newProject.setOnAction(e -> {
-        	 DMenuWizard.displayProjectOptions();
+        	if (!(project.getName() == null && project.getObjects().isEmpty()))
+        		DMenuWizard.displayProjectOptions();
         });
         MenuItem openProject = new MenuItem( "Open");
         MenuItem saveProject = new MenuItem( "Save");
@@ -338,7 +337,12 @@ public class DApp extends Application {
 
 
         extractAll.setOnAction(e ->  DMenuWizard.extractAll(e, project) );
-        showCode.setOnAction(e ->  DMenuWizard.showCode(selectedElement));
+        showCode.setOnAction(e ->  {
+        	if (selectedElement != null)
+        		DMenuWizard.showCode(selectedElement);
+        	else
+        		DMenuWizard.displayErrorMessage("Select an element to show code.");
+        });
 
 
         extractMenu.getItems().addAll(extractAll, showCode);
@@ -454,6 +458,7 @@ public class DApp extends Application {
 				DGeneralClass gc = (DGeneralClass) o;
 				if (gc.getSuperClass() != null)
 				{
+					System.out.println("added another line");
 					drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
 				}
 
@@ -461,17 +466,19 @@ public class DApp extends Application {
 				{
 					for (DInterface superInt : gc.getInterfaces())
 					{
+						System.out.println("added another dashed line");
 						drawCenteredDashedLine( gc.getElement(), superInt.getElement());
 					}
 				}
 			}
-			if (o instanceof DInterface)
+			else if (o instanceof DInterface)
 			{
 				DInterface i = (DInterface) o;
 				if (!i.getSuperInterfaces().isEmpty())
 				{
 					for (DInterface superInt : i.getSuperInterfaces())
 					{
+						System.out.println("added another line");
 						drawCenteredLine(superInt.getElement(), i.getElement());
 					}
 				}
@@ -715,7 +722,7 @@ public class DApp extends Application {
 		group.getChildren().addAll(a);
 		first.startLines.add(line);
 		second.endLines.add(line);
-		lines.add(line);
+		project.addComplexLine(line);
 		first.toFront();
 		second.toFront();
 	}
@@ -732,7 +739,7 @@ public class DApp extends Application {
 		group.getChildren().addAll(a);
 		first.startLines.add(line);
 		second.endLines.add(line);
-		lines.add(line);
+		project.addComplexLine(line);
 		first.toFront();
 		second.toFront();
 	}
@@ -1016,7 +1023,7 @@ public class DApp extends Application {
 		//deleting line from group
 		for ( int i =0; i < group.getChildren().size();i++) {
 
-			if ( group.getChildren().get(i) instanceof Element && !((Element) group.getChildren().get(i)).listener) {
+			if ( group.getChildren().get(i) instanceof Element && !((Element) group.getChildren().get(i)).interactable) {
 
 			}else {
 				group.getChildren().remove( i);

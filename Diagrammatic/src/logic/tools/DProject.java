@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import gui.DApp;
+
 import gui.tools.ComplexLine;
 import gui.tools.Element;
 import logic.object_source.DGeneralClass;
@@ -17,7 +17,6 @@ public class DProject {
 	ArrayList<DObject> objects;
 	String projectName;
 	ArrayList<ComplexLine> complexLines;
-    ArrayList<Element> elements;
 
 	/**
 	 *
@@ -25,6 +24,7 @@ public class DProject {
 	public DProject()
 	{
 		objects = new ArrayList<DObject>();
+		complexLines = new ArrayList<ComplexLine>();
 	}
 
 	/**
@@ -33,6 +33,7 @@ public class DProject {
 	public DProject( String name)
 	{
 		objects = new ArrayList<DObject>();
+		complexLines = new ArrayList<ComplexLine>();
 		projectName = name;
 	}
 
@@ -42,6 +43,7 @@ public class DProject {
 	public DProject( ArrayList<String> projectText)
 	{
 		DProject p = ProjectManager.textToProject(projectText);
+		complexLines = new ArrayList<ComplexLine>();
 		this.objects = p.objects;
 		this.projectName = p.projectName;
 	}
@@ -99,16 +101,16 @@ public class DProject {
 			projectText.add("");
 		}
 
-		if (!DApp.lines.isEmpty())
+		if (!complexLines.isEmpty())
 		{
 			projectText.add("COMPLEXLINES");
-			for (ComplexLine cln : DApp.lines)
+			System.out.println(complexLines.size());
+			for (ComplexLine cln : complexLines)
 			{
+				System.out.println(cln.lineToString());
 				projectText.add(cln.lineToString());
 			}
 		}
-
-
 
 		projectText.add("END");
 
@@ -180,25 +182,6 @@ public class DProject {
         }
     }
 
-    // adds new element to elements
-    public void addElement( Element element)
-    {
-        elements.add(element);
-    }
-
-    // removes a specific element from elements list
-    public void removeElement( Element element)
-    {
-        for(int i = 0; i < elements.size(); i++)
-        {
-            if(elements.get(i) == element)
-            {
-                elements.remove(i);
-                i = elements.size() + 1;
-            }
-        }
-    }
-
     public ArrayList<DObject> degreeSort(ArrayList<DObject> list)
     {
     	boolean sorted = false;
@@ -225,6 +208,11 @@ public class DProject {
     public void setSaveFile( File saveFile)
     {
     	this.saveFile = saveFile;
+    }
+
+    public ArrayList<ComplexLine> getComplexLines()
+    {
+    	return complexLines;
     }
 
 }

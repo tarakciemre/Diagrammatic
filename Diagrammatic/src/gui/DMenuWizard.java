@@ -536,22 +536,33 @@ public class DMenuWizard {
 		for ( CheckBox c : otherInterfaces)
 			interfacesVBox.getChildren().add(c);
 
+		updateHierarchy.setOnAction( e -> {
+			// reseting
+			removeLine( DApp.selectedElement, true);
+			( (DInterface)DApp.selectedElement.getObject()).getSuperInterfaces().clear();
 
-		for ( Node n : interfacesVBox.getChildren()) {
-			if ( n instanceof CheckBox) {
+			// reconfiguring
+			for ( Node n : interfacesVBox.getChildren()) {
 
-				for (Element element : DApp.elements) {
-					CheckBox c = (CheckBox)n;
+				if ( n instanceof CheckBox) {
 
+					for (Element element : DApp.elements) {
+						CheckBox c = (CheckBox)n;
+						if ( element.getObject() instanceof DInterface && c.getText().equals(element.getObject().getName())) {
+							if (c.isSelected()) {
+								DApp.drawCenteredLine(element, DApp.selectedElement);
+								( (DInterface)DApp.selectedElement.getObject()).getSuperInterfaces().add((DInterface)element.getObject());
+							}
 
-
+						}
+					}
 
 				}
-
 			}
-		}
+		});
+
 		HBox inheritanceHBox = new HBox();
-		inheritanceHBox.getChildren().addAll(interfacesVBox);
+		inheritanceHBox.getChildren().addAll(interfacesVBox, updateHierarchy);
 
 
 		VBox radioButtonVBox = new VBox();
@@ -1045,50 +1056,50 @@ public class DMenuWizard {
 	 * @param element
 	 */
 	public static void displayConstructorMakerWindow( Element element) {
-        Stage window = new Stage();
-        Scene scene;
-        window.initModality(Modality.APPLICATION_MODAL);
-        window.initStyle(StageStyle.DECORATED);
-        window.setTitle("Constructor Maker");
-        window.setMinWidth(200);
-        window.setMinHeight(160);
+		Stage window = new Stage();
+		Scene scene;
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.initStyle(StageStyle.DECORATED);
+		window.setTitle("Constructor Maker");
+		window.setMinWidth(200);
+		window.setMinHeight(160);
 
-        ArrayList<HBox> consBoxes = new ArrayList<HBox>();
-        if ( element.getObject() instanceof DClass) {
-            String properties = new String( "(");
-            HBox currentRow;
-            for ( DConstructor dcon : element.getObject().getConstructorCollector()) {
+		ArrayList<HBox> consBoxes = new ArrayList<HBox>();
+		if ( element.getObject() instanceof DClass) {
+			String properties = new String( "(");
+			HBox currentRow;
+			for ( DConstructor dcon : element.getObject().getConstructorCollector()) {
 
-                currentRow = new HBox();
+				currentRow = new HBox();
 
-                for ( DConstructorProperty p : dcon.getIncludedProperties()) {
-                    properties = properties + p.getProperty().getType() + ", ";
-                }
+				for ( DConstructorProperty p : dcon.getIncludedProperties()) {
+					properties = properties + p.getProperty().getType() + ", ";
+				}
 
-                properties = properties.substring(0,properties.length()-1) + ")";
-                currentRow.getChildren().add( new Label(dcon.getAcccessability() + properties ));
-                consBoxes.add(currentRow );
-            }
+				properties = properties.substring(0,properties.length()-1) + ")";
+				currentRow.getChildren().add( new Label(dcon.getAcccessability() + properties ));
+				consBoxes.add(currentRow );
+			}
 
-        }
-        else {
-            displayErrorMessage("Cannot add constructors to abstract classes or interfaces!");
-            window.close();
-        }
+		}
+		else {
+			displayErrorMessage("Cannot add constructors to abstract classes or interfaces!");
+			window.close();
+		}
 
 
-        VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 10, 10, 10));
-        for ( int i = 0; i < consBoxes.size(); i++)
-            vbox.getChildren().add( consBoxes.get(i));
+		VBox vbox = new VBox();
+		vbox.setSpacing(5);
+		vbox.setPadding(new Insets(10, 10, 10, 10));
+		for ( int i = 0; i < consBoxes.size(); i++)
+			vbox.getChildren().add( consBoxes.get(i));
 
-        scene = new Scene(vbox);
-        //((Group) scene.getRoot()).getChildren().addAll(vbox);
+		scene = new Scene(vbox);
+		//((Group) scene.getRoot()).getChildren().addAll(vbox);
 
-        window.setScene(scene);
-        window.show();
-    }
+		window.setScene(scene);
+		window.show();
+	}
 	/**
 	 * This method displays remove options
 	 * @param element
@@ -1133,7 +1144,7 @@ public class DMenuWizard {
 		DApp.elements.remove(element);
 		// deleting element
 		for ( int i =0; i < DApp.group.getChildren().size();i++) {
-			if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).listener &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
+			if ( DApp.group.getChildren().get(i) instanceof Element && ((Element) DApp.group.getChildren().get(i)).interactable &&((Element)DApp.group.getChildren().get(i)).getObject().getName().equals( element.getObject().getName()))
 				DApp.group.getChildren().remove(DApp.group.getChildren().get(i));
 		}
 
@@ -1203,9 +1214,9 @@ public class DMenuWizard {
 				{
 					DApp.group.getChildren().remove(cl);
 				}
-				if ( DApp.lines.contains(cl))
+				if ( DApp.project.getComplexLines().contains(cl))
 				{
-					DApp.lines.remove(cl);
+					DApp.project.removeComplexLine(cl);
 				}
 			}
 			else if ( DApp.group.getChildren().get(i) instanceof DashedComplexLine && all ) {
@@ -1222,9 +1233,9 @@ public class DMenuWizard {
 					}
 				if ( element.startLines.contains(cdl) || element.endLines.contains(cdl))
 					DApp.group.getChildren().remove(cdl);
-				if ( DApp.lines.contains(cdl))
+				if ( DApp.project.getComplexLines().contains(cdl))
 				{
-					DApp.lines.remove(cdl);
+					DApp.project.removeComplexLine(cdl);
 				}
 			}
 		}
@@ -1432,6 +1443,7 @@ public class DMenuWizard {
 		}
 
 		DProject loadedProject = ProjectManager.textToProject(projectLines);
+		loadedProject.setSaveFile(f);
 		DApp.project = loadedProject;
 
 	}

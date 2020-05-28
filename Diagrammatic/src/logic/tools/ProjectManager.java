@@ -432,11 +432,16 @@ public class ProjectManager
             		dp.addObject(da);
             	}
 
+
+
             	else if (line.startsWith( "COMPLEXLINES"))
             	{
             		DApp.drawHierarchy(dp);
             		i++;
+            		dp.complexLines = DApp.project.complexLines;
             	}
+
+
 
             	else if (line.startsWith( "CLN"))
             	{
@@ -452,7 +457,7 @@ public class ProjectManager
             				second = e;
             		}
 
-            		for (ComplexLine l : DApp.lines)
+            		for (ComplexLine l : dp.complexLines)
             		{
             			if (first.getStartLines().contains(l) && second.getEndLines().contains(l))
             				cln = l;
@@ -485,6 +490,7 @@ public class ProjectManager
     {
     	e.setObject(o);
     	o.setElement(e);
+    	e.updateSeperators();
     }
 
     public static boolean isSuitableName(String name)

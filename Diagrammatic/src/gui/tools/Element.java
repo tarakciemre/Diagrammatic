@@ -2,6 +2,7 @@ package gui.tools;
 
 import java.util.ArrayList;
 
+import gui.DApp;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
@@ -13,14 +14,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import gui.*;
-
-import logic.object_source.*;
-import logic.tools.*;
+import logic.object_source.DAbstractClass;
+import logic.object_source.DClass;
+import logic.object_source.DGeneralClass;
+import logic.object_source.DInterface;
+import logic.object_source.DObject;
+import logic.tools.DMethod;
+import logic.tools.DProperty;
 
 public class Element extends Group {
-
-	final int SPACE = 5;
 
 	DObject dObject;
 	Rectangle rectangle = new Rectangle();
@@ -29,7 +31,7 @@ public class Element extends Group {
 	public DoubleProperty heightProperty = new SimpleDoubleProperty();
 	public ArrayList<ComplexLine> startLines = new ArrayList<ComplexLine>();
 	public ArrayList<ComplexLine> endLines = new ArrayList<ComplexLine>();
-	public boolean listener;
+	public boolean interactable;
 	Line belowName;
 	Line belowProperties;
 
@@ -42,13 +44,14 @@ public class Element extends Group {
 	VBox metho;
 	VBox contentsV;
 	Label l;
+	Label empty;
 
 	/**
-	 * @param listener
+	 * @param interactable
 	 */
-	public Element( boolean listener) {
-		if (listener) {
-			this.listener = listener;
+	public Element( boolean interactable) {
+		if (interactable) {
+			this.interactable = interactable;
 			setOnMousePressed(me -> {
 				DApp.select(this);
 				DApp.srBnd.fireEvent(me);
@@ -65,16 +68,16 @@ public class Element extends Group {
 	 * @param width
 	 * @param height
 	 * @param fill
-	 * @param listener
+	 * @param interactable
 	 */
-	public Element(double x, double y, double width, double height, Paint fill, boolean listener) {
+	public Element(double x, double y, double width, double height, Paint fill, boolean interactable) {
 		widthProperty.addListener((v, o, n) -> { rectangle.setWidth(n.doubleValue()); });
 		heightProperty.addListener((v, o, n) -> { rectangle.setHeight(n.doubleValue()); });
 
 		setLayoutX(x);
 		setLayoutY(y);
 
-		this.listener = listener;
+		this.interactable = interactable;
 
 		widthProperty.set(width);
 		heightProperty.set(height);
@@ -85,7 +88,6 @@ public class Element extends Group {
 		rectangle.setArcHeight(20.0d);
 		rectangle.setArcWidth(20.0d);
 
-		l = new Label(  "   " + nameOfClass + "\n");
 		/*
         final int fontSize = 9;
         final String fontType = "Arial";
@@ -103,27 +105,32 @@ public class Element extends Group {
 			for ( int i = 0; i < dObject.getMethods().size(); i++)
 				meths.add( new Label( dObject.getProperties().get(i).toString()));
 		}
-		contentsH = new HBox();
 
-		contentsH2 = new HBox();
-		proper = new VBox();
-
-		contentsH3 = new HBox();
-		metho = new VBox();
-
-		contentsV = new VBox();
-
-		contentsH.getChildren().addAll(l);
-
-		belowName = new Line();
-		belowProperties = new Line();
-		updateSeperators();
-
-		contentsV.getChildren().addAll( contentsH, belowName, contentsH2, proper, belowProperties, contentsH3, metho);
+		getChildren().add(rectangle);
 
 		//setPickOnBounds(true);
-		getChildren().addAll(rectangle, contentsV);
-		if(listener) {
+		if(interactable) {
+			l = new Label( "   " + nameOfClass + "\n");
+			empty = new Label (" ");
+			contentsV = new VBox();
+
+			contentsH = new HBox();
+
+			contentsH2 = new HBox();
+			proper = new VBox();
+
+			contentsH3 = new HBox();
+			metho = new VBox();
+
+			contentsH.getChildren().addAll(l);
+
+			getChildren().add(contentsV);
+
+			belowName = new Line();
+			belowProperties = new Line();
+
+			contentsV.getChildren().addAll( contentsH, belowName, contentsH2, empty, proper, belowProperties, contentsH3, metho);
+			updateSeperators();
 			setOnMousePressed(me -> {
 				DApp.select(this);
 				DApp.srBnd.fireEvent(me);
@@ -328,6 +335,8 @@ public class Element extends Group {
 			if (!metho.getChildren().contains(label))
 				metho.getChildren().addAll(label);
 		}
+
+		updateSeperators();
 	}
 
 	/**
@@ -389,38 +398,30 @@ public class Element extends Group {
 		belowName.setEndX(contentsH.getLayoutX() + widthProperty().get());
 		belowName.setEndY(contentsH.getLayoutY());
 
-		System.out.println(contentsH.getLayoutX());
-		System.out.println(contentsH.getLayoutY());
-		System.out.println(contentsH2.getLayoutX());
-		System.out.println(contentsH2.getLayoutY());
-
 		if (getObject() != null)
 		{
-			if (getObject () instanceof DGeneralClass)
+			if (getObject() instanceof DGeneralClass)
 			{
-				if (getObject().getProperties().size() == 0)
+				if (getObject().getProperties().isEmpty())
 				{
 					belowProperties.setStartX(contentsH2.getLayoutX());
 					belowProperties.setStartY(contentsH2.getLayoutY());
 					belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
 					belowProperties.setEndY(contentsH2.getLayoutY());
+					if (!contentsV.getChildren().contains(empty))
+					{
+						contentsV.getChildren().add(3, empty);
+					}
 				}
 				else
 				{
-					belowProperties.setStartX(contentsH2.getLayoutX());
-					belowProperties.setStartY(contentsH2.getLayoutY() + SPACE);
-					belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
-					belowProperties.setEndY(contentsH2.getLayoutY() + SPACE);
+					contentsV.getChildren().remove(empty);
 				}
 			}
-
-		}
-		else
-		{
-			belowProperties.setStartX(contentsH2.getLayoutX());
-			belowProperties.setStartY(contentsH2.getLayoutY() + SPACE);
-			belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
-			belowProperties.setEndY(contentsH2.getLayoutY() + SPACE);
+			else
+			{
+				belowProperties.setVisible(false);
+			}
 		}
 	}
 
