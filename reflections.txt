@@ -1,0 +1,20 @@
+Questions: 
+
+ -In what ways you found the project a useful learning experience?
+ +We found the necessity of teamworking to be useful an useful experience, and our problem solving skills have improved considerably during the implementation of project. 
+
+ -What did you dislike about project work?
+ +We could have worked more efficiently and clearly because of late explained deadlines. We crunched way more than we should have, since everyone else has other class asignments they need to worry about deadlines are really important to communicate priority
+ 
+ -What was the most difficult aspect of it?
+ +Testing GUI components, and the distance we had. We could have been more efficient at some meetings if it weren't for the epidemic. 
+
+ -What would you do differently if you had to start over again?
+ +We would have designed our GUIs better perhaps.
+ 
+ -How much time did you spend on it?
+ +probably around 5 weeks. 
+ 
+ -Are you proud of what you have achieved? 
+ +We really do. Only if we had more time...
+ 

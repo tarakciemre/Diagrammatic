@@ -38,6 +38,64 @@ I helped design of upcoming stages of drawing arrows.
 
 ****
 
-### ~ 15/05/2020 ~
+### ~ 12/05/2020 ~
 ****
 I updated element and 2 other methods in Resize so that element boxes cannot be resized smaller than the Strings inside.
+
+### ~ 17/05/2020 ~
+****
+-I helped design of ComplexLine class.
+-I wrote drawCenteredLine() method.
+
+### ~ 18/05/2020 ~
+****
+
+-I helped seperation process of Element class.
+-I helped design of Menu bar.
+-I added scrollpane to the GUI
+-I helped writing of DisplayFieldOptions() method.
+****
+
+### ~ 19/05/2020 ~
+****
+
+-I wrote ArrowHead and DashedComplexLine classes.
+-I added menu options for adding properties and methods to classes
+-I identified some of the bugs in ComplexLine.
+
+****
+
+### ~ 20/05/2020 ~
+****
+-I added displayConstructorMaker().
+-I edited ArrowHead class to calculate its direction automatically
+-I helped adding color options for the objects.
+
+****
+
+### ~ 23/05/2020 ~
+****
+
+-I helped updating DMethod Class.
+
+****
+
+### ~ 26/05/2020 ~
+****
+
+-I helped editClassOptions() and editInterfaceOptions() methods.
+-I helped design of containsSuperInterface().
+****
+
+### ~ 27/05/2020 ~
+****
+
+-I identified and fixed some of the DApp bugs.
+****
+
+### ~ 28/05/2020 ~
+****
+-I identified remaining DApp bugs.
+-I helped fixing edit class bugs.
+-I helped fixing property and add method bugs
+****

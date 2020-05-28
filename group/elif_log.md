@@ -34,3 +34,76 @@ I helped planning of the GUI classes and interfaces.
 I helped design of Resize class.
 I helped design of Resize class listeners.
 I helped design of upcoming stages of drawing arrows.
+
+### ~ 8/05/2020 ~
+****
+
+I re-designed Resize class (changed Element inner-class constructor/properties and changed createElement method.)
+I changed Resize class listeners. (Designed them to fit our purpose of UML structure.)
+I helped design of upcoming stages of drawing arrows.
+
+### ~ 12/05/2020 ~
+
+I helped design of Arrow class.
+I helped design of ComplexLine class.
+
+### ~ 17/05/2020 ~
+****
+I helped design of Resize(DApp) class methods:
+	-updateSize() 
+	-drawCenteredLine()
+	-showClosest()
+	-getClosestPoint() methods are added
+
+
+
+### ~ 18/05/2020 ~
+****
+-I designed Menu bar code.
+-I helped adding ScrollPane to GUI.
+****
+
+### ~ 19/05/2020 ~
+****
+
+-I helped design of ArrowHead class.
+-I added menu options for adding properties and methods to classes are added
+-I helped resize code turning into DApp and is integrating with other classes
+
+****
+
+### ~ 20/05/2020 ~
+****
+-I edited to calculate its direction automatically
+-I helped updating drawHierarchy() method.
+-I helped design of DMenuWizard by moving menu options to a new class called DMenuWizard
+
+****
+
+### ~ 23/05/2020 ~
+****
+
+-I helped updating DMethod class.
+-I wrote some parts of saveProject() and loadProject() methods.
+
+****
+
+### ~ 26/05/2020 ~
+****
+-I designed editClassOptions() and editInterfaceOptions() methods GUI.
+****
+
+### ~ 27/05/2020 ~
+****
+
+-I identified and fixed some of DApp bugs
+-I helped design of ConstructorMaker window.
+****
+
+### ~ 28/05/2020 ~
+****
+
+-I identified remaining DApp bugs.
+-I helped fixing edit class bugs.
+-I helped fixing property and add method bugs
+****

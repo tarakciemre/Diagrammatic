@@ -41,3 +41,70 @@ I helped planning of the GUI classes and interfaces.
 I re-designed Resize class (changed Element inner-class constructor/properties and changed createElement method.)
 I changed Resize class listeners. (Designed them to fit our purpose of UML structure.)
 I helped design of upcoming stages of drawing arrows.
+
+### ~ 12/05/2020 ~
+
+I designed ComplexLine division process.
+I designed a text-saving method for ComplexLine.
+
+### ~ 17/05/2020 ~
+****
+I created ComplexLine class.
+I created showClosest() and getClosestPoint() methods in Resize (DApp) class.
+
+### ~ 18/05/2020 ~
+****
+
+-I transferred Element class from DApp class.
+
+****
+
+### ~ 19/05/2020 ~
+****
+
+-I updated extract methods.
+-I created DProject and wrote extract method for projects
+-I wrote stringToText and textToString methods for projects
+-I fixed ComplexLine bugs.
+-I edited projectToText() method.
+
+****
+
+### ~ 20/05/2020 ~
+****
+-I created toString() methods are created for Element and Complexline, which is important for saving function
+
+****
+
+### ~ 23/05/2020 ~
+****
+
+-I updated DMethod class.
+-I wrote a method for checking if class names are suitable.
+-I wrote saveProject() and loadProject() methods.
+
+****
+
+### ~ 26/05/2020 ~
+****
+
+-I helped writing editClassOptions() and editInterfaceOptions() methods are added to DMenuWizard
+-I helped writing containsSuperInterface() method.
+****
+
+### ~ 27/05/2020 ~
+****
+
+-I fixed some of DApp bugs.
+-I wrote updateSeperators() method
+****
+
+### ~ 28/05/2020 ~
+****
+
+-I added close warning window
+-I fixed the bug properties not being visible on elements
+-I removed unused imports
+-I fixed project warnings
+-I removed unused class and interfaces
+****

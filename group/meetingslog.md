@@ -51,7 +51,7 @@ DGeneralClass, DInterfac, DClass, DProperty, DAbstractClass
 -Implemented a JavaFX graphical user interface class into project (Resize class) 
 ****
 
-### Meeting ~ (7/05/2020, 3 hours)
+### Meeting ~ (8/05/2020, 3 hours)
 ****
 **Present:** Osman, Giray, Özgür, Elif, Kaan, Emre..   _**Absent:** -
 
