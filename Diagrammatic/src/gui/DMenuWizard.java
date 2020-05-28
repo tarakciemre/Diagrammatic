@@ -1030,7 +1030,7 @@ public class DMenuWizard {
 
 	/**
 	 * This method extracts the java code of only methods from uml scheme which made by user
-	 * @param e
+	 * @param element
 	 */
 	public static void showCode( Element element) {
 		Stage window = new Stage();
@@ -1104,7 +1104,7 @@ public class DMenuWizard {
 					currentRow = new HBox();
 
 					for (DConstructorProperty p : dcon.getIncludedProperties()) {
-						properties = properties + p.getProperty().getType() + ", ";
+						properties = properties + p.getProperty().getType() + " " + p.getProperty().getName() + ", ";
 					}
 
 					properties = properties.substring(0, properties.length() - 2) + ")";
