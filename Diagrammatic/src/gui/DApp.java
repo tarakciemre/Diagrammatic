@@ -449,43 +449,43 @@ public class DApp extends Application {
 
 	public static void drawHierarchy( DProject prj) {
 
-		for (int j = 0; j < prj.getObjects().size(); j++)
-		{
-			DObject o = prj.getObjects().get(j);
+        for (int j = 0; j < prj.getObjects().size(); j++)
+        {
+            DObject o = prj.getObjects().get(j);
 
-			if (o instanceof DGeneralClass)
-			{
-				DGeneralClass gc = (DGeneralClass) o;
-				if (gc.getSuperClass() != null)
-				{
-					System.out.println("added another line");
-					drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
-				}
+            if (o instanceof DGeneralClass)
+            {
+                DGeneralClass gc = (DGeneralClass) o;
+                if (gc.getSuperClass() != null)
+                {
+                    System.out.println("added another line");
+                    drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
+                }
 
-				if (!gc.getInterfaces().isEmpty())
-				{
-					for (DInterface superInt : gc.getInterfaces())
-					{
-						System.out.println("added another dashed line");
-						drawCenteredDashedLine( gc.getElement(), superInt.getElement());
-					}
-				}
-			}
-			else if (o instanceof DInterface)
-			{
-				DInterface i = (DInterface) o;
-				if (!i.getSuperInterfaces().isEmpty())
-				{
-					for (DInterface superInt : i.getSuperInterfaces())
-					{
-						System.out.println("added another line");
-						drawCenteredLine(superInt.getElement(), i.getElement());
-					}
-				}
-			}
-		}
+                if (!gc.getInterfaces().isEmpty())
+                {
+                    for (DInterface superInt : gc.getInterfaces())
+                    {
+                        System.out.println("added another dashed line");
+                        drawCenteredDashedLine( superInt.getElement(), gc.getElement());
+                    }
+                }
+            }
+            else if (o instanceof DInterface)
+            {
+                DInterface i = (DInterface) o;
+                if (!i.getSuperInterfaces().isEmpty())
+                {
+                    for (DInterface superInt : i.getSuperInterfaces())
+                    {
+                        System.out.println("added another line");
+                        drawCenteredLine(superInt.getElement(), i.getElement());
+                    }
+                }
+            }
+        }
 
-	}
+    }
 
 	static void addElements( Group group) {
 		for ( int i = 0; i < elements.size(); i++)
