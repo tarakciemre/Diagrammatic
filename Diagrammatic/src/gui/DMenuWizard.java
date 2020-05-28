@@ -493,13 +493,13 @@ public class DMenuWizard {
 			for ( Node n : propertyVBox.getChildren()) {
 				if ( n instanceof CheckBox) {
 					CheckBox cb = (CheckBox)n;
-
 					if ( cb.isSelected()) {
 						for ( int i = 0; i < DApp.selectedElement.getObject().getProperties().size(); i++) {
 							if ( DApp.selectedElement.getObject().getProperties().get(i).getName().equals(cb.getText()))
 							{
 								DApp.selectedElement.getObject().getProperties().remove(i);
 								DApp.selectedElement.heightProperty.set(DApp.selectedElement.heightProperty.get() - DApp.size);
+								DApp.selectedElement.updateObject();
 							}
 						}
 					}
@@ -509,6 +509,7 @@ public class DMenuWizard {
 			DApp.selectedElement.updateObject();
 			window.close();
 			editClassOptions();
+			DApp.selectedElement.updateObject();
 		});
 
 		addMethodButton.setOnAction(e -> {
@@ -966,15 +967,40 @@ public class DMenuWizard {
 
 		if( element.getObject() instanceof DGeneralClass)
 		{
-			((DGeneralClass)element.getObject()).addProperty(prop);
-			element.addField(prop);
+			if ( ((DGeneralClass)element.getObject()).getProperties().isEmpty()) {
+				((DGeneralClass)element.getObject()).addProperty(prop);
+				element.addField(prop);
+			}
+			else {
+				boolean same = true;
+				boolean taken = false;
+				for ( int i = 0; i < ((DGeneralClass)element.getObject()).getProperties().size(); i++)
+				{
+					DProperty p = ((DGeneralClass)element.getObject()).getProperties().get(i);
+					if (p.getName().equals(prop.getName())){
+						taken = true;
+					}
+				}
+				for ( int i = 0; i < ((DGeneralClass)element.getObject()).getProperties().size(); i++)
+				{
+					DProperty p = ((DGeneralClass)element.getObject()).getProperties().get(i);
+					if ( !taken && (!p.getName().equals(prop.getName()) || !p.getType().equals(prop.getType()))) {
+						((DGeneralClass)element.getObject()).addProperty(prop);
+						element.addField(prop);
+						same = false;
+					}
+				}
+				if (same || taken) {
+					displayErrorMessage( "this vairable already exists!");
+					//displayFieldOptions(element);
+				}
+			}
 		}
 
 		if( element.getObject() instanceof DInterface)
 		{
 			displayErrorMessage( "Cannot add a property to an Interface.");
-			//            displayFieldOptions( element);
-			//            window.close();
+			//displayFieldOptions(element);
 		}
 		System.out.println( prop);
 	}
@@ -1070,34 +1096,60 @@ public class DMenuWizard {
 
 		ArrayList<HBox> consBoxes = new ArrayList<HBox>();
 		if ( element.getObject() instanceof DClass) {
-			String properties = new String( "(");
+			String properties = new String(  " " + element.getObject().getName() + "(");
 			HBox currentRow;
-			for ( DConstructor dcon : element.getObject().getConstructorCollector()) {
+			if ( ((DClass) element.getObject()).getConstructors() != null) {
+				for (DConstructor dcon : ((DClass) element.getObject()).getConstructors()) {
 
-				currentRow = new HBox();
+					currentRow = new HBox();
 
-				for ( DConstructorProperty p : dcon.getIncludedProperties()) {
-					properties = properties + p.getProperty().getType() + ", ";
+					for (DConstructorProperty p : dcon.getIncludedProperties()) {
+						properties = properties + p.getProperty().getType() + ", ";
+					}
+
+					properties = properties.substring(0, properties.length() - 2) + ")";
+					currentRow.getChildren().add(new Label(dcon.getAcccessability() + properties));
+					properties = " " + element.getObject().getName() + "(";
+					consBoxes.add(currentRow);
 				}
-
-				properties = properties.substring(0,properties.length()-1) + ")";
-				currentRow.getChildren().add( new Label(dcon.getAcccessability() + properties ));
-				consBoxes.add(currentRow );
 			}
-
 		}
 		else {
 			displayErrorMessage("Cannot add constructors to abstract classes or interfaces!");
 			window.close();
 		}
-
-
+		//include properties & button part
+		VBox propsVBox = new VBox();
+		Button newConstructorButton = new Button( "Create Constructor");
+		propsVBox.getChildren().add( new Label("Include Properties:"));
+		ArrayList<CheckBox> checkBoxArrayList = new ArrayList<>();
+		for ( DProperty prop: element.getObject().getProperties()) {
+			CheckBox checkBox = new CheckBox( prop.toString());
+			checkBoxArrayList.add( checkBox);
+			propsVBox.getChildren().add( checkBox);
+		}
+		newConstructorButton.setOnAction( event -> {
+			DConstructor dConstructor = new DConstructor( (DClass) element.getObject());
+			for (CheckBox cb : checkBoxArrayList) {
+				if (cb.isSelected()) {
+					for (int i = 0; i < element.getObject().getProperties().size(); i++) {
+						if (element.getObject().getProperties().get(i).toString().equals( cb.getText()) ) {
+							dConstructor.include( element.getObject().getProperties().get(i));
+ 						}
+					}
+				}
+			}
+			((DClass) element.getObject()).getConstructors().add( dConstructor);
+			window.close();
+			displayConstructorMakerWindow( element);
+		});
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);
 		vbox.setPadding(new Insets(10, 10, 10, 10));
 		for ( int i = 0; i < consBoxes.size(); i++)
 			vbox.getChildren().add( consBoxes.get(i));
 
+		vbox.getChildren().addAll( propsVBox, newConstructorButton);
 		scene = new Scene(vbox);
 		//((Group) scene.getRoot()).getChildren().addAll(vbox);
 

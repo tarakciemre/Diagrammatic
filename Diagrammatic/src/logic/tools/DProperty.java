@@ -91,4 +91,7 @@ public class DProperty implements Accessible{
 
 	}
 
+	public boolean equals( DProperty other) {
+		return other.getName().equals( this.getName()) && other.getType().equals( this.getType());
+	}
 }

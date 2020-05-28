@@ -26,7 +26,7 @@ public class DConstructor implements Extractable, Accessible
 			properties.add(new DConstructorProperty( c.getProperties().get(i), false) );
 		}
 		className = c.getName();
-		accesibility = ProjectManager.DEFAULT;
+		accesibility = ProjectManager.PUBLIC;
 	}
 
 	/**
@@ -146,6 +146,14 @@ public class DConstructor implements Extractable, Accessible
 
 	}
 
+	public void include( DProperty prop) {
+		for( int i = 0; i < properties.size(); i++) {
+			if (properties.get(i).getProperty().equals(prop)) {
+				properties.set(i, new DConstructorProperty(properties.get(i).getProperty(), true));
+				System.out.print("osman buraya girdi");
+			}
+		}
+	}
 }
 
 

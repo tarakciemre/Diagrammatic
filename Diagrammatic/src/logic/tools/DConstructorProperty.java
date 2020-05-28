@@ -25,9 +25,7 @@ public class DConstructorProperty implements Accessible
 	 */
 	public DProperty getProperty()
 	{
-		if (included)
-			return property;
-		return new DProperty( "a", "a");
+		return property;
 	}
 
 	/**
