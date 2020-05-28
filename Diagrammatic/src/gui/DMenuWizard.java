@@ -385,7 +385,9 @@ public class DMenuWizard {
 		window.setMinHeight(160);
 
 		Button removePropertyButton = new Button("Remove Selected Properties");
+		Button addPropertyButton = new Button("Add New Property");
 		Button removeMethodButton = new Button("Remove Selected Methods");
+		Button addMethodButton = new Button("Add New Method");
 		Button editInheritanceButton = new Button("Edit Inheritance");
 		Button editInterfaces = new Button("Edit Implemented Interface");
 
@@ -411,10 +413,10 @@ public class DMenuWizard {
 		}
 
 		HBox propertiesHBox = new HBox();
-		propertiesHBox.getChildren().addAll(propertyVBox, removePropertyButton);
+		propertiesHBox.getChildren().addAll(propertyVBox, removePropertyButton, addPropertyButton);
 
 		HBox methodsHBox = new HBox();
-		methodsHBox.getChildren().addAll(methodVBox, removeMethodButton);
+		methodsHBox.getChildren().addAll(methodVBox, removeMethodButton, addMethodButton);
 
 		Label editInheritanceLabel = new Label("Super Class: ");
 		ComboBox<String> comboBoxSuperClass = new ComboBox<>();
@@ -481,6 +483,12 @@ public class DMenuWizard {
 			}
 		}
 
+		addPropertyButton.setOnAction( e -> {
+			displayFieldOptions( DApp.selectedElement);
+			window.close();
+			editClassOptions();
+		});
+
 		removePropertyButton.setOnAction( e -> {
 			for ( Node n : propertyVBox.getChildren()) {
 				if ( n instanceof CheckBox) {
@@ -500,8 +508,36 @@ public class DMenuWizard {
 			}
 			DApp.selectedElement.updateObject();
 			window.close();
+			editClassOptions();
 		});
 
+		addMethodButton.setOnAction(e -> {
+			displayMethodOptions( DApp.selectedElement);
+			window.close();
+			editClassOptions();
+		});
+
+		removeMethodButton.setOnAction( e -> {
+			for ( Node n : methodVBox.getChildren()) {
+				if ( n instanceof CheckBox) {
+					CheckBox cb = (CheckBox)n;
+
+					if ( cb.isSelected()) {
+						for ( int i = 0; i < DApp.selectedElement.getObject().getMethods().size(); i++) {
+							if ( DApp.selectedElement.getObject().getMethods().get(i).getName().equals(cb.getText()))
+							{
+								DApp.selectedElement.getObject().getMethods().remove(i);
+								DApp.selectedElement.heightProperty.set(DApp.selectedElement.heightProperty.get() - DApp.size);
+							}
+						}
+					}
+
+				}
+			}
+			DApp.selectedElement.updateObject();
+			window.close();
+			editClassOptions();
+		});
 
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);

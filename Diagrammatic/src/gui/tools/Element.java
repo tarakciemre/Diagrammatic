@@ -402,12 +402,13 @@ public class Element extends Group {
 		{
 			if (getObject() instanceof DGeneralClass)
 			{
+				belowProperties.setStartX(contentsH2.getLayoutX());
+				belowProperties.setStartY(contentsH2.getLayoutY());
+				belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
+				belowProperties.setEndY(contentsH2.getLayoutY());
 				if (getObject().getProperties().isEmpty())
 				{
-					belowProperties.setStartX(contentsH2.getLayoutX());
-					belowProperties.setStartY(contentsH2.getLayoutY());
-					belowProperties.setEndX(contentsH2.getLayoutX() + widthProperty().get());
-					belowProperties.setEndY(contentsH2.getLayoutY());
+
 					if (!contentsV.getChildren().contains(empty))
 					{
 						contentsV.getChildren().add(3, empty);
