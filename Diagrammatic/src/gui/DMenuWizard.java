@@ -94,7 +94,9 @@ public class DMenuWizard {
 		ChoiceBox<String> choiceBox = new ChoiceBox<>();
 
 		Label messageInh2 = new Label( "This class implements:");
-		ChoiceBox<String> choiceBox2 = new ChoiceBox<>();
+		ArrayList<CheckBox> interfaces = new ArrayList<>();
+
+
 
 		// Going to add the elements in project
 		choiceBox.getItems().add("Object");
@@ -111,11 +113,15 @@ public class DMenuWizard {
 		{
 			if (obj instanceof DInterface)
 			{
-				choiceBox2.getItems().add( obj.getName());
+				interfaces.add( new CheckBox(obj.getName()));
 			}
 
 		}
-
+		HBox interfaceBox = new HBox();
+		for ( CheckBox c : interfaces)
+			interfaceBox.getChildren().add(c);
+		if ( interfaces.isEmpty())
+			interfaceBox.getChildren().add( new Label("\t\t\t\t\tno interfaces in project"));
 
 		create = new Button("Create a new class");
 
@@ -133,7 +139,7 @@ public class DMenuWizard {
 					if( !taken)
 					{
 						boolean isAbstract = abstractCheck.isSelected();
-						getInheritanceChoice( choiceBox, createClass( name, choiceBox2, isAbstract));
+						getInheritanceChoice( choiceBox, createClass( name, interfaces, isAbstract));
 					}
 					else
 					{
@@ -154,49 +160,8 @@ public class DMenuWizard {
 		});
 
 
-
 		VBox layout = new VBox();
-		layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, messageInh2, choiceBox2, abstractCheck, create);
-		layout.setAlignment( Pos.CENTER);
-
-		window.setScene( new Scene( layout));
-		window.showAndWait();
-	}
-
-	public static void displayLoadOptions() {
-		Button load;
-
-		Stage window = new Stage();
-
-		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("Open Project");
-		window.setMinWidth(400);
-
-		load = new Button("Load Project");
-
-		load.setOnAction( e -> {
-			try {
-				FileChooser fileChooser = new FileChooser();
-				File selectedFile = fileChooser.showOpenDialog(window);
-				cleanProjectView();
-				loadProject(selectedFile);
-				DApp.updateArrow();
-				DApp.updateLines();
-				DApp.updateOverlay();
-				DApp.updateZoomPane();
-				displayErrorMessage("Project Loaded Successfully!");
-
-			} catch (NullPointerException n) {
-				n.printStackTrace();
-				displayErrorMessage("Project Wasn't Loaded Successfully!");
-			}
-			window.close();
-		});
-
-
-
-		VBox layout = new VBox();
-		layout.getChildren().addAll(load);
+		layout.getChildren().addAll(  messageName, name, messageInh, choiceBox, messageInh2, interfaceBox, abstractCheck, create);
 		layout.setAlignment( Pos.CENTER);
 
 		window.setScene( new Scene( layout));
@@ -274,23 +239,76 @@ public class DMenuWizard {
 	}
 
 	/**
+	 * This method allows user to choose parent class for new class
+	 * @param cb
+	 * @param child
+	 */
+	public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
+		for ( DObject o : DApp.project.getObjects() ) {
+			if ( cb.getValue() != null && cb.getValue().equals(o.getName()))
+			{
+				System.out.println("Inheritance found!");
+				setInheritance(o , child);
+			}
+
+		}
+	}
+
+	/**
+	 * This method allows user to set the inheritance of the class
+	 * @param parent
+	 * @param child
+	 */
+	public static void setInheritance( DObject parent, DObject child) {
+		Element lastAdded = null, selected = null;
+
+		for ( Node n : DApp.group.getChildren()) {
+			if ( n instanceof Element && ((Element) n).hasObject()){
+				if ( (((Element) n).getObject().getName()).equals( child.getName()) )
+					lastAdded = (Element)n;
+			}
+		}
+		for ( Node n : DApp.group.getChildren()) {
+			if ( n instanceof Element && ((Element) n).hasObject()){
+				if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
+					selected = (Element)n;
+			}
+		}
+
+		if (child instanceof DGeneralClass && parent instanceof DGeneralClass)
+		{
+			DGeneralClass childClass= (DGeneralClass) child;
+			DGeneralClass parentClass = (DGeneralClass) parent;
+			childClass.setSuperClass(parentClass);
+		}
+
+		if (child instanceof DInterface && parent instanceof DInterface)
+		{
+			((DInterface)child).addSuperInterface( (DInterface) parent);
+		}
+
+		DApp.drawCenteredLine( selected, lastAdded);
+		DApp.select(selected);
+		DApp.select(lastAdded);
+	}
+
+	/**
 	 * This method creates new object in the program
 	 * @param name
 	 * @return DObject
 	 */
-	public static DGeneralClass createClass( TextField name, ChoiceBox<String> cb, boolean isAbstract) {
+	public static DGeneralClass createClass( TextField name, ArrayList<CheckBox> interfaces, boolean isAbstract) {
 		Element r;
 		DGeneralClass object = null;
+
+		// ini DObjects
 		if (isAbstract)
-		{
 			object = new DAbstractClass( name.getText());
-		}
 		else
-		{
 			object = new DClass( name.getText());
-		}
 		object.setName(name.getText());
 
+		// ini element
 		Random rand = new Random();
 		if ( DApp.selectedElement != null)
 			r = new Element(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
@@ -299,43 +317,45 @@ public class DMenuWizard {
 			r = new Element( DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, DApp.offset + 0 - Math.random()*DApp.RANDOMNESS, 150, 150,
 					Color.web(DApp.colors[0].substring(0, 1) + DApp.colors[rand.nextInt(10)].substring(1).toUpperCase(), 1.0), true);
 
-
+		// update project and application
 		ProjectManager.connectElement(r, object);
 		DApp.elements.add(r);
 		DApp.project.addObject(object);
-
 		DApp.group.getChildren().add(r);
 
-		if (cb.getValue() != null)
-		{
-			String cbS = cb.getValue();
-			Element lastAdded = null, selected = null;
+		// draw relations to interface for each interface implemented
+		for ( int i = 0; i < interfaces.size(); i++) {
+			if ( interfaces.get(i).isSelected()) {
+				Element lastAdded = null, selected = null;
 
-			for ( Node n : DApp.group.getChildren()) {
-				if ( n instanceof Element && ((Element) n).hasObject()){
-					if ( (((Element) n).getObject().getName()).equals( object.getName()) )
-						lastAdded = (Element)n;
-				}
-			}
-			for ( Node n : DApp.group.getChildren()) {
-				if ( n instanceof Element && ((Element) n).hasObject()){
-					if ( (((Element) n).getObject().getName()).equals( cbS) )
-					{
-						selected = (Element)n;
-						DInterface di = (DInterface) selected.getObject();
-						object.addInterface(di);
+				// determine for each
+				for ( Node n : DApp.group.getChildren()) {
+					if ( n instanceof Element && ((Element) n).hasObject()){
+						if ( (((Element) n).getObject().getName()).equals( object.getName()) )
+							lastAdded = (Element)n;
 					}
 				}
+				for ( Node n : DApp.group.getChildren()) {
+					if ( n instanceof Element && ((Element) n).hasObject()) {
+						if ( (((Element) n).getObject().getName()).equals(interfaces.get(i).getText()) )
+						{
+							selected = (Element)n;
+							DInterface di = (DInterface) selected.getObject();
+							object.addInterface(di);
+						}
+					}
+				}
+
+				// draw the line
+				DApp.drawCenteredDashedLine( selected,  lastAdded);
+				DApp.select(selected);
+				DApp.select(lastAdded);
+				DApp.select(r);
+				DApp.updateZoomPane();
 			}
 
-			DApp.drawCenteredDashedLine( selected,  lastAdded);
-
-			DApp.select(selected);
-			DApp.select(lastAdded);
 		}
 
-		DApp.select(r);
-		DApp.updateZoomPane();
 
 		return object;
 	}
@@ -637,59 +657,7 @@ public class DMenuWizard {
 		return object;
 	}
 
-	/**
-	 * This method allows user to choose parent class for new class
-	 * @param cb
-	 * @param child
-	 */
-	public static void getInheritanceChoice( ChoiceBox<String> cb, DObject child) {
-		for ( DObject o : DApp.project.getObjects() ) {
-			if ( cb.getValue() != null && cb.getValue().equals(o.getName()))
-			{
-				System.out.println("Inheritance found!");
-				setInheritance(o , child);
-			}
 
-		}
-	}
-
-	/**
-	 * This method allows user to set the inheritance of the class
-	 * @param parent
-	 * @param child
-	 */
-	public static void setInheritance( DObject parent, DObject child) {
-		Element lastAdded = null, selected = null;
-
-		for ( Node n : DApp.group.getChildren()) {
-			if ( n instanceof Element && ((Element) n).hasObject()){
-				if ( (((Element) n).getObject().getName()).equals( child.getName()) )
-					lastAdded = (Element)n;
-			}
-		}
-		for ( Node n : DApp.group.getChildren()) {
-			if ( n instanceof Element && ((Element) n).hasObject()){
-				if ( (((Element) n).getObject().getName()).equals( parent.getName()) )
-					selected = (Element)n;
-			}
-		}
-
-		if (child instanceof DGeneralClass && parent instanceof DGeneralClass)
-		{
-			DGeneralClass childClass= (DGeneralClass) child;
-			DGeneralClass parentClass = (DGeneralClass) parent;
-			childClass.setSuperClass(parentClass);
-		}
-
-		if (child instanceof DInterface && parent instanceof DInterface)
-		{
-			((DInterface)child).addSuperInterface( (DInterface) parent);
-		}
-
-		DApp.drawCenteredLine( selected, lastAdded);
-		DApp.select(selected);
-		DApp.select(lastAdded);
-	}
 
 	/**
 	 * This method gives options to the user to demonstrate a field in a class
@@ -1291,25 +1259,11 @@ public class DMenuWizard {
 	/**
 	 * This method displays the project options
 	 */
-	public static void displaySaveOptions() {
-		Stage window = new Stage();
-		TextField t = new TextField();
-		t.setText("New Project");
+	public static void saveProject() {
 
-		window.initModality(Modality.APPLICATION_MODAL);
-		window.setTitle("Save Project");
-		window.setMinWidth(200);
-		window.setMinHeight(160);
+		try {
 
-		Label messageName = new Label( "Enter Project Name");
-
-		Button save = new Button("Save Project");
-
-		save.setOnAction(e -> {
-			if (DApp.project.getName() == null)
-				DApp.project.setName(t.getText());
-
-			if (DApp.project.getSaveFile() != null)
+			if ( DApp.project.getName() != null && DApp.project.getSaveFile() != null)
 			{
 				saveProject(DApp.project.getSaveFile());
 			}
@@ -1321,7 +1275,7 @@ public class DMenuWizard {
 				fileChooser.getExtensionFilters().add(
 						new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
 						);
-				File selectedFile = fileChooser.showSaveDialog(window);
+				File selectedFile = fileChooser.showSaveDialog( new Stage());
 				if (selectedFile != null)
 				{
 					saveProject(selectedFile);
@@ -1329,18 +1283,15 @@ public class DMenuWizard {
 				}
 
 			}
+			displayErrorMessage("project saved!");
 
-			window.close();
-		});
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+			displayErrorMessage("Error:Project wasn't saved successully");
 
-		VBox layout = new VBox();
-		if (DApp.project.getName() == null)
-			layout.getChildren().addAll( messageName, t);
-		layout.getChildren().add(save);
-		layout.setAlignment( Pos.CENTER);
+		}
 
-		window.setScene( new Scene( layout));
-		window.showAndWait();
 	}
 
 	public static void displaySaveAsOptions() {
@@ -1396,7 +1347,7 @@ public class DMenuWizard {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		if (result.get() == ButtonType.OK){
-			displaySaveOptions();
+			saveProject();
 		} else {
 
 		}
@@ -1478,5 +1429,44 @@ public class DMenuWizard {
 
 	}
 
+	public static void displayLoadOptions() {
+		Button load;
+
+		Stage window = new Stage();
+
+		window.initModality(Modality.APPLICATION_MODAL);
+		window.setTitle("Open Project");
+		window.setMinWidth(400);
+
+		load = new Button("Load Project");
+
+		load.setOnAction( e -> {
+			try {
+				FileChooser fileChooser = new FileChooser();
+				File selectedFile = fileChooser.showOpenDialog(window);
+				cleanProjectView();
+				loadProject(selectedFile);
+				DApp.updateArrow();
+				DApp.updateLines();
+				DApp.updateOverlay();
+				DApp.updateZoomPane();
+				displayErrorMessage("Project Loaded Successfully!");
+
+			} catch (NullPointerException n) {
+				n.printStackTrace();
+				displayErrorMessage("Project Wasn't Loaded Successfully!");
+			}
+			window.close();
+		});
+
+
+
+		VBox layout = new VBox();
+		layout.getChildren().addAll(load);
+		layout.setAlignment( Pos.CENTER);
+
+		window.setScene( new Scene( layout));
+		window.showAndWait();
+	}
 
 }

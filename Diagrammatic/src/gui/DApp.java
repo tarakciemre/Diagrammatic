@@ -279,7 +279,7 @@ public class DApp extends Application {
         });
 
         saveProject.setOnAction(e -> {
-        	DMenuWizard.displaySaveOptions();
+        	DMenuWizard.saveProject();
         });
 
         saveProjectAs.setOnAction(e -> {
