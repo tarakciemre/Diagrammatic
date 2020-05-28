@@ -21,7 +21,12 @@ import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
@@ -61,6 +66,7 @@ import logic.tools.DConstructor;
 import logic.tools.DConstructorProperty;
 import logic.tools.DProject;
 import logic.tools.DProperty;
+import logic.tools.ProjectManager;
 
 
 /*
@@ -427,7 +433,39 @@ public class DApp extends Application {
         setColorMode("Dark");
         scrollPane.setPannable(true);
 
-        System.out.println("size: " + slider1.getValue() * slider2.getValue());
+        stage.setOnCloseRequest(e -> {
+			if (!ProjectManager.checkIfSaved())
+			{
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Save your project");
+				alert.setHeaderText("Do you want to save your current project?");
+				alert.setContentText("You will lose unsaved progress");
+
+				ButtonType okButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+				ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+				ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+				alert.getButtonTypes().setAll(okButton, noButton, cancelButton);
+
+				//Optional<ButtonType> result = alert.showAndWait();
+
+				alert.showAndWait().ifPresent(type -> {
+					if (type.getButtonData() == ButtonData.YES) {
+						DMenuWizard.saveProject();
+					}
+					else if (type.getButtonData() == ButtonData.NO) {
+
+					}
+					else {
+						e.consume();
+					}
+				});
+			}
+			else
+			{
+
+			}
+		});
     }
 	void iniElements( DProject prj) {
 		elements = new ArrayList<Element>();
@@ -463,7 +501,6 @@ public class DApp extends Application {
                 DGeneralClass gc = (DGeneralClass) o;
                 if (gc.getSuperClass() != null)
                 {
-                    System.out.println("added another line");
                     drawCenteredLine(gc.getSuperClass().getElement(), gc.getElement());
                 }
 
@@ -471,7 +508,6 @@ public class DApp extends Application {
                 {
                     for (DInterface superInt : gc.getInterfaces())
                     {
-                        System.out.println("added another dashed line");
                         drawCenteredDashedLine( superInt.getElement(), gc.getElement());
                     }
                 }
@@ -483,7 +519,6 @@ public class DApp extends Application {
                 {
                     for (DInterface superInt : i.getSuperInterfaces())
                     {
-                        System.out.println("added another line");
                         drawCenteredLine(superInt.getElement(), i.getElement());
                     }
                 }

@@ -128,7 +128,6 @@ public class Element extends Group {
 				DApp.select(this);
 				DApp.srBnd.fireEvent(me);
 				me.consume();
-				System.out.println("S: " + toString());
 			});
 
 			setOnMouseDragged(me -> DApp.srBnd.fireEvent(me));
@@ -210,7 +209,8 @@ public class Element extends Group {
 	 */
 	public void addField( DProperty prop) {
 		String out = new String("   -"+prop.getName() + ": ");
-		out += prop.getType();
+        out += prop.getType();
+        props.add(new Label(out));
 		updateObject();
 		heightProperty.set(heightProperty.get() + DApp.size);
 	}

@@ -3,7 +3,7 @@ package logic.interfaces;
 public interface Accessible {
 
 	    /**
-	     * @return 
+	     * @return
 	     */
 	    public String getAcccessability();
 	    /**

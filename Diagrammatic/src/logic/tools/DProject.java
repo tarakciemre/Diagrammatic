@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import gui.tools.ComplexLine;
-import gui.tools.Element;
 import logic.object_source.DGeneralClass;
 import logic.object_source.DInterface;
 import logic.object_source.DObject;
@@ -104,10 +103,8 @@ public class DProject {
 		if (!complexLines.isEmpty())
 		{
 			projectText.add("COMPLEXLINES");
-			System.out.println(complexLines.size());
 			for (ComplexLine cln : complexLines)
 			{
-				System.out.println(cln.lineToString());
 				projectText.add(cln.lineToString());
 			}
 		}

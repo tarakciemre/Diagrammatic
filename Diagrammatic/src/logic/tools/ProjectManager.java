@@ -1,6 +1,8 @@
 package logic.tools;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import gui.DApp;
 import gui.tools.ComplexLine;
@@ -69,7 +71,6 @@ public class ProjectManager
                     else if(line.startsWith( "IMP"))
                     {
                     	String[] interfaces = lineInfo.split(",");
-                    	System.out.println(interfaces[0]);
                     	for (DObject o : project.getObjects())
                     	{
                     		if (o instanceof DInterface)
@@ -92,7 +93,6 @@ public class ProjectManager
                         String[] propInfo = lineInfo.split(",");
                         DProperty dp = new DProperty( propInfo[0], propInfo[1]);
                         dc.addProperty( dp);
-                        System.out.println("added property");
                     }
                     else if(line.startsWith( "MET"))
                     {
@@ -353,7 +353,6 @@ public class ProjectManager
                         DApp.elements.add(e);
 
             			DApp.group.getChildren().add(e);
-            			System.out.println(e);
                     }
 
                     else if (line.startsWith( "END"))
@@ -470,7 +469,6 @@ public class ProjectManager
                 			String[] pointInfo = clnInfo[j].split("-");
                 			Point2D point = new Point2D( Double.valueOf(pointInfo[0]), Double.valueOf(pointInfo[1]));
                 			cln.addPoint(point, cln.getPointCount() - 1);
-                			System.out.println(cln);
                 		}
             		}
 
@@ -508,5 +506,32 @@ public class ProjectManager
 		}
 		return suitable;
     }
+
+    public static boolean checkIfSaved()
+    {
+    	boolean saved = false;
+    	ArrayList<String> p1Lines = DApp.project.projectToText();
+    	ArrayList<String> p2Lines = new ArrayList<String>();
+    	if (DApp.project.getSaveFile() != null)
+    	{
+    		try {
+    			Scanner myReader = new Scanner(DApp.project.getSaveFile());
+    			while (myReader.hasNextLine()) {
+    				String line = myReader.nextLine();
+    				p2Lines.add(line);
+    			}
+    			myReader.close();
+    		} catch (FileNotFoundException e) {
+    			e.printStackTrace();
+    		}
+
+    		if (p1Lines.containsAll(p2Lines))
+    			saved = true;
+    	}
+
+
+		return saved;
+    }
+
 
 }

@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,17 +22,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -247,7 +245,6 @@ public class DMenuWizard {
 		for ( DObject o : DApp.project.getObjects() ) {
 			if ( cb.getValue() != null && cb.getValue().equals(o.getName()))
 			{
-				System.out.println("Inheritance found!");
 				setInheritance(o , child);
 			}
 
@@ -390,11 +387,6 @@ public class DMenuWizard {
 		Button addPropertyButton = new Button("Add New Property");
 		Button removeMethodButton = new Button("Remove Selected Methods");
 		Button addMethodButton = new Button("Add New Method");
-		Button editInheritanceButton = new Button("Edit Inheritance");
-		Button editInterfaces = new Button("Edit Implemented Interface");
-
-		ArrayList<Label> properties = new ArrayList<>();
-		ArrayList<Label> methods = new ArrayList<>();
 
 		Button editName = new Button( "Edit Name");
 		editName.setOnAction( e -> {
@@ -572,7 +564,6 @@ public class DMenuWizard {
 
 		Button removeMethodButton = new Button( "Remove Method");
 		Button updateHierarchy = new Button( "Update Hierarchy");
-		ArrayList<Label> methods = new ArrayList<>();
 
 		VBox methodVBox = new VBox();
 		methodVBox.getChildren().add( new Label("Methods: "));
@@ -632,7 +623,6 @@ public class DMenuWizard {
 
 
 		VBox radioButtonVBox = new VBox();
-		Label editInterfacesLabel = new Label("Edit Interfaces");
 
 		VBox vbox = new VBox();
 		vbox.setSpacing(5);
@@ -676,13 +666,8 @@ public class DMenuWizard {
 	public static DObject createInterface( TextField name, ChoiceBox<String> cb) {
 		InterfaceElement r;
 		DInterface object = new DInterface( name.getText());
-		System.out.println( object);
 		object.setName(name.getText());
 
-		if (cb != null)
-		{
-			String cbS = cb.getValue();
-		}
 		Random rand = new Random();
 		if ( DApp.selectedElement != null)
 			r = new InterfaceElement(  DApp.selectedElement.getLayoutX() + 30 + rand.nextInt(7) , DApp.selectedElement.getLayoutY()+ 30 + rand.nextInt(7),
@@ -771,7 +756,7 @@ public class DMenuWizard {
 	public static void displayMethodOptions( Element element) {
 		Button create;
 		TextField name, returnType;
-		CheckBox cb, cb2, cb3;
+		CheckBox cb2, cb3;
 		Stage window = new Stage();
 
 		window.initModality(Modality.APPLICATION_MODAL);
@@ -995,10 +980,8 @@ public class DMenuWizard {
 						same = true;
 					}
 				}
-
-				System.out.println( same+""+taken);
 				if (same || taken)
-					displayErrorMessage( "this vairable already exists!");
+					displayErrorMessage( "this variable already exists!");
 				else {
 					((DGeneralClass)element.getObject()).addProperty(prop);
 					element.addField(prop);
@@ -1011,7 +994,6 @@ public class DMenuWizard {
 			displayErrorMessage( "Cannot add a property to an Interface.");
 			//displayFieldOptions(element);
 		}
-		System.out.println( prop);
 	}
 
 	/**
@@ -1037,7 +1019,6 @@ public class DMenuWizard {
 					}
 				}
 
-				System.out.println( same+"");
 				if (same )
 					displayErrorMessage( "this method already exists!");
 				else {
@@ -1062,7 +1043,6 @@ public class DMenuWizard {
 					}
 				}
 
-				System.out.println( same+"");
 				if (same )
 					displayErrorMessage( "this method already exists!");
 				else {
@@ -1072,7 +1052,6 @@ public class DMenuWizard {
 			}
 		}
 
-		System.out.print( m);
 	}
 
 	/**
@@ -1082,7 +1061,6 @@ public class DMenuWizard {
 	 */
 	public static void extractAll( ActionEvent e, DProject prj) {
 		displayErrorMessage( "Project extracted successfully.");
-		System.out.println("extracting all...");
 		prj.extract("");
 	}
 
@@ -1135,8 +1113,6 @@ public class DMenuWizard {
 	static void setBackgroundColor(Paint color)
 	{
 		DApp.backgroundColor = color;
-		Paint bg1 = color;
-		BackgroundFill backgroundFill1 = new BackgroundFill(bg1, null, null);
 	}
 
 	/**
@@ -1415,24 +1391,55 @@ public class DMenuWizard {
 			if ( DApp.project.getName() != null && DApp.project.getSaveFile() != null)
 			{
 				saveProject(DApp.project.getSaveFile());
+				displayErrorMessage("project saved!");
 			}
 			else
 			{
-				FileChooser fileChooser = new FileChooser();
+				Stage window = new Stage();
+				TextField t = new TextField();
+				t.setText("New Project");
 
-				fileChooser.setInitialFileName(DApp.project.getName());
-				fileChooser.getExtensionFilters().add(
-						new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
-						);
-				File selectedFile = fileChooser.showSaveDialog( new Stage());
-				if (selectedFile != null)
-				{
-					saveProject(selectedFile);
-					DApp.project.setSaveFile(selectedFile);
-				}
+				window.initModality(Modality.APPLICATION_MODAL);
+				window.setTitle("New Project");
+				window.setMinWidth(200);
+				window.setMinHeight(160);
+
+				Label messageName = new Label( "Enter Project Name");
+
+				Button save = new Button("Save Project");
+
+				save.setOnAction(e -> {
+					FileChooser fileChooser = new FileChooser();
+
+					if (DApp.project.getName() == null)
+						DApp.project.setName(t.getText());
+
+					fileChooser.setInitialFileName(DApp.project.getName());
+					fileChooser.getExtensionFilters().add(
+							new FileChooser.ExtensionFilter("Diagrammatic Project File", "*.diag")
+							);
+					File selectedFile = fileChooser.showSaveDialog(window);
+					if (selectedFile != null)
+					{
+						saveProject(selectedFile);
+						DApp.project.setSaveFile(selectedFile);
+						displayErrorMessage("project saved!");
+					}
+
+					window.close();
+				});
+
+				VBox layout = new VBox();
+				if (DApp.project.getName() == null)
+					layout.getChildren().addAll( messageName, t);
+				layout.getChildren().add(save);
+				layout.setAlignment( Pos.CENTER);
+
+				window.setScene( new Scene( layout));
+				window.showAndWait();
 
 			}
-			displayErrorMessage("project saved!");
+
 
 		}
 		catch (Exception exception) {
@@ -1472,6 +1479,7 @@ public class DMenuWizard {
 			{
 				saveProject(selectedFile);
 				DApp.project.setSaveFile(selectedFile);
+				displayErrorMessage("project saved!");
 			}
 
 			window.close();
@@ -1494,12 +1502,22 @@ public class DMenuWizard {
 		alert.setHeaderText("Do you want to save your current project?");
 		alert.setContentText("You will lose unsaved progress");
 
-		Optional<ButtonType> result = alert.showAndWait();
-		if (result.get() == ButtonType.OK){
-			saveProject();
-		} else {
+		ButtonType okButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+		ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+		ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-		}
+		alert.getButtonTypes().setAll(okButton, noButton, cancelButton);
+
+		//Optional<ButtonType> result = alert.showAndWait();
+
+		alert.showAndWait().ifPresent(type -> {
+			if (type.getButtonData() == ButtonData.YES) {
+				saveProject();
+			}
+			else if (type.getButtonData() == ButtonData.NO) {
+
+			}
+		});
 
 		DApp.project = new DProject();
 		cleanProjectView();
@@ -1539,7 +1557,6 @@ public class DMenuWizard {
 			myReader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.out.println("An error occurred.");
 		}
 
 		DProject loadedProject = ProjectManager.textToProject(projectLines);
@@ -1564,8 +1581,6 @@ public class DMenuWizard {
 		Element cornerNE = new Element( 10000, -100, 1, 1, Color.GOLD, false);
 		Element cornerSW = new Element( -100, 10000, 1, 1, Color.GOLD, false);
 		Element cornerSE = new Element( 10000, 10000, 1, 1, Color.GOLD, false);
-
-		System.out.println(cornerSE.elementToString());
 
 		DApp.group.getChildren().removeAll(DApp.group.getChildren());
 
